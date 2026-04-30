@@ -103,7 +103,7 @@ export function NavUser({
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => router.push("/admin/setting")}>
                 <CircleUserRoundIcon />
                 Account
               </DropdownMenuItem>

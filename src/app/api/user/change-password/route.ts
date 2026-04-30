@@ -7,7 +7,7 @@ import { StatusCodes } from "http-status-codes";
 export async function POST(req: Request) {
   try {
     await connectDB();
-    const userPayload = await verifyAuth(req);
+    const userPayload = (await verifyAuth(req)) as any;
 
     if (!userPayload) {
       return NextResponse.json(

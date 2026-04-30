@@ -40,7 +40,7 @@ export async function GET(req: Request) {
 export async function PATCH(req: Request) {
   try {
     await connectDB();
-    const userPayload = await verifyAuth(req);
+    const userPayload = (await verifyAuth(req)) as any;
 
     if (!userPayload) {
       return NextResponse.json(
