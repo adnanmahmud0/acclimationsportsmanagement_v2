@@ -62,11 +62,36 @@ export interface ProcessStep {
   subtitle: string;
 }
 
+export interface MetricData {
+  title: string;
+  value: string;
+}
+
+export interface ServiceBoxData {
+  title: string;
+  desc: string;
+}
+
+export interface HighlightData {
+  value: string;
+  label: string;
+}
+
+export interface PersonalBrandingData {
+  title: string;
+  tagline: string;
+  metrics: MetricData[];
+  services: ServiceBoxData[];
+  resultsTitle: string;
+  highlights: HighlightData[];
+}
+
 export interface PageContent {
   hero?: HeroData;
   oneStopShop?: OneStopShopData;
   about?: AboutData;
   contact?: ContactData;
+  personalBranding?: PersonalBrandingData;
   mainTitle?: string;
   subDescription?: string;
   points?: string[];

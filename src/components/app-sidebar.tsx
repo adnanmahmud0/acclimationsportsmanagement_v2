@@ -43,6 +43,10 @@ const data = {
           title: "Contract Negotiation",
           url: "/admin/pages/contract-negotiation",
         },
+        {
+          title: "Personal Branding",
+          url: "/admin/pages/personal-branding",
+        },
       ],
     },
     {
