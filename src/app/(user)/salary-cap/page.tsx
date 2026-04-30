@@ -1,13 +1,64 @@
 import Image from "next/image";
-import { Metadata } from "next";
+import React from "react";
 import { GradientHeader } from "@/components/gradient-header";
 import { CtaButton } from "@/components/cta-button";
 import { buildPageMetadata } from "@/lib/seo";
 import { BreadcrumbSchema } from "@/components/json-ld";
+import connectDB from "@/lib/mongodb";
+import Page from "@/models/page";
+import { PageData } from "@/types/cms";
 
-export const metadata: Metadata = buildPageMetadata("/salary-cap");
+async function getPageData() {
+  await connectDB();
+  const page = await Page.findOne({ slug: "salary-cap" }).lean();
+  return page as unknown as PageData | null;
+}
 
-export default function SalaryCapPage() {
+export async function generateMetadata() {
+  const page = await getPageData();
+  if (page?.seo) {
+    return {
+      title: page.seo.title,
+      description: page.seo.description,
+      keywords: page.seo.keywords,
+      openGraph: {
+        title: page.seo.title,
+        description: page.seo.description,
+        images: page.seo.ogImage ? [{ url: page.seo.ogImage }] : [],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: page.seo.title,
+        description: page.seo.description,
+        images: page.seo.ogImage ? [page.seo.ogImage] : [],
+      }
+    };
+  }
+  return buildPageMetadata("/salary-cap");
+}
+
+export default async function SalaryCapPage() {
+  const pageData = await getPageData();
+  
+  const content = pageData?.content?.salaryCap || {
+    title: "Master the Salary Cap. \n Maximize Every Dollar.",
+    subtitle: "Proprietary analytical models and expert salary cap strategy that put more money in your pocket. We deliver precise, real-time salary cap modeling and data-driven strategies to optimize every contract.",
+    engineTitle: "The Acclimation Salary Cap Engine",
+    cardTitles: [
+      "Live Salary Cap Forecasting",
+      "Luxury Tax Stress Testing",
+      "Endorsement & NIL Valuation",
+      "Contract Optimization Simulator"
+    ],
+    points: [
+      "In-house salary cap & luxury tax forecasts",
+      "Custom analytical projections",
+      "Bird Rights and exception optimization",
+      "Trade scenario analysis"
+    ],
+    ctaText: "SCHEDULE YOUR CONFIDENTIAL CONTRACT STRATEGY CALL"
+  };
+
   return (
     <main className="relative min-h-screen overflow-x-hidden bg-[#05070a] text-white">
       <BreadcrumbSchema items={[{ name: "Salary Cap Analytics", href: "/salary-cap" }]} />
@@ -26,14 +77,16 @@ export default function SalaryCapPage() {
       <div className="container mx-auto px-6 pt-32 pb-24 relative z-10 flex flex-col items-center">
         {/* Header Section */}
         <div className="text-center space-y-6 max-w-5xl mx-auto mb-16">
-          <GradientHeader tag="h1" size="lg" className="mb-4">
-            Master the Salary Cap. <br />
-            <span className="   flex">Maximize Every Dollar.</span>
+          <GradientHeader tag="h1" size="lg" className="mb-4 text-center">
+            {content.title.split('\n').map((line: string, i: number) => (
+              <React.Fragment key={i}>
+                {line}
+                {i < content.title.split('\n').length - 1 && <br />}
+              </React.Fragment>
+            ))}
           </GradientHeader>
-          <p className="text-sm font-bold tracking-[0.3em] uppercase text-white/50 mb-4">
-            Proprietary analytical models and expert salary cap strategy that
-            put more money in your pocket. We deliver precise, real-time salary
-            cap modeling and data-driven strategies to optimize every contract.
+          <p className="text-sm font-bold tracking-[0.3em] uppercase text-white/50 mb-4 whitespace-pre-line">
+            {content.subtitle}
           </p>
         </div>
 
@@ -43,7 +96,7 @@ export default function SalaryCapPage() {
             <div className="flex items-center justify-center gap-4 text-primary">
               <div className="h-[1px] w-12 bg-primary/30" />
               <span className="text-sm font-black uppercase tracking-[0.4em]">
-                The Acclimation Salary Cap Engine
+                {content.engineTitle}
               </span>
               <div className="h-[1px] w-12 bg-primary/30" />
             </div>
@@ -55,7 +108,7 @@ export default function SalaryCapPage() {
 
           {/* Engine Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <EngineCard title="Live Salary Cap Forecasting">
+            <EngineCard title={content.cardTitles[0] || "Live Salary Cap Forecasting"}>
               <div className="space-y-4">
                 <div className="text-xs font-bold text-white/30 uppercase tracking-widest leading-none">
                   Premium Growth
@@ -72,7 +125,7 @@ export default function SalaryCapPage() {
               </div>
             </EngineCard>
 
-            <EngineCard title="Luxury Tax Stress Testing">
+            <EngineCard title={content.cardTitles[1] || "Luxury Tax Stress Testing"}>
               <div className="space-y-4">
                 <div className="flex justify-between items-end h-20 gap-2 px-2">
                   <div className="w-3 bg-purple-500/80 h-full rounded-t-sm" />
@@ -90,7 +143,7 @@ export default function SalaryCapPage() {
               </div>
             </EngineCard>
 
-            <EngineCard title="Endorsement & NIL Valuation">
+            <EngineCard title={content.cardTitles[2] || "Endorsement & NIL Valuation"}>
               <div className="space-y-4">
                 <div className="flex justify-between items-center text-xs font-bold uppercase tracking-widest">
                   <span className="text-white/30">Value Uplift</span>
@@ -107,7 +160,7 @@ export default function SalaryCapPage() {
               </div>
             </EngineCard>
 
-            <EngineCard title="Contract Optimization Simulator">
+            <EngineCard title={content.cardTitles[3] || "Contract Optimization Simulator"}>
               <div className="h-28 relative pt-4">
                 <svg
                   viewBox="0 0 200 100"
@@ -139,15 +192,10 @@ export default function SalaryCapPage() {
           {/* List Section */}
           <div className="pt-12 ">
             <div className="flex flex-col justify-center items-center">
-              {[
-                { id: 1, text: "In-house salary cap & luxury tax forecasts" },
-                { id: 2, text: "Custom analytical projections" },
-                { id: 3, text: "Bird Rights and exception optimization" },
-                { id: 4, text: "Trade scenario analysis" },
-              ].map((item) => (
-                <div key={item.id} className="flex gap-4 items-center group">
+              {content.points.map((point: string, i: number) => (
+                <div key={i} className="flex gap-4 items-center group">
                   <p className="text-sm font-bold text-white/70 uppercase tracking-widest leading-tight">
-                    {item.text}
+                    {point}
                   </p>
                 </div>
               ))}
@@ -155,7 +203,7 @@ export default function SalaryCapPage() {
 
             <div className="mt-12 text-center order-1 md:order-2">
               <CtaButton href="/contact">
-                SCHEDULE YOUR CONFIDENTIAL CONTRACT STRATEGY CALL
+                {content.ctaText}
               </CtaButton>
             </div>
           </div>

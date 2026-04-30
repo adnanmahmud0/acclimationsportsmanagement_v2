@@ -86,12 +86,22 @@ export interface PersonalBrandingData {
   highlights: HighlightData[];
 }
 
+export interface SalaryCapData {
+  title: string;
+  subtitle: string;
+  engineTitle: string;
+  cardTitles: string[];
+  points: string[];
+  ctaText: string;
+}
+
 export interface PageContent {
   hero?: HeroData;
   oneStopShop?: OneStopShopData;
   about?: AboutData;
   contact?: ContactData;
   personalBranding?: PersonalBrandingData;
+  salaryCap?: SalaryCapData;
   mainTitle?: string;
   subDescription?: string;
   points?: string[];

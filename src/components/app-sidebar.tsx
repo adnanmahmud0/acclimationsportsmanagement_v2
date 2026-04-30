@@ -47,6 +47,10 @@ const data = {
           title: "Personal Branding",
           url: "/admin/pages/personal-branding",
         },
+        {
+          title: "Salary Cap",
+          url: "/admin/pages/salary-cap",
+        },
       ],
     },
     {
