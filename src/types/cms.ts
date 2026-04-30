@@ -56,11 +56,22 @@ export interface ContactData {
   locationTitle: string;
 }
 
+export interface ProcessStep {
+  step: number;
+  title: string;
+  subtitle: string;
+}
+
 export interface PageContent {
-  hero: HeroData;
-  oneStopShop: OneStopShopData;
-  about: AboutData;
-  contact: ContactData;
+  hero?: HeroData;
+  oneStopShop?: OneStopShopData;
+  about?: AboutData;
+  contact?: ContactData;
+  mainTitle?: string;
+  subDescription?: string;
+  points?: string[];
+  processSteps?: ProcessStep[];
+  ctaText?: string;
 }
 
 export interface PageData {

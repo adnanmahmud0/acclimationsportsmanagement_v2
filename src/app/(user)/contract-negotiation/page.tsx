@@ -1,13 +1,64 @@
 import Image from "next/image";
-import { Metadata } from "next";
+import React from "react";
 import { GradientHeader } from "@/components/gradient-header";
 import { CtaButton } from "@/components/cta-button";
 import { buildPageMetadata } from "@/lib/seo";
 import { BreadcrumbSchema, FAQSchema } from "@/components/json-ld";
+import connectDB from "@/lib/mongodb";
+import Page from "@/models/page";
+import { PageData, ProcessStep } from "@/types/cms";
 
-export const metadata: Metadata = buildPageMetadata("/contract-negotiation");
+async function getPageData() {
+  await connectDB();
+  const page = await Page.findOne({ slug: "contract-negotiation" }).lean();
+  return page as unknown as PageData | null;
+}
 
-export default function ContractNegotiationPage() {
+export async function generateMetadata() {
+  const page = await getPageData();
+  if (page?.seo) {
+    return {
+      title: page.seo.title,
+      description: page.seo.description,
+      keywords: page.seo.keywords,
+      openGraph: {
+        title: page.seo.title,
+        description: page.seo.description,
+        images: page.seo.ogImage ? [{ url: page.seo.ogImage }] : [],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: page.seo.title,
+        description: page.seo.description,
+        images: page.seo.ogImage ? [page.seo.ogImage] : [],
+      }
+    };
+  }
+  return buildPageMetadata("/contract-negotiation");
+}
+
+export default async function ContractNegotiationPage() {
+  const pageData = await getPageData();
+  
+  const content = pageData?.content || {
+    mainTitle: "NBA Contract Negotiation and \n Representation",
+    subDescription: "Data-driven contract deals with proprietary in-house salary-cap models. Expert representation that maximizes guaranteed money, incentives, and long-term player for active NBA players, college prospects, and elite high-school talent.",
+    points: [
+      "Salary Cap Mastery & Analytical Modeling",
+      "Rookie Scale & Veteran Extension Negotiation",
+      "Multi-Team Bidding War Strategy",
+      "Full CBA Compliance & Contract Structuring",
+      "Pre-Draft & Combine Contract Positioning",
+    ],
+    processSteps: [
+      { step: 1, title: "Maximum", subtitle: "Guaranteed Money" },
+      { step: 2, title: "Performance", subtitle: "Incentives & Escalators" },
+      { step: 3, title: "Trade & Buyout", subtitle: "Negotiation" },
+      { step: 4, title: "Post-Contract", subtitle: "Wealth Coordination" },
+    ],
+    ctaText: "SCHEDULE YOUR CONFIDENTIAL CONTRACT STRATEGY CALL"
+  };
+
   return (
     <main className="relative min-h-screen overflow-x-hidden pt-12">
       <BreadcrumbSchema items={[{ name: "Contract Negotiation", href: "/contract-negotiation" }]} />
@@ -16,6 +67,7 @@ export default function ContractNegotiationPage() {
         { question: "What is salary cap mastery in NBA contracts?", answer: "Our analytical models provide real-time cap forecasting, Bird Rights optimization, luxury tax stress testing, and trade scenario analysis to ensure the best possible contract structure." },
         { question: "Can Acclimation help with rookie scale contracts?", answer: "Yes. We specialize in rookie scale and veteran extension negotiations, pre-draft positioning, and full CBA compliance for all stages of an NBA career." },
       ]} />
+      
       {/* Background Image with Overlay */}
       <div className="absolute inset-0 z-0">
         <Image
@@ -31,26 +83,21 @@ export default function ContractNegotiationPage() {
       <div className="container mx-auto px-6 pt-24 relative z-10 flex flex-col items-center ">
         <div className="space-y-8 max-w-5xl mx-auto text-center">
           <GradientHeader tag="h1" size="lg" className="mb-4 text-center">
-            NBA Contract Negotiation and <br />
-            <span className="flex justify-center">Representation</span>
+            {content.mainTitle?.split('\n').map((line, i) => (
+              <React.Fragment key={i}>
+                {line}
+                {i < (content.mainTitle?.split('\n').length || 0) - 1 && <br />}
+              </React.Fragment>
+            ))}
           </GradientHeader>
 
           <p className="text-sm font-bold tracking-[0.3em] uppercase text-white/50 mb-4">
-            Data-driven contract deals with proprietary in-house salary-cap
-            models. Expert representation that maximizes guaranteed money,
-            incentives, and long-term player for active NBA players, college
-            prospects, and elite high-school talent.
+            {content.subDescription}
           </p>
 
           <div className="flex flex-col md:flex-row">
             <ul className="text-left">
-              {[
-                "Salary Cap Mastery & Analytical Modeling",
-                "Rookie Scale & Veteran Extension Negotiation",
-                "Multi-Team Bidding War Strategy",
-                "Full CBA Compliance & Contract Structuring",
-                "Pre-Draft & Combine Contract Positioning",
-              ].map((point, i) => (
+              {content.points?.map((point, i) => (
                 <li
                   key={i}
                   className="flex items-center gap-4 text-white/80 group"
@@ -78,20 +125,7 @@ export default function ContractNegotiationPage() {
             <div className="absolute top-[4.5rem] left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/30 to-transparent hidden md:block" />
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-12 relative">
-              {[
-                { step: 1, title: "Maximum", subtitle: "Guaranteed Money" },
-                {
-                  step: 2,
-                  title: "Performance",
-                  subtitle: "Incentives & Escalators",
-                },
-                { step: 3, title: "Trade & Buyout", subtitle: "Negotiation" },
-                {
-                  step: 4,
-                  title: "Post-Contract",
-                  subtitle: "Wealth Coordination",
-                },
-              ].map((item) => (
+              {content.processSteps?.map((item: ProcessStep) => (
                 <div
                   key={item.step}
                   className="flex flex-col items-center text-center group"
@@ -114,7 +148,7 @@ export default function ContractNegotiationPage() {
 
           <div className="flex justify-center pt-8">
             <CtaButton href="/contact" fullWidth className="max-w-4xl">
-              SCHEDULE YOUR CONFIDENTIAL CONTRACT STRATEGY CALL
+              {content.ctaText}
             </CtaButton>
           </div>
         </div>

@@ -180,8 +180,7 @@ export function HomePageEditor() {
     )
   }
 
-  return (
-    <div className="space-y-12 pb-24 animate-in fade-in duration-700">
+  return <div className="space-y-12 pb-24 animate-in fade-in duration-700">
       {/* 1. Header & Quick Publish */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 bg-[#0a0d12]/60 p-6 rounded-3xl border border-white/5 backdrop-blur-xl sticky top-4 z-50 shadow-2xl">
         <div className="flex items-center gap-4">
@@ -693,8 +692,7 @@ export function HomePageEditor() {
         </DialogContent>
       </Dialog>
     </div>
-  )
-}
+  }
 
 function PreviewWrapper({ children, onEdit }: { children: React.ReactNode, onEdit: () => void }) {
   return (

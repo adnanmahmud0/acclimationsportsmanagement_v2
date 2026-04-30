@@ -39,6 +39,10 @@ const data = {
           title: "Home",
           url: "/admin/pages/home",
         },
+        {
+          title: "Contract Negotiation",
+          url: "/admin/pages/contract-negotiation",
+        },
       ],
     },
     {
