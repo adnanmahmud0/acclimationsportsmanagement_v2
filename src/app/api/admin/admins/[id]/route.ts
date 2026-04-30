@@ -4,6 +4,7 @@ import User from "@/models/user";
 import { verifyAuth } from "@/lib/auth-middleware";
 import { USER_ROLES } from "@/types/user";
 import { StatusCodes } from "http-status-codes";
+import { JwtPayload } from "jsonwebtoken";
 
 export async function PATCH(
   req: Request,
@@ -11,7 +12,7 @@ export async function PATCH(
 ) {
   try {
     await connectDB();
-    const userPayload = (await verifyAuth(req)) as any;
+    const userPayload = (await verifyAuth(req)) as JwtPayload;
     const { id } = await params;
 
     if (!userPayload || userPayload.role !== USER_ROLES.SUPER_ADMIN) {
@@ -47,7 +48,7 @@ export async function PATCH(
       message: "Admin updated successfully",
       data: updatedAdmin,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Update admin error:", error);
     return NextResponse.json(
       { success: false, message: "Internal server error" },
@@ -62,7 +63,7 @@ export async function DELETE(
 ) {
   try {
     await connectDB();
-    const userPayload = (await verifyAuth(req)) as any;
+    const userPayload = (await verifyAuth(req)) as JwtPayload;
     const { id } = await params;
 
     if (!userPayload || userPayload.role !== USER_ROLES.SUPER_ADMIN) {
@@ -88,7 +89,7 @@ export async function DELETE(
       success: true,
       message: "Admin deleted successfully",
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Delete admin error:", error);
     return NextResponse.json(
       { success: false, message: "Internal server error" },

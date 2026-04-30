@@ -1,8 +1,23 @@
+import React from "react";
 import Image from "next/image";
-import { Phone, Mail, MapPin } from "lucide-react";
+import { MapPin, Phone, Mail } from "lucide-react";
 import { GradientHeader } from "@/components/gradient-header";
+import { PageData } from "@/types/cms";
 
-export function ContactSection() {
+export function ContactSection({ data }: { data?: PageData | null }) {
+   const content = data?.content?.contact || {
+      title: "Ready to Take the Next Step?",
+      tagline: "Any questions or remarks? Just contact us!",
+      phone: "512-518-6547",
+      phoneTitle: "Joe's Direct Line",
+      phoneDesc: "Call or text Joe anytime —\n24/7 for serious inquiries",
+      email: "Joseph.Grekoski@AcclimationGroup.com",
+      emailTitle: "Email",
+      emailDesc: "Fast responses for NBA,\ncollege & high school athletes",
+      location: "Acclimation Sports Agency\nFort Lauderdale, Florida 33308",
+      locationTitle: "Office Location"
+   };
+
    return (
       <section id="contact" className="relative py-32 overflow-hidden bg-[#05070a]">
          {/* Background Image with Overlay */}
@@ -20,10 +35,10 @@ export function ContactSection() {
             {/* Header Section */}
             <div className="text-center space-y-6 mb-20 max-w-4xl mx-auto">
                <GradientHeader tag="h2" size="lg" className="mb-4">
-                  Ready to Take the Next Step?
+                  {content.title}
                </GradientHeader>
                <h2 className="text-sm font-bold tracking-[0.3em] uppercase text-white/50 mb-4">
-                  Any questions or remarks? Just contact us!
+                  {content.tagline}
                </h2>
             </div>
 
@@ -37,15 +52,20 @@ export function ContactSection() {
                      <Phone size={40} strokeWidth={1.5} />
                   </div>
                   <div className="space-y-4 relative z-10">
-                     <h3 className="text-white font-black text-xl uppercase tracking-[0.2em] pt-4">Joe&apos;s Direct Line</h3>
+                     <h3 className="text-white font-black text-xl uppercase tracking-[0.2em] pt-4">{content.phoneTitle}</h3>
                      <a
-                        href="tel:512-518-6547"
+                        href={`tel:${content.phone}`}
                         className="text-2xl md:text-3xl font-serif font-black text-white hover:text-primary transition-colors block"
                      >
-                        512-518-6547
+                        {content.phone}
                      </a>
                      <p className="text-white/50 text-sm font-bold leading-relaxed tracking-wide uppercase">
-                        Call or text Joe anytime —<br />24/7 for serious inquiries
+                        {content.phoneDesc?.split('\n').map((line: string, i: number) => (
+                           <React.Fragment key={i}>
+                              {line}
+                              {i < content.phoneDesc.split('\n').length - 1 && <br />}
+                           </React.Fragment>
+                        ))}
                      </p>
                   </div>
                </div>
@@ -57,15 +77,20 @@ export function ContactSection() {
                      <Mail size={40} strokeWidth={1.5} />
                   </div>
                   <div className="space-y-4 relative z-10">
-                     <h3 className="text-white font-black text-xl uppercase tracking-[0.2em] pt-4">Email</h3>
+                     <h3 className="text-white font-black text-xl uppercase tracking-[0.2em] pt-4">{content.emailTitle}</h3>
                      <a
-                        href="mailto:Joseph.Grekoski@AcclimationGroup.com"
+                        href={`mailto:${content.email}`}
                         className="text-lg md:text-xl font-bold text-white hover:text-primary transition-colors break-all leading-snug block"
                      >
-                        Joseph.Grekoski@AcclimationGroup.com
+                        {content.email}
                      </a>
                      <p className="text-white/50 text-sm font-bold leading-relaxed tracking-wide uppercase">
-                        Fast responses for NBA,<br />college & high school athletes
+                        {content.emailDesc?.split('\n').map((line: string, i: number) => (
+                           <React.Fragment key={i}>
+                              {line}
+                              {i < content.emailDesc.split('\n').length - 1 && <br />}
+                           </React.Fragment>
+                        ))}
                      </p>
                   </div>
                </div>
@@ -77,10 +102,14 @@ export function ContactSection() {
                      <MapPin size={40} strokeWidth={1.5} />
                   </div>
                   <div className="space-y-4 relative z-10">
-                     <h3 className="text-white font-black text-xl uppercase tracking-[0.2em] pt-4">Office Location</h3>
+                     <h3 className="text-white font-black text-xl uppercase tracking-[0.2em] pt-4">{content.locationTitle}</h3>
                      <div className="text-white/90 font-bold text-lg leading-relaxed pt-2">
-                        Acclimation Sports Agency<br />
-                        Fort Lauderdale, Florida 33308
+                        {content.location?.split('\n').map((line: string, i: number) => (
+                           <React.Fragment key={i}>
+                              {line}
+                              {i < content.location.split('\n').length - 1 && <br />}
+                           </React.Fragment>
+                        ))}
                      </div>
                   </div>
                </div>

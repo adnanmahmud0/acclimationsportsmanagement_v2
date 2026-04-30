@@ -1,5 +1,5 @@
 "use client"
-
+import React from "react"
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts"
 import {
   ChartConfig,
@@ -7,29 +7,37 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart"
 
-const chartData = [
-  { year: 1, value: 2.5, label: "Year 1: $2.5M" },
-  { year: 2, value: 4.2 },
-  { year: 3, value: 6.1 },
-  { year: 4, value: 8.1, label: "Year 4: $8.1M" },
-  { year: 5, value: 10.2 },
-  { year: 6, value: 12.0 },
-  { year: 7, value: 13.8 },
-  { year: 8, value: 15.3, label: "Year 8: $15.3M" },
-  { year: 9, value: 16.5 },
-  { year: 10, value: 18.2 },
-  { year: 11, value: 20.5 },
-  { year: 12, value: 22.7, label: "Year 12: $22.7M" },
-]
+interface ChartDataItem {
+  year: number
+  value: number
+  label?: string
+}
 
-const chartConfig = {
-  value: {
-    label: "Value ($M)",
-    color: "#00d2ff",
-  },
-} satisfies ChartConfig
+export function CareerGrowthChart({ data }: { data?: ChartDataItem[] }) {
+  const defaultData = [
+    { year: 1, value: 2.5, label: "Year 1: $2.5M" },
+    { year: 2, value: 4.2 },
+    { year: 3, value: 6.1 },
+    { year: 4, value: 8.1, label: "Year 4: $8.1M" },
+    { year: 5, value: 10.2 },
+    { year: 6, value: 12.0 },
+    { year: 7, value: 13.8 },
+    { year: 8, value: 15.3, label: "Year 8: $15.3M" },
+    { year: 9, value: 16.5 },
+    { year: 10, value: 18.2 },
+    { year: 11, value: 20.5 },
+    { year: 12, value: 22.7, label: "Year 12: $22.7M" },
+  ]
 
-export function CareerGrowthChart() {
+  const chartData = data || defaultData
+  
+  const chartConfig = {
+    value: {
+      label: "Value ($M)",
+      color: "#00d2ff",
+    },
+  } satisfies ChartConfig
+
   return (
     <ChartContainer config={chartConfig} className="w-full h-full min-h-[300px]">
       <ResponsiveContainer width="100%" height="100%">

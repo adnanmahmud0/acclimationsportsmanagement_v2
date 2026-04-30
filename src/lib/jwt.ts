@@ -5,7 +5,8 @@ export const createToken = (
   secret: Secret,
   expireTime: string | number
 ) => {
-  return jwt.sign(payload, secret, { expiresIn: expireTime });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return jwt.sign(payload, secret, { expiresIn: expireTime as any });
 };
 
 export const verifyToken = (token: string, secret: Secret) => {

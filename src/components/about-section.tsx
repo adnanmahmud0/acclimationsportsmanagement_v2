@@ -1,8 +1,35 @@
+import React from "react";
 import Image from "next/image";
 import { GradientHeader } from "@/components/gradient-header";
 import { CtaButton } from "@/components/cta-button";
+import { PageData } from "@/types/cms";
 
-export function AboutSection() {
+export function AboutSection({ data }: { data?: PageData | null }) {
+  const content = data?.content?.about || {
+    title: "About Acclimation Sports Management\nLed by Joe Grekoski",
+    subtitle: "I am a certified agent from the National Basketball Players Association (NBPA).",
+    description: "Joe Grekoski is the founder of Acclimation Group and Acclimation Sports Management.",
+    focusText: "While other agents focus only on basketball, Joe Grekoski built Acclimation Sports Management as the true one-stop shop. You just play basketball. We handle everything else.",
+    ctaText: "SCHEDULE YOUR CONFIDENTIAL CONTRACT STRATEGY CALL",
+    bullets: [
+      "Launched Acclimation Group and built it into a premier advisory firm serving top law firms worldwide.",
+      "Advised on the sale of IP assets to professional sports teams using advanced social media sentiment analysis.",
+      "Featured on CBS News discussing college basketball economics and player valuation.",
+      "Expert in determining fair market rates for endorsement deals and NIL valuation.",
+      "Brings courtroom-tested economic analysis to NBA contract negotiation.",
+      "His goal is clear: to help elite NBA players, college prospects, and 5-star high-school talents succeed."
+    ],
+    specialties: [
+      "Intellectual Property Expert",
+      "Personal Brand Valuation Specialist",
+      "Endorsement Market Rate Authority",
+      "IP Asset Valuation for Professional Sports Teams",
+      "Featured on CBS News",
+      "You Just Play Basketball",
+      "Acclimation Sports Management",
+    ]
+  };
+
   return (
     <section className="relative py-24 overflow-hidden bg-[#05070a]" id="about">
       {/* Subtle Background elements */}
@@ -12,14 +39,17 @@ export function AboutSection() {
       <div className="container mx-auto px-6 max-w-7xl relative">
         <div className="text-center mb-16 space-y-4">
           <GradientHeader tag="h2" size="lg" className="mb-6">
-            About Acclimation Sports Management<br />
-            Led by Joe Grekoski
+            {content.title.split('\n').map((line: string, i: number) => (
+              <React.Fragment key={i}>
+                {line}
+                {i < content.title.split('\n').length - 1 && <br />}
+              </React.Fragment>
+            ))}
           </GradientHeader>
 
           <div className="max-w-4xl mx-auto glass-premium p-6 rounded-2xl border-primary/20 bg-primary/5">
             <p className="text-sm md:text-base font-bold text-white leading-relaxed">
-              I am a certified agent from the National
-              Basketball Players Association (NBPA).
+              {content.subtitle}
             </p>
           </div>
         </div>
@@ -43,21 +73,12 @@ export function AboutSection() {
           <div className="lg:col-span-7 space-y-8">
             <div className="space-y-4">
               <p className="text-lg text-white/90 leading-relaxed">
-                <span className="font-black text-primary">Joe Grekoski</span> is the founder of <span className="font-bold whitespace-nowrap">Acclimation Group</span> and <span className="font-bold">Acclimation Sports Management</span>.
-                He is a recognized economic expert who specializes in intellectual property with a particular focus on
-                personal brand valuation and development for high-profile athletes. At age 29, Joe Grekoski became one of the youngest economic damages experts to testify in a U.S. court.
+                {content.description}
               </p>
             </div>
 
             <ul className="space-y-4">
-              {[
-                "Launched Acclimation Group and built it into a premier advisory firm serving top law firms worldwide and major global consumer brands.",
-                "Advised on the sale of IP assets to professional sports teams using advanced social media sentiment analysis and esoteric brand valuation modeling.",
-                "Featured on CBS News discussing college basketball economics and player valuation.",
-                "Expert in determining fair market rates for endorsement deals, NIL valuation, and turning personal brands into premium, monetizable economic assets.",
-                "Brings courtroom-tested economic analysis to NBA contract negotiation, reputational management, and long-term wealth building that traditional agents cannot match.",
-                "His goal is clear: to help elite NBA players, college prospects, and 5-star high-school talents succeed at the highest level on the court. While making sure they are compensated what they truly deserve, both on and off the court."
-              ].map((bullet, idx) => (
+              {content.bullets?.map((bullet: string, idx: number) => (
                 <li key={idx} className="flex items-start gap-4 group">
                   <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0 shadow-[0_0_8px_rgba(0,210,255,1)]" />
                   <p className="text-sm md:text-base text-white/70 leading-relaxed group-hover:text-white transition-colors">
@@ -68,8 +89,7 @@ export function AboutSection() {
             </ul>
 
             <p className="text-sm font-medium text-white/50 leading-relaxed uppercase tracking-wide">
-              While other agents focus only on basketball, Joe Grekoski built <span className="text-white">Acclimation Sports Management</span> as the true one-stop shop.
-              <span className="text-primary"> You just play basketball. We handle everything else.</span>
+              {content.focusText}
             </p>
           </div>
         </div>
@@ -77,7 +97,7 @@ export function AboutSection() {
         {/* CTA Section */}
         <div className="mt-20 flex flex-col items-center">
           <CtaButton href="/contact">
-            SCHEDULE YOUR CONFIDENTIAL CONTRACT STRATEGY CALL
+            {content.ctaText}
           </CtaButton>
         </div>
       </div>
@@ -86,15 +106,7 @@ export function AboutSection() {
       <div className="mt-20 w-full bg-[#0a0d12]/80 backdrop-blur-sm py-6 border-y border-white/5 overflow-hidden relative">
         <div className="flex whitespace-nowrap animate-marquee">
           <div className="flex items-center gap-12 text-[9px] md:text-[11px] font-black tracking-[0.4em] text-white/30 uppercase">
-            {[
-              "Intellectual Property Expert",
-              "Personal Brand Valuation Specialist",
-              "Endorsement Market Rate Authority",
-              "IP Asset Valuation for Professional Sports Teams",
-              "Featured on CBS News",
-              "You Just Play Basketball",
-              "Acclimation Sports Management",
-            ].map((text, i) => (
+            {content.specialties?.map((text: string, i: number) => (
               <div key={i} className="flex items-center gap-12">
                 <span>{text}</span>
                 <span className="text-primary/20 text-lg">•</span>
@@ -103,15 +115,7 @@ export function AboutSection() {
           </div>
           {/* Duplicate for infinite loop */}
           <div className="flex items-center gap-12 text-[9px] md:text-[11px] font-black tracking-[0.4em] text-white/30 uppercase ml-12">
-            {[
-              "Intellectual Property Expert",
-              "Personal Brand Valuation Specialist",
-              "Endorsement Market Rate Authority",
-              "IP Asset Valuation for Professional Sports Teams",
-              "Featured on CBS News",
-              "You Just Play Basketball",
-              "Acclimation Sports Management",
-            ].map((text, i) => (
+            {content.specialties?.map((text: string, i: number) => (
               <div key={i} className="flex items-center gap-12">
                 <span>{text}</span>
                 <span className="text-primary/20 text-lg">•</span>

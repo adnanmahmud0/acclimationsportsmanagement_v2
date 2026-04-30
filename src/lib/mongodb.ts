@@ -12,18 +12,27 @@ if (!DATABASE_URL) {
  * in development. This prevents connections growing exponentially
  * during API Route usage.
  */
-let cached = (global as any).mongoose;
+interface GlobalMongoose {
+  mongoose: {
+    conn: typeof mongoose | null;
+    promise: Promise<typeof mongoose> | null;
+  } | undefined;
+}
+
+const globalWithMongoose = global as unknown as GlobalMongoose;
+
+let cached = globalWithMongoose.mongoose;
 
 if (!cached) {
-  cached = (global as any).mongoose = { conn: null, promise: null };
+  cached = globalWithMongoose.mongoose = { conn: null, promise: null };
 }
 
 async function connectDB() {
-  if (cached.conn) {
+  if (cached && cached.conn) {
     return cached.conn;
   }
 
-  if (!cached.promise) {
+  if (cached && !cached.promise) {
     const opts = {
       bufferCommands: false,
     };
@@ -42,20 +51,24 @@ async function connectDB() {
 
     console.log(`Connecting to MongoDB: ${dbName}`);
 
-    cached.promise = mongoose.connect(urlWithDb, opts).then(async (mongoose) => {
+    cached.promise = mongoose.connect(urlWithDb, opts).then(async (mongooseInstance) => {
       await seedSuperAdmin();
-      return mongoose;
+      return mongooseInstance;
     });
   }
 
   try {
-    cached.conn = await cached.promise;
+    if (cached) {
+      cached.conn = await cached.promise;
+    }
   } catch (e) {
-    cached.promise = null;
+    if (cached) {
+      cached.promise = null;
+    }
     throw e;
   }
 
-  return cached.conn;
+  return cached?.conn;
 }
 
 export default connectDB;

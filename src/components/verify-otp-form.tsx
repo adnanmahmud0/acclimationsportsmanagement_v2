@@ -75,7 +75,7 @@ export function VerifyOTPForm({
         <CardHeader>
           <CardTitle>Verify OTP</CardTitle>
           <CardDescription>
-            We've sent a code to <span className="font-semibold">{email}</span>.
+            We&apos;ve sent a code to <span className="font-semibold">{email}</span>.
           </CardDescription>
         </CardHeader>
         <CardContent>

@@ -9,7 +9,7 @@ export async function GET() {
     // Get list of databases
     const admin = mongoose.connection.db!.admin();
     const result = await admin.listDatabases();
-    const databases = result.databases.map((db: any) => db.name);
+    const databases = result.databases.map((db: { name: string }) => db.name);
 
     return NextResponse.json({
       status: "connected",
@@ -18,13 +18,13 @@ export async function GET() {
       currentDatabase: mongoose.connection.name,
       allDatabases: databases,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Database connection error:", error);
     return NextResponse.json(
       {
         status: "error",
         message: "Failed to connect to MongoDB",
-        error: error.message,
+        error: error instanceof Error ? error.message : "Unknown error",
       },
       { status: 500 }
     );

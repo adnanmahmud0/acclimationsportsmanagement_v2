@@ -55,7 +55,7 @@ export async function POST(req: Request) {
         role: newAdmin.role,
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Create admin error:", error);
     return NextResponse.json(
       { success: false, message: "Internal server error" },

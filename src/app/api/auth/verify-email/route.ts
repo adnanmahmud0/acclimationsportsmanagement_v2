@@ -80,7 +80,7 @@ export async function POST(req: Request) {
       message,
       data,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Verification error:", error);
     return NextResponse.json(
       { success: false, message: "Internal server error" },

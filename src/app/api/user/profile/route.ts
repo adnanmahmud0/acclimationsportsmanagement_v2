@@ -3,6 +3,7 @@ import connectDB from "@/lib/mongodb";
 import User from "@/models/user";
 import { verifyAuth } from "@/lib/auth-middleware";
 import { StatusCodes } from "http-status-codes";
+import { JwtPayload } from "jsonwebtoken";
 
 export async function GET(req: Request) {
   try {
@@ -28,7 +29,7 @@ export async function GET(req: Request) {
       success: true,
       data: user,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Get profile error:", error);
     return NextResponse.json(
       { success: false, message: "Internal server error" },
@@ -40,7 +41,7 @@ export async function GET(req: Request) {
 export async function PATCH(req: Request) {
   try {
     await connectDB();
-    const userPayload = (await verifyAuth(req)) as any;
+    const userPayload = (await verifyAuth(req)) as JwtPayload;
 
     if (!userPayload) {
       return NextResponse.json(
@@ -84,7 +85,7 @@ export async function PATCH(req: Request) {
       allowedUpdates.push("email");
     }
 
-    const filteredData: any = {};
+    const filteredData: Record<string, unknown> = {};
     allowedUpdates.forEach(key => {
       if (data[key] !== undefined) {
         filteredData[key] = data[key];
@@ -102,7 +103,7 @@ export async function PATCH(req: Request) {
       message: "Profile updated successfully",
       data: updatedUser,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Update profile error:", error);
     return NextResponse.json(
       { success: false, message: "Internal server error" },

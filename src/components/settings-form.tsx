@@ -1,8 +1,6 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -20,8 +18,14 @@ import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
 import { Separator } from "@/components/ui/separator"
 
+interface UserProfile {
+  name: string;
+  email: string;
+  role: string;
+}
+
 export function SettingsForm() {
-  const [user, setUser] = useState<any>(null)
+  const [user, setUser] = useState<UserProfile | null>(null)
   const [loading, setLoading] = useState(true)
   const [updatingProfile, setUpdatingProfile] = useState(false)
   const [updatingPassword, setUpdatingPassword] = useState(false)
@@ -70,7 +74,7 @@ export function SettingsForm() {
       } else {
         toast.error(result.message)
       }
-    } catch (error) {
+    } catch {
       toast.error("Failed to update profile")
     } finally {
       setUpdatingProfile(false)
@@ -106,7 +110,7 @@ export function SettingsForm() {
       } else {
         toast.error(result.message)
       }
-    } catch (error) {
+    } catch {
       toast.error("Failed to change password")
     } finally {
       setUpdatingPassword(false)

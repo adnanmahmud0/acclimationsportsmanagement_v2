@@ -64,10 +64,10 @@ export async function POST(req: Request) {
         email: newUser.email,
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Registration error:", error);
     return NextResponse.json(
-      { success: false, message: error.message || "Internal server error" },
+      { success: false, message: error instanceof Error ? error.message : "Internal server error" },
       { status: StatusCodes.INTERNAL_SERVER_ERROR }
     );
   }

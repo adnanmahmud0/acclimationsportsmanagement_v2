@@ -4,11 +4,12 @@ import User from "@/models/user";
 import { verifyAuth } from "@/lib/auth-middleware";
 import { USER_ROLES } from "@/types/user";
 import { StatusCodes } from "http-status-codes";
+import { JwtPayload } from "jsonwebtoken";
 
 export async function GET(req: Request) {
   try {
     await connectDB();
-    const userPayload = (await verifyAuth(req)) as any;
+    const userPayload = (await verifyAuth(req)) as JwtPayload;
 
     if (!userPayload || userPayload.role !== USER_ROLES.SUPER_ADMIN) {
       return NextResponse.json(
@@ -24,7 +25,7 @@ export async function GET(req: Request) {
       success: true,
       data: admins,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("List admins error:", error);
     return NextResponse.json(
       { success: false, message: "Internal server error" },
@@ -36,7 +37,7 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   try {
     await connectDB();
-    const userPayload = (await verifyAuth(req)) as any;
+    const userPayload = (await verifyAuth(req)) as JwtPayload;
 
     if (!userPayload || userPayload.role !== USER_ROLES.SUPER_ADMIN) {
       return NextResponse.json(
@@ -75,7 +76,7 @@ export async function POST(req: Request) {
       message: "Admin account created successfully",
       data: newAdmin,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Create admin error:", error);
     return NextResponse.json(
       { success: false, message: "Internal server error" },

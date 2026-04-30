@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import connectDB from "@/lib/mongodb";
 import User from "@/models/user";
 import ResetToken from "@/models/reset-token";
-import bcrypt from "bcrypt";
 import { StatusCodes } from "http-status-codes";
 
 export async function POST(req: Request) {
@@ -64,7 +63,7 @@ export async function POST(req: Request) {
       success: true,
       message: "Password reset successfully. You can now login with your new password.",
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Reset password error:", error);
     return NextResponse.json(
       { success: false, message: "Internal server error" },

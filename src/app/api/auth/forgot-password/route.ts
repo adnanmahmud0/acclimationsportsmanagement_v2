@@ -48,7 +48,7 @@ export async function POST(req: Request) {
       success: true,
       message: "Password reset code sent to your email.",
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Forgot password error:", error);
     return NextResponse.json(
       { success: false, message: "Internal server error" },

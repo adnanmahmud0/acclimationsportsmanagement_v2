@@ -27,12 +27,19 @@ import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { toast } from "sonner"
 import { Trash2Icon, PencilIcon, PlusIcon } from "lucide-react"
 
+interface Admin {
+  _id: string
+  name: string
+  email: string
+  createdAt: string
+}
+
 export function AdminManagement() {
-  const [admins, setAdmins] = useState<any[]>([])
+  const [admins, setAdmins] = useState<Admin[]>([])
   const [loading, setLoading] = useState(true)
   const [isCreateOpen, setIsCreateOpen] = useState(false)
   const [isEditOpen, setIsEditOpen] = useState(false)
-  const [currentAdmin, setCurrentAdmin] = useState<any>(null)
+  const [currentAdmin, setCurrentAdmin] = useState<Admin | null>(null)
   const [submitting, setSubmitting] = useState(false)
 
   useEffect(() => {
@@ -49,7 +56,7 @@ export function AdminManagement() {
       if (result.success) {
         setAdmins(result.data)
       }
-    } catch (error) {
+    } catch {
       toast.error("Failed to fetch admins")
     } finally {
       setLoading(false)
@@ -80,7 +87,7 @@ export function AdminManagement() {
       } else {
         toast.error(result.message)
       }
-    } catch (error) {
+    } catch {
       toast.error("An error occurred")
     } finally {
       setSubmitting(false)
@@ -89,6 +96,7 @@ export function AdminManagement() {
 
   const handleUpdate = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+    if (!currentAdmin) return
     setSubmitting(true)
     const formData = new FormData(event.currentTarget)
     const data = Object.fromEntries(formData)
@@ -111,7 +119,7 @@ export function AdminManagement() {
       } else {
         toast.error(result.message)
       }
-    } catch (error) {
+    } catch {
       toast.error("An error occurred")
     } finally {
       setSubmitting(false)
@@ -134,7 +142,7 @@ export function AdminManagement() {
       } else {
         toast.error(result.message)
       }
-    } catch (error) {
+    } catch {
       toast.error("An error occurred")
     }
   }

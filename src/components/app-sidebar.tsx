@@ -2,9 +2,7 @@
 
 import * as React from "react"
 
-import { NavDocuments } from "@/components/nav-documents"
 import { NavMain } from "@/components/nav-main"
-import { NavSecondary } from "@/components/nav-secondary"
 import { NavUser } from "@/components/nav-user"
 import {
   Sidebar,
@@ -15,7 +13,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { LayoutDashboardIcon, ListIcon, ChartBarIcon, FolderIcon, UsersIcon, CameraIcon, FileTextIcon, Settings2Icon, CircleHelpIcon, SearchIcon, DatabaseIcon, FileChartColumnIcon, FileIcon } from "lucide-react"
+import { LayoutDashboardIcon, UsersIcon, FileTextIcon, Settings2Icon } from "lucide-react"
 import Link from "next/link"
 import { Logo } from "@/components/logo"
 
@@ -36,6 +34,12 @@ const data = {
       title: "Page",
       url: "#",
       icon: <FileTextIcon />,
+      items: [
+        {
+          title: "Home",
+          url: "/admin/pages/home",
+        },
+      ],
     },
     {
       title: "Admin",

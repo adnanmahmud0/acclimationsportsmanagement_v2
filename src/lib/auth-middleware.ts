@@ -1,4 +1,3 @@
-import { NextResponse } from "next/server";
 import { jwtHelper } from "./jwt";
 import { JwtPayload } from "jsonwebtoken";
 
@@ -16,7 +15,7 @@ export async function verifyAuth(req: Request) {
   try {
     const decoded = jwtHelper.verifyToken(token, process.env.JWT_SECRET as string);
     return decoded as JwtPayload;
-  } catch (error) {
+  } catch {
     return null;
   }
 }

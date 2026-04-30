@@ -1,10 +1,55 @@
+import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, ShieldCheck, TrendingUp, Handshake, Trophy } from "lucide-react";
+import { PageData } from "@/types/cms";
 import { CareerGrowthChart } from "@/components/career-growth-chart";
 import { GradientHeader } from "@/components/gradient-header";
 
-export function Hero() {
+interface HeroCard {
+  title: string;
+  desc: string;
+  type: string;
+}
+
+export function Hero({ data }: { data?: PageData | null }) {
+  const content = data?.content?.hero || {
+    title: "Where Economic Precision \n Meets NBA Domination",
+    tagline: "A New Kind of Basketball Agency",
+    features: [
+      "20+ Years Economic Edge",
+      "Real-Time Salary Cap Forecasting",
+      "Litigation-Grade Strategy",
+      "In-House Analytics",
+      "Lower Fees & More In Your Pocket"
+    ],
+    cards: [
+      { title: "NBA Contract Negotiation", desc: "Data-driven deals with litigation-grade strategy.", type: "shield" },
+      { title: "Brand Development", desc: "Turn your talent into a premium economic asset.", type: "trending" },
+      { title: "Marketing and Endorsements", desc: "Proprietary analytics ensure you're never underpaid.", type: "handshake" },
+      { title: "Holistic Support", desc: "Elite trainers, chefs, wealth advisors & strategists.", type: "trophy" },
+    ],
+    chart: {
+      title: "Projected Career Value Growth",
+      data: [
+        { year: 1, value: 2.5, label: "Year 1: $2.5M" },
+        { year: 4, value: 8.1, label: "Year 4: $8.1M" },
+        { year: 8, value: 15.3, label: "Year 8: $15.3M" },
+        { year: 12, value: 22.7, label: "Year 12: $22.7M" },
+      ]
+    }
+  };
+
+  const getIcon = (type: string) => {
+    switch (type) {
+      case "shield": return <ShieldCheck className="w-5 h-5 text-primary" />;
+      case "trending": return <TrendingUp className="w-5 h-5 text-primary" />;
+      case "handshake": return <Handshake className="w-5 h-5 text-primary" />;
+      case "trophy": return <Trophy className="w-5 h-5 text-primary" />;
+      default: return <ShieldCheck className="w-5 h-5 text-primary" />;
+    }
+  };
+
   return (
     <div className="relative">
       {/* Background Image with Overlay */}
@@ -22,56 +67,46 @@ export function Hero() {
       <main className="container mx-auto px-6 pb-20 min-h-screen flex flex-col justify-center text-center text-balance">
         <div className="max-w-7xl mx-auto w-full">
           <GradientHeader tag="h1" size="lg" className="mb-4">
-            Where Economic Precision <br className="hidden md:block" /> Meets NBA Domination
+            {content.title.split('\n').map((line: string, i: number) => (
+              <React.Fragment key={i}>
+                {line}
+                {i < content.title.split('\n').length - 1 && <br className="hidden md:block" />}
+              </React.Fragment>
+            ))}
           </GradientHeader>
 
           <p className="text-sm font-bold tracking-[0.3em] uppercase text-white/50 mb-4">
-            A New Kind of Basketball Agency
+            {content.tagline}
           </p>
 
           {/* Feature Bar */}
           <div className="inline-flex flex-wrap justify-center items-center gap-4 md:gap-8 px-6 py-2.5 glass-premium rounded-full text-[9px] md:text-[10px] font-semibold tracking-wide border-primary/20 bg-[#00d2ff]/5 mb-4">
-            <span className="flex items-center gap-2">20+ Years Economic Edge</span>
-            <span className="text-primary/30 hidden sm:inline">•</span>
-            <span className="flex items-center gap-2">Real-Time Salary Cap Forecasting</span>
-            <span className="text-primary/30 hidden sm:inline">•</span>
-            <span className="flex items-center gap-2">Litigation-Grade Strategy</span>
-            <span className="text-primary/30 hidden sm:inline">•</span>
-            <span className="flex items-center gap-2">In-House Analytics</span>
-            <span className="text-primary/30 hidden sm:inline">•</span>
-            <span className="flex items-center gap-2">Lower Fees & More In Your Pocket</span>
+            {content.features.map((feature: string, i: number) => (
+              <React.Fragment key={i}>
+                <span className="flex items-center gap-2">{feature}</span>
+                {i < content.features.length - 1 && <span className="text-primary/30 hidden sm:inline">•</span>}
+              </React.Fragment>
+            ))}
           </div>
 
           {/* Service Cards Grid */}
           <section id="services" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4 text-left">
-            <ServiceCard
-              title="NBA Contract Negotiation"
-              desc="Data-driven deals with litigation-grade strategy."
-              icon={<ShieldCheck className="w-5 h-5 text-primary" />}
-            />
-            <ServiceCard
-              title="Brand Development"
-              desc="Turn your talent into a premium economic asset."
-              icon={<TrendingUp className="w-5 h-5 text-primary" />}
-            />
-            <ServiceCard
-              title="Marketing and Endorsements"
-              desc="Proprietary analytics ensure you're never underpaid."
-              icon={<Handshake className="w-5 h-5 text-primary" />}
-            />
-            <ServiceCard
-              title="Holistic Support"
-              desc="Elite trainers, chefs, wealth advisors & strategists."
-              icon={<Trophy className="w-5 h-5 text-primary" />}
-            />
+            {content.cards?.map((card: HeroCard, i: number) => (
+              <ServiceCard
+                key={i}
+                title={card.title}
+                desc={card.desc}
+                icon={getIcon(card.type)}
+              />
+            ))}
           </section>
 
           {/* Career Value Growth Section */}
           <div className="relative glass-premium p-6 rounded-xl overflow-hidden mb-6 border-primary/10 mx-auto">
             <div className="flex flex-col items-center">
-              <GradientHeader tag="h3" size="md" className="mb-4 text-center">Projected Career Value Growth</GradientHeader>
+              <GradientHeader tag="h3" size="md" className="mb-4 text-center">{content.chart?.title || "Projected Career Value Growth"}</GradientHeader>
               <div className="w-full h-[280px] relative">
-                <CareerGrowthChart />
+                <CareerGrowthChart data={content.chart?.data} />
               </div>
             </div>
           </div>

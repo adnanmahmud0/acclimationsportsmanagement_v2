@@ -3,11 +3,12 @@ import connectDB from "@/lib/mongodb";
 import User from "@/models/user";
 import { verifyAuth } from "@/lib/auth-middleware";
 import { StatusCodes } from "http-status-codes";
+import { JwtPayload } from "jsonwebtoken";
 
 export async function POST(req: Request) {
   try {
     await connectDB();
-    const userPayload = (await verifyAuth(req)) as any;
+    const userPayload = (await verifyAuth(req)) as JwtPayload;
 
     if (!userPayload) {
       return NextResponse.json(
@@ -57,7 +58,7 @@ export async function POST(req: Request) {
       success: true,
       message: "Password updated successfully",
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Change password error:", error);
     return NextResponse.json(
       { success: false, message: "Internal server error" },

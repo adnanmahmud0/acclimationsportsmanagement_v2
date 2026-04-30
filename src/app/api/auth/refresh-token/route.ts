@@ -22,7 +22,7 @@ export async function POST() {
     let decoded;
     try {
       decoded = jwtHelper.verifyToken(refreshToken, process.env.JWT_REFRESH_SECRET as string);
-    } catch (error) {
+    } catch {
       return NextResponse.json(
         { success: false, message: "Invalid or expired refresh token" },
         { status: StatusCodes.UNAUTHORIZED }
@@ -68,7 +68,7 @@ export async function POST() {
     });
 
     return response;
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Refresh token error:", error);
     return NextResponse.json(
       { success: false, message: "Internal server error" },
