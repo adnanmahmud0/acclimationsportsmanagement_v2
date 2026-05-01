@@ -95,6 +95,21 @@ export interface SalaryCapData {
   ctaText: string;
 }
 
+export interface MarketingEndorsementItem {
+  title: string;
+  desc?: string;
+  iconType: "chart" | "mic" | "handshake" | "network" | "trophy";
+}
+
+export interface MarketingEndorsementsData {
+  title: string;
+  tagline: string;
+  items: MarketingEndorsementItem[];
+  transitionQuote: string;
+  readyHeading: string;
+  ctaText: string;
+}
+
 export interface PageContent {
   hero?: HeroData;
   oneStopShop?: OneStopShopData;
@@ -102,6 +117,7 @@ export interface PageContent {
   contact?: ContactData;
   personalBranding?: PersonalBrandingData;
   salaryCap?: SalaryCapData;
+  marketingEndorsements?: MarketingEndorsementsData;
   mainTitle?: string;
   subDescription?: string;
   points?: string[];

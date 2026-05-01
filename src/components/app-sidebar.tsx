@@ -51,6 +51,10 @@ const data = {
           title: "Salary Cap",
           url: "/admin/pages/salary-cap",
         },
+        {
+          title: "Marketing & Endorsements",
+          url: "/admin/pages/marketing-endorsements",
+        },
       ],
     },
     {

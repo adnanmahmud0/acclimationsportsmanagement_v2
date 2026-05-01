@@ -1,14 +1,61 @@
 import Image from "next/image";
-import { Metadata } from "next";
+import React from "react";
 import { GradientHeader } from "@/components/gradient-header";
 import { CtaButton } from "@/components/cta-button";
 import { BarChart3, Mic2, Handshake, Network, Trophy } from "lucide-react";
 import { buildPageMetadata } from "@/lib/seo";
 import { BreadcrumbSchema } from "@/components/json-ld";
+import connectDB from "@/lib/mongodb";
+import Page from "@/models/page";
+import { PageData, MarketingEndorsementItem } from "@/types/cms";
 
-export const metadata: Metadata = buildPageMetadata("/marketing-endorsements");
+async function getPageData() {
+  await connectDB();
+  const page = await Page.findOne({ slug: "marketing-endorsements" }).lean();
+  return page as unknown as PageData | null;
+}
 
-export default function MarketingEndorsementsPage() {
+export async function generateMetadata() {
+  const page = await getPageData();
+  if (page?.seo) {
+    return {
+      title: page.seo.title,
+      description: page.seo.description,
+      keywords: page.seo.keywords,
+      openGraph: {
+        title: page.seo.title,
+        description: page.seo.description,
+        images: page.seo.ogImage ? [{ url: page.seo.ogImage }] : [],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: page.seo.title,
+        description: page.seo.description,
+        images: page.seo.ogImage ? [page.seo.ogImage] : [],
+      }
+    };
+  }
+  return buildPageMetadata("/marketing-endorsements");
+}
+
+export default async function MarketingEndorsementsPage() {
+  const pageData = await getPageData();
+  
+  const content = pageData?.content?.marketingEndorsements || {
+    title: "Marketing and \n Endorsement Deals",
+    tagline: "We build and monetize your personal brand so you earn maximum value from endorsements, sponsorships, and marketing opportunities. elite high school talent turn their talent into real off-court income.",
+    items: [
+      { title: "Professional brand valuation and market positioning", desc: "Analysis of your market value and strategic positioning", iconType: "chart" },
+      { title: "Media training and personal branding development", iconType: "mic" },
+      { title: "Targeted endorsement strategy and deal sourcing", desc: "Negotiation of sponsorships, NIL deals, and long-term partnerships", iconType: "handshake" },
+      { title: "Full integration with your NBA contract for maximum career earnings", desc: "Seamless alignment with your professional contract", iconType: "network" },
+      { title: "Long-term portfolio growth and legacy building", desc: "Strategies to ensure sustained off-court success", iconType: "trophy" },
+    ],
+    transitionQuote: "Whether you're chasing your first major shoe deal, building your NIL portfolio, or expanding your brand as a NBA player, we make sure you're never undervalued in the marketplace.",
+    readyHeading: "Ready to unlock your full earning potential off the court?",
+    ctaText: "SCHEDULE YOUR CONFIDENTIAL CONTRACT STRATEGY CALL"
+  };
+
   return (
     <main className="relative min-h-screen overflow-x-hidden pt-12">
       <BreadcrumbSchema items={[{ name: "Marketing & Endorsements", href: "/marketing-endorsements" }]} />
@@ -28,69 +75,63 @@ export default function MarketingEndorsementsPage() {
         <div className="space-y-12 max-w-5xl mx-auto">
           {/* Main Header */}
           <div className="space-y-6">
-            <GradientHeader tag="h1" size="lg" className="mb-4">
-              Marketing and <br />
-              <span className="flex justify-center">Endorsement Deals</span>
+            <GradientHeader tag="h1" size="lg" className="mb-4 text-center">
+              {content.title.split('\n').map((line: string, i: number) => (
+                <React.Fragment key={i}>
+                  {line}
+                  {i < content.title.split('\n').length - 1 && <br />}
+                </React.Fragment>
+              ))}
             </GradientHeader>
-            <p className="text-sm font-bold tracking-[0.3em] uppercase text-white/50 mb-4">
-              We build and monetize your personal brand so you earn maximum
-              value from endorsements, sponsorships, and marketing
-              opportunities. elite high school talent turn their talent into
-              real off-court income.
+            <p className="text-sm font-bold tracking-[0.3em] uppercase text-white/50 mb-4 whitespace-pre-line">
+              {content.tagline}
             </p>
           </div>
 
           {/* List Section */}
           <div className="flex flex-col items-center gap-10 py-8 w-full max-w-4xl mx-auto">
             <ul className="space-y-8 text-left w-full">
-              <ListItem
-                icon={<BarChart3 className="w-6 h-6 text-primary" />}
-                title="Professional brand valuation and market positioning"
-                desc="Analysis of your market value and strategic positioning"
-              />
-              <ListItem
-                icon={<Mic2 className="w-6 h-6 text-primary" />}
-                title="Media training and personal branding development"
-              />
-              <ListItem
-                icon={<Handshake className="w-6 h-6 text-primary" />}
-                title="Targeted endorsement strategy and deal sourcing"
-                desc="Negotiation of sponsorships, NIL deals, and long-term partnerships"
-              />
-              <ListItem
-                icon={<Network className="w-6 h-6 text-primary" />}
-                title="Full integration with your NBA contract for maximum career earnings"
-                desc="Seamless alignment with your professional contract"
-              />
-              <ListItem
-                icon={<Trophy className="w-6 h-6 text-primary" />}
-                title="Long-term portfolio growth and legacy building"
-                desc="Strategies to ensure sustained off-court success"
-              />
+              {content.items.map((item: MarketingEndorsementItem, i: number) => (
+                <ListItem
+                  key={i}
+                  icon={getIcon(item.iconType)}
+                  title={item.title}
+                  desc={item.desc}
+                />
+              ))}
             </ul>
           </div>
 
           {/* Transition Copy */}
           <div className="space-y-6 max-w-4xl mx-auto">
             <p className="text-white/60 text-lg md:text-xl font-bold tracking-wide leading-relaxed">
-              {`              Whether you're chasing your first major shoe deal, building your
-              NIL portfolio, or expanding your brand as a NBA player, we make
-              sure you're never undervalued in the marketplace.`}
+              {content.transitionQuote}
             </p>
             <h2 className="text-2xl md:text-4xl font-black text-white uppercase tracking-tighter">
-              Ready to unlock your full earning potential off the court?
+              {content.readyHeading}
             </h2>
           </div>
 
           <div className="pt-6">
             <CtaButton href="/contact">
-              SCHEDULE YOUR CONFIDENTIAL CONTRACT STRATEGY CALL
+              {content.ctaText}
             </CtaButton>
           </div>
         </div>
       </div>
     </main>
   );
+}
+
+function getIcon(type: string) {
+  switch (type) {
+    case "chart": return <BarChart3 className="w-6 h-6 text-primary" />;
+    case "mic": return <Mic2 className="w-6 h-6 text-primary" />;
+    case "handshake": return <Handshake className="w-6 h-6 text-primary" />;
+    case "network": return <Network className="w-6 h-6 text-primary" />;
+    case "trophy": return <Trophy className="w-6 h-6 text-primary" />;
+    default: return <Trophy className="w-6 h-6 text-primary" />;
+  }
 }
 
 function ListItem({
