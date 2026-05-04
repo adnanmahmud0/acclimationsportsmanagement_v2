@@ -13,6 +13,7 @@ import {
 import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { SitemapConfig } from "@/components/sitemap-config"
 
 interface Stats {
   totalPages: number
@@ -129,6 +130,9 @@ export default function AdminDashboard() {
             </div>
           </CardContent>
         </Card>
+
+        {/* SEO & Domain Configuration */}
+        <SitemapConfig />
       </div>
     </div>
   )

@@ -63,43 +63,6 @@ const data = {
       ],
     },
     {
-      title: "For Players",
-      url: "#",
-      icon: <UsersIcon />,
-      items: [
-        {
-          title: "WNBA",
-          url: "/admin/pages/wnba",
-          icon: <UsersIcon className="size-4" />,
-        },
-        {
-          title: "College Prospects",
-          url: "/admin/pages/college-prospects",
-          icon: <GraduationCap className="size-4" />,
-        },
-        {
-          title: "G-League Elite",
-          url: "/admin/pages/g-league-elite",
-          icon: <TrophyIcon className="size-4" />,
-        },
-        {
-          title: "High School Talent",
-          url: "/admin/pages/high-school-talent",
-          icon: <TargetIcon className="size-4" />,
-        },
-        {
-          title: "NBA Players",
-          url: "/admin/pages/nba-players",
-          icon: <UsersIcon className="size-4" />,
-        },
-        {
-          title: "Two-Way Contracts",
-          url: "/admin/pages/two-way-contracts",
-          icon: <FileTextIcon className="size-4" />,
-        },
-      ],
-    },
-    {
       title: "Services",
       url: "#",
       icon: <LayersIcon />,
@@ -133,6 +96,43 @@ const data = {
           title: "Holistic Concierge",
           url: "/admin/pages/holistic-concierge",
           icon: <HeartIcon className="size-4" />,
+        },
+      ],
+    },
+    {
+      title: "For Players",
+      url: "#",
+      icon: <UsersIcon />,
+      items: [
+        {
+          title: "WNBA",
+          url: "/admin/pages/wnba",
+          icon: <UsersIcon className="size-4" />,
+        },
+        {
+          title: "College Prospects",
+          url: "/admin/pages/college-prospects",
+          icon: <GraduationCap className="size-4" />,
+        },
+        {
+          title: "G-League Elite",
+          url: "/admin/pages/g-league-elite",
+          icon: <TrophyIcon className="size-4" />,
+        },
+        {
+          title: "High School Talent",
+          url: "/admin/pages/high-school-talent",
+          icon: <TargetIcon className="size-4" />,
+        },
+        {
+          title: "NBA Players",
+          url: "/admin/pages/nba-players",
+          icon: <UsersIcon className="size-4" />,
+        },
+        {
+          title: "Two-Way Contracts",
+          url: "/admin/pages/two-way-contracts",
+          icon: <FileTextIcon className="size-4" />,
         },
       ],
     },
