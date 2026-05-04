@@ -1,3 +1,9 @@
+# this branch for vercel deployment
+# This branch for vercel deployment
+# test
+# test
+
+
 # Acclimation Sports Management
 
 A fully dynamic, production-ready web platform and custom Content Management System (CMS) built for an elite NBA representation and sports management agency.
