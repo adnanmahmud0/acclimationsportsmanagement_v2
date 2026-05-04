@@ -44,11 +44,11 @@ export default async function ContractNegotiationPage() {
     mainTitle: "NBA Contract Negotiation and \n Representation",
     subDescription: "Data-driven contract deals with proprietary in-house salary-cap models. Expert representation that maximizes guaranteed money, incentives, and long-term player for active NBA players, college prospects, and elite high-school talent.",
     points: [
-      "Salary Cap Mastery & Analytical Modeling",
-      "Rookie Scale & Veteran Extension Negotiation",
-      "Multi-Team Bidding War Strategy",
-      "Full CBA Compliance & Contract Structuring",
-      "Pre-Draft & Combine Contract Positioning",
+      { title: "Salary Cap Mastery & Analytical Modeling", items: [] },
+      { title: "Rookie Scale & Veteran Extension Negotiation", items: [] },
+      { title: "Multi-Team Bidding War Strategy", items: [] },
+      { title: "Full CBA Compliance & Contract Structuring", items: [] },
+      { title: "Pre-Draft & Combine Contract Positioning", items: [] },
     ],
     processSteps: [
       { step: 1, title: "Maximum", subtitle: "Guaranteed Money" },
@@ -56,22 +56,19 @@ export default async function ContractNegotiationPage() {
       { step: 3, title: "Trade & Buyout", subtitle: "Negotiation" },
       { step: 4, title: "Post-Contract", subtitle: "Wealth Coordination" },
     ],
-    ctaText: "SCHEDULE YOUR CONFIDENTIAL CONTRACT STRATEGY CALL"
+    ctaText: "SCHEDULE YOUR CONFIDENTIAL CONTRACT STRATEGY CALL",
+    backgroundImage: "/effect.png"
   };
 
   return (
     <main className="relative min-h-screen overflow-x-hidden pt-12">
       <BreadcrumbSchema items={[{ name: "Contract Negotiation", href: "/contract-negotiation" }]} />
-      <FAQSchema faqs={[
-        { question: "How does Acclimation negotiate NBA contracts?", answer: "We use proprietary in-house salary-cap models and litigation-grade strategies to maximize guaranteed money, incentives, and long-term player security." },
-        { question: "What is salary cap mastery in NBA contracts?", answer: "Our analytical models provide real-time cap forecasting, Bird Rights optimization, luxury tax stress testing, and trade scenario analysis to ensure the best possible contract structure." },
-        { question: "Can Acclimation help with rookie scale contracts?", answer: "Yes. We specialize in rookie scale and veteran extension negotiations, pre-draft positioning, and full CBA compliance for all stages of an NBA career." },
-      ]} />
+      {pageData?.seo?.faqs && <FAQSchema faqs={pageData.seo.faqs} />}
       
       {/* Background Image with Overlay */}
       <div className="absolute inset-0 z-0">
         <Image
-          src="/effect.png"
+          src={content.backgroundImage || "/effect.png"}
           alt="Contract Negotiation Background"
           fill
           className="object-cover opacity-80"
@@ -83,10 +80,10 @@ export default async function ContractNegotiationPage() {
       <div className="container mx-auto px-6 pt-24 relative z-10 flex flex-col items-center ">
         <div className="space-y-8 max-w-5xl mx-auto text-center">
           <GradientHeader tag="h1" size="lg" className="mb-4 text-center">
-            {content.mainTitle?.split('\n').map((line, i) => (
+            {(content.mainTitle || "").split('\n').map((line, i) => (
               <React.Fragment key={i}>
                 {line}
-                {i < (content.mainTitle?.split('\n').length || 0) - 1 && <br />}
+                {i < (content.mainTitle || "").split('\n').length - 1 && <br />}
               </React.Fragment>
             ))}
           </GradientHeader>
@@ -97,14 +94,14 @@ export default async function ContractNegotiationPage() {
 
           <div className="flex flex-col md:flex-row">
             <ul className="text-left">
-              {content.points?.map((point, i) => (
+              {content.points?.map((point: { title: string; items: string[] }, i: number) => (
                 <li
                   key={i}
                   className="flex items-center gap-4 text-white/80 group"
                 >
                   <div className="w-2 h-2 rounded-full bg-primary shadow-[0_0_10px_rgba(0,210,255,1)] group-hover:scale-125 transition-transform" />
                   <span className="text-base md:text-lg font-bold tracking-tight">
-                    {point}
+                    {point.title}
                   </span>
                 </li>
               ))}

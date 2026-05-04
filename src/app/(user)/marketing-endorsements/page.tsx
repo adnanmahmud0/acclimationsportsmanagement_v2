@@ -4,7 +4,7 @@ import { GradientHeader } from "@/components/gradient-header";
 import { CtaButton } from "@/components/cta-button";
 import { BarChart3, Mic2, Handshake, Network, Trophy } from "lucide-react";
 import { buildPageMetadata } from "@/lib/seo";
-import { BreadcrumbSchema } from "@/components/json-ld";
+import { BreadcrumbSchema, FAQSchema } from "@/components/json-ld";
 import connectDB from "@/lib/mongodb";
 import Page from "@/models/page";
 import { PageData, MarketingEndorsementItem } from "@/types/cms";
@@ -53,16 +53,18 @@ export default async function MarketingEndorsementsPage() {
     ],
     transitionQuote: "Whether you're chasing your first major shoe deal, building your NIL portfolio, or expanding your brand as a NBA player, we make sure you're never undervalued in the marketplace.",
     readyHeading: "Ready to unlock your full earning potential off the court?",
-    ctaText: "SCHEDULE YOUR CONFIDENTIAL CONTRACT STRATEGY CALL"
+    ctaText: "SCHEDULE YOUR CONFIDENTIAL CONTRACT STRATEGY CALL",
+    backgroundImage: "/endorsements_v2.png"
   };
 
   return (
     <main className="relative min-h-screen overflow-x-hidden pt-12">
       <BreadcrumbSchema items={[{ name: "Marketing & Endorsements", href: "/marketing-endorsements" }]} />
+      {pageData?.seo?.faqs && <FAQSchema faqs={pageData.seo.faqs} />}
       {/* Background Image with Overlay */}
       <div className="absolute inset-0 z-0">
         <Image
-          src="/fullbuscatecoart.png"
+          src={content.backgroundImage || "/fullbuscatecoart.png"}
           alt="Arena Background"
           fill
           className="object-cover opacity-80"
@@ -76,10 +78,10 @@ export default async function MarketingEndorsementsPage() {
           {/* Main Header */}
           <div className="space-y-6">
             <GradientHeader tag="h1" size="lg" className="mb-4 text-center">
-              {content.title.split('\n').map((line: string, i: number) => (
+              {(content.title || "").split('\n').map((line: string, i: number) => (
                 <React.Fragment key={i}>
                   {line}
-                  {i < content.title.split('\n').length - 1 && <br />}
+                  {i < (content.title || "").split('\n').length - 1 && <br />}
                 </React.Fragment>
               ))}
             </GradientHeader>

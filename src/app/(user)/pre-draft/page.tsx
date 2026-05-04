@@ -1,25 +1,79 @@
-import Image from "next/image";
-import { CircleDot, TrendingUp, Target, Mic, FileText } from "lucide-react";
-import { Metadata } from "next";
-import { GradientHeader } from "@/components/gradient-header";
-import { CtaButton } from "@/components/cta-button";
-import { buildPageMetadata } from "@/lib/seo";
-import { BreadcrumbSchema, FAQSchema } from "@/components/json-ld";
+import Image from "next/image"
+import { CircleDot, TrendingUp, Target, Mic, FileText } from "lucide-react"
+import React from "react"
+import { GradientHeader } from "@/components/gradient-header"
+import { CtaButton } from "@/components/cta-button"
+import { buildPageMetadata } from "@/lib/seo"
+import { BreadcrumbSchema, FAQSchema } from "@/components/json-ld"
 
-export const metadata: Metadata = buildPageMetadata("/pre-draft");
+import connectDB from "@/lib/mongodb"
+import Page from "@/models/page"
+import { PageData } from "@/types/cms"
 
-export default function PreDraftPage() {
+async function getPageData() {
+  await connectDB();
+  const page = await Page.findOne({ slug: "pre-draft" }).lean();
+  return page as unknown as PageData | null;
+}
+
+export async function generateMetadata() {
+  const page = await getPageData();
+  if (page?.seo) {
+    return {
+      title: page.seo.title,
+      description: page.seo.description,
+      keywords: page.seo.keywords,
+      openGraph: {
+        title: page.seo.title,
+        description: page.seo.description,
+        images: page.seo.ogImage ? [{ url: page.seo.ogImage }] : [],
+      },
+    };
+  }
+  return buildPageMetadata("/pre-draft");
+}
+
+export default async function PreDraftPage() {
+  const pageData = await getPageData();
+
+  const content = pageData?.content?.preDraft || {
+    title: "Pre-Draft and NBA \n Combine Mastery",
+    tagline: "Our Pre-Draft and NBA Combine Mastery program prepares elite high school and college basketball prospects to rise on draft boards and enter the NBA with maximum value.",
+    points: [
+      "PROFESSIONAL PLAYER VALUATION AND DRAFT PROJECTION REPORT",
+      "CUSTOMIZED NBA COMBINE AND PRO DAY TRAINING WITH TOP COACHES",
+      "TARGETED WORKOUTS WITH NBA TEAMS THAT NEED YOUR SKILL SET",
+      "MEDIA TRAINING, INTERVIEW PREPARATION, AND PERSONAL BRANDING",
+      "SEAMLESS TRANSITION INTO AGGRESSIVE ROOKIE CONTRACT NEGOTIATION"
+    ],
+    ctaText: "SCHEDULE YOUR CONFIDENTIAL CONTRACT STRATEGY CALL",
+    backgroundImage: "/pre_draft_v2.png"
+  };
+
+  const faqs = pageData?.seo?.faqs || [
+    { question: "What does NBA Combine preparation include?", answer: "Our Pre-Draft Mastery program includes player valuation reports, customized NBA Combine training with top coaches, targeted workouts with NBA teams, media and interview preparation, and seamless transition into rookie contract negotiation." },
+    { question: "How do you prepare prospects for the NBA Draft?", answer: "We provide professional player valuation and draft projection reports, customized combine training, targeted workouts, media training, and aggressive rookie contract negotiation planning." },
+  ];
+
+  const getIcon = (idx: number) => {
+    const icons = [
+      <CircleDot key={0} className="w-6 h-6 text-primary" />,
+      <TrendingUp key={1} className="w-6 h-6 text-primary" />,
+      <Target key={2} className="w-6 h-6 text-primary" />,
+      <Mic key={3} className="w-6 h-6 text-primary" />,
+      <FileText key={4} className="w-6 h-6 text-primary" />,
+    ]
+    return icons[idx % icons.length]
+  }
+
   return (
     <main className="relative min-h-screen overflow-x-hidden pt-12 bg-[#05070a]">
       <BreadcrumbSchema items={[{ name: "Pre-Draft Mastery", href: "/pre-draft" }]} />
-      <FAQSchema faqs={[
-        { question: "What does NBA Combine preparation include?", answer: "Our Pre-Draft Mastery program includes player valuation reports, customized NBA Combine training with top coaches, targeted workouts with NBA teams, media and interview preparation, and seamless transition into rookie contract negotiation." },
-        { question: "How do you prepare prospects for the NBA Draft?", answer: "We provide professional player valuation and draft projection reports, customized combine training, targeted workouts, media training, and aggressive rookie contract negotiation planning." },
-      ]} />
+      <FAQSchema faqs={faqs} />
       {/* Background Image with Overlay */}
       <div className="absolute inset-0 z-0">
         <Image
-          src="/baskateballplayer.png"
+          src={content.backgroundImage || "/baskateballplayer.png"}
           alt="Pre-Draft Arena"
           fill
           className="object-cover opacity-60"
@@ -33,46 +87,35 @@ export default function PreDraftPage() {
           {/* Header Content */}
           <div className="space-y-6">
             <GradientHeader tag="h1" size="lg" className="mb-4">
-              Pre-Draft and NBA <br />
-              Combine Mastery
+              {(content.title || "").split('\n').map((line: string, i: number) => (
+                <React.Fragment key={i}>
+                  {line}
+                  {i < (content.title || "").split('\n').length - 1 && <br className="hidden md:block" />}
+                </React.Fragment>
+              ))}
             </GradientHeader>
-            <p className="text-sm font-bold tracking-[0.3em] uppercase text-white/50 mb-4">
-              Our Pre-Draft and NBA Combine Mastery program prepares elite high
-              school and college basketball prospects to rise on draft boards
-              and enter the NBA with maximum value.
+            <p className="text-sm font-bold tracking-[0.3em] uppercase text-white/50 mb-4 whitespace-pre-line max-w-4xl mx-auto leading-relaxed">
+              {content.tagline}
             </p>
           </div>
 
           {/* Mastery Points List */}
           <div className="pt-12 flex justify-center w-full">
             <ul className="space-y-8 max-w-4xl text-left w-full">
-              <PointItem
-                icon={<CircleDot className="w-6 h-6 text-primary" />}
-                text="PROFESSIONAL PLAYER VALUATION AND DRAFT PROJECTION REPORT"
-              />
-              <PointItem
-                icon={<TrendingUp className="w-6 h-6 text-primary" />}
-                text="CUSTOMIZED NBA COMBINE AND PRO DAY TRAINING WITH TOP COACHES"
-              />
-              <PointItem
-                icon={<Target className="w-6 h-6 text-primary" />}
-                text="TARGETED WORKOUTS WITH NBA TEAMS THAT NEED YOUR SKILL SET"
-              />
-              <PointItem
-                icon={<Mic className="w-6 h-6 text-primary" />}
-                text="MEDIA TRAINING, INTERVIEW PREPARATION, AND PERSONAL BRANDING"
-              />
-              <PointItem
-                icon={<FileText className="w-6 h-6 text-primary" />}
-                text="SEAMLESS TRANSITION INTO AGGRESSIVE ROOKIE CONTRACT NEGOTIATION"
-              />
+              {(content.points || []).map((point: string, idx: number) => (
+                <PointItem
+                  key={idx}
+                  icon={getIcon(idx)}
+                  text={point}
+                />
+              ))}
             </ul>
           </div>
 
           {/* CTA Section */}
           <div className="text-center pt-8">
             <CtaButton href="/contact">
-              SCHEDULE YOUR CONFIDENTIAL CONTRACT STRATEGY CALL
+              {content.ctaText}
             </CtaButton>
           </div>
         </div>

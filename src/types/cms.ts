@@ -31,6 +31,7 @@ export interface OneStopShopData {
   description: string;
   ctaText: string;
   points: ServicePoint[];
+  backgroundImage?: string;
 }
 
 export interface AboutData {
@@ -41,6 +42,8 @@ export interface AboutData {
   ctaText: string;
   bullets: string[];
   specialties: string[];
+  backgroundImage?: string;
+  profileImage?: string;
 }
 
 export interface ContactData {
@@ -54,6 +57,7 @@ export interface ContactData {
   emailDesc: string;
   location: string;
   locationTitle: string;
+  backgroundImage?: string;
 }
 
 export interface ProcessStep {
@@ -84,6 +88,8 @@ export interface PersonalBrandingData {
   services: ServiceBoxData[];
   resultsTitle: string;
   highlights: HighlightData[];
+  ctaText: string;
+  backgroundImage?: string;
 }
 
 export interface SalaryCapData {
@@ -93,6 +99,7 @@ export interface SalaryCapData {
   cardTitles: string[];
   points: string[];
   ctaText: string;
+  backgroundImage?: string;
 }
 
 export interface MarketingEndorsementItem {
@@ -108,6 +115,29 @@ export interface MarketingEndorsementsData {
   transitionQuote: string;
   readyHeading: string;
   ctaText: string;
+  backgroundImage?: string;
+}
+
+export interface PreDraftData {
+  title: string;
+  tagline: string;
+  points: string[];
+  ctaText: string;
+  backgroundImage?: string;
+}
+
+export interface HolisticConciergeService {
+  iconType: string;
+  title: string;
+  desc: string;
+}
+
+export interface HolisticConciergeData {
+  title: string;
+  tagline: string;
+  services: HolisticConciergeService[];
+  ctaText: string;
+  backgroundImage?: string;
 }
 
 export interface PageContent {
@@ -118,11 +148,22 @@ export interface PageContent {
   personalBranding?: PersonalBrandingData;
   salaryCap?: SalaryCapData;
   marketingEndorsements?: MarketingEndorsementsData;
+  preDraft?: PreDraftData;
+  holisticConcierge?: HolisticConciergeData;
   mainTitle?: string;
   subDescription?: string;
-  points?: string[];
+  description?: string;
+  points?: Array<{ title: string; items: string[] }>; // Standardized points structure
   processSteps?: ProcessStep[];
   ctaText?: string;
+  backgroundImage?: string;
+  tagline?: string;
+  stats?: Array<{ label: string; value: string }>;
+}
+
+export interface FAQ {
+  question: string;
+  answer: string;
 }
 
 export interface PageData {
@@ -134,5 +175,6 @@ export interface PageData {
     description: string;
     keywords: string;
     ogImage?: string;
+    faqs?: FAQ[];
   };
 }

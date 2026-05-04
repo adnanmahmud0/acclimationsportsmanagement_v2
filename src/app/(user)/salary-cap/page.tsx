@@ -3,7 +3,7 @@ import React from "react";
 import { GradientHeader } from "@/components/gradient-header";
 import { CtaButton } from "@/components/cta-button";
 import { buildPageMetadata } from "@/lib/seo";
-import { BreadcrumbSchema } from "@/components/json-ld";
+import { BreadcrumbSchema, FAQSchema } from "@/components/json-ld";
 import connectDB from "@/lib/mongodb";
 import Page from "@/models/page";
 import { PageData } from "@/types/cms";
@@ -56,16 +56,18 @@ export default async function SalaryCapPage() {
       "Bird Rights and exception optimization",
       "Trade scenario analysis"
     ],
-    ctaText: "SCHEDULE YOUR CONFIDENTIAL CONTRACT STRATEGY CALL"
+    ctaText: "SCHEDULE YOUR CONFIDENTIAL CONTRACT STRATEGY CALL",
+    backgroundImage: "/graph.png"
   };
 
   return (
     <main className="relative min-h-screen overflow-x-hidden bg-[#05070a] text-white">
       <BreadcrumbSchema items={[{ name: "Salary Cap Analytics", href: "/salary-cap" }]} />
+      {pageData?.seo?.faqs && <FAQSchema faqs={pageData.seo.faqs} />}
       {/* Hero Background */}
       <div className="absolute inset-x-0 top-0 h-[85vh]">
         <Image
-          src="/graph.png"
+          src={content.backgroundImage || "/graph.png"}
           alt="Salary Cap Analysis Background"
           fill
           className="object-cover opacity-100"
@@ -78,10 +80,10 @@ export default async function SalaryCapPage() {
         {/* Header Section */}
         <div className="text-center space-y-6 max-w-5xl mx-auto mb-16">
           <GradientHeader tag="h1" size="lg" className="mb-4 text-center">
-            {content.title.split('\n').map((line: string, i: number) => (
+            {(content.title || "").split('\n').map((line: string, i: number) => (
               <React.Fragment key={i}>
                 {line}
-                {i < content.title.split('\n').length - 1 && <br />}
+                {i < (content.title || "").split('\n').length - 1 && <br />}
               </React.Fragment>
             ))}
           </GradientHeader>

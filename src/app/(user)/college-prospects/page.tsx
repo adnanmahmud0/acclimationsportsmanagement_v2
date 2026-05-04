@@ -1,21 +1,81 @@
 import Image from "next/image";
 import { GraduationCap, Share2, Award, Home, Brain } from "lucide-react";
-import { Metadata } from "next";
+import React from "react";
 import { GradientHeader } from "@/components/gradient-header";
 import { CtaButton } from "@/components/cta-button";
 import { buildPageMetadata } from "@/lib/seo";
 import { BreadcrumbSchema } from "@/components/json-ld";
+import connectDB from "@/lib/mongodb";
+import Page from "@/models/page";
+import { PageData } from "@/types/cms";
+import { FAQSchema } from "@/components/json-ld";
 
-export const metadata: Metadata = buildPageMetadata("/college-prospects");
+async function getPageData() {
+  await connectDB();
+  const page = await Page.findOne({ slug: "college-prospects" }).lean();
+  return page as unknown as PageData | null;
+}
 
-export default function CollegeProspectsPage() {
+export async function generateMetadata() {
+  const page = await getPageData();
+  if (page?.seo) {
+    return {
+      title: page.seo.title,
+      description: page.seo.description,
+      keywords: page.seo.keywords,
+      openGraph: {
+        title: page.seo.title,
+        description: page.seo.description,
+        images: page.seo.ogImage ? [{ url: page.seo.ogImage }] : [],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: page.seo.title,
+        description: page.seo.description,
+        images: page.seo.ogImage ? [page.seo.ogImage] : [],
+      }
+    };
+  }
+  return buildPageMetadata("/college-prospects");
+}
+
+export default async function CollegeProspectsPage() {
+  const pageData = await getPageData();
+
+  const content = pageData?.content || {
+    mainTitle: "College \n Prospects",
+    subDescription: "Position yourself for the NBA Draft and \n build your future wealth now.",
+    description: "The college years are your launchpad. We help top college prospects maximize NIL deals, develop a professional brand, and prepare for the NBA with elite off-court support.",
+    points: [
+      { title: "NIL deal valuation and high-value brand partnerships", items: ["Connect with top brands and secure maximum value for your name, image, and likeness."] },
+      { title: "Personal brand development and marketing strategy", items: ["Build a professional, social-media-ready identity that sets you apart."] },
+      { title: "Pre-draft and NBA Combine mastery", items: ["Elite trainers, private chefs, luxury accommodations, and interview prep to dominate the draft."] },
+      { title: "One-stop holistic concierge support", items: ["Manage travel, finances, and logistics so you can focus solely on your game."] },
+      { title: "Early contract negotiation planning and salary cap education", items: ["Learn the business of the NBA early to maximize your future earnings."] }
+    ],
+    ctaText: "SCHEDULE YOUR CONFIDENTIAL CONTRACT STRATEGY CALL",
+    backgroundImage: "/basketcoart_v5.png"
+  };
+
+  const getIcon = (idx: number) => {
+    const icons = [
+      <GraduationCap key={0} className="w-5 h-5" />,
+      <Share2 key={1} className="w-5 h-5" />,
+      <Award key={2} className="w-5 h-5" />,
+      <Home key={3} className="w-5 h-5" />,
+      <Brain key={4} className="w-5 h-5" />,
+    ]
+    return icons[idx % icons.length]
+  }
+
   return (
     <main className="relative min-h-screen overflow-x-hidden pt-12">
       <BreadcrumbSchema items={[{ name: "College Prospects", href: "/college-prospects" }]} />
+      {pageData?.seo?.faqs && <FAQSchema faqs={pageData.seo.faqs} />}
       {/* Background Image with Overlay */}
       <div className="absolute inset-0 z-0">
         <Image
-          src="/basketcoart_v5.png"
+          src={content.backgroundImage || "/basketcoart_v5.png"}
           alt="Neon Arena Background"
           fill
           className="object-cover opacity-80"
@@ -30,23 +90,24 @@ export default function CollegeProspectsPage() {
           <div className="flex flex-col lg:flex-row items-center gap-12 lg:text-left">
             <div className="flex-1 space-y-6">
               <GradientHeader tag="h1" size="lg" className="mb-4">
-                College <br className="hidden md:block" />
-                <span className="   pr-12">Prospects</span>
+                {(content.mainTitle || "").split('\n').map((line: string, i: number) => (
+                  <React.Fragment key={i}>
+                    {line}
+                    {i < (content.mainTitle || "").split('\n').length - 1 && <br className="hidden md:block" />}
+                  </React.Fragment>
+                ))}
               </GradientHeader>
               <div className="space-y-6">
-                <h2 className="text-sm font-bold tracking-[0.3em] uppercase text-white/50 mb-4">
-                  Position yourself for the NBA Draft and <br />
-                  build your future wealth now.
+                <h2 className="text-sm font-bold tracking-[0.3em] uppercase text-white/50 mb-4 whitespace-pre-line">
+                  {content.subDescription}
                 </h2>
                 <p className="text-sm md:text-lg text-white/50 font-medium leading-relaxed max-w-3xl mx-auto lg:mx-0">
-                  The college years are your launchpad. We help top college
-                  prospects maximize NIL deals, develop a professional brand,
-                  and prepare for the NBA with elite off-court support.
+                  {content.description}
                 </p>
               </div>
             </div>
 
-            {/* Visual Element - Floating Basketball (from mockup vibe) */}
+            {/* Visual Element - Floating Basketball */}
             <div className="lg:w-1/3 relative aspect-square w-64 md:w-80 animate-float hidden lg:block">
               <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full" />
               <div className="relative w-full h-full rounded-full border-2 border-primary/30 flex items-center justify-center overflow-hidden">
@@ -75,36 +136,15 @@ export default function CollegeProspectsPage() {
 
             {/* Arc Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
-              <ArcCard
-                number="1"
-                icon={<GraduationCap className="w-5 h-5" />}
-                title="NIL deal valuation and high-value brand partnerships"
-                desc="Connect with top brands and secure maximum value for your name, image, and likeness."
-              />
-              <ArcCard
-                number="2"
-                icon={<Share2 className="w-5 h-5" />}
-                title="Personal brand development and marketing strategy"
-                desc="Build a professional, social-media-ready identity that sets you apart."
-              />
-              <ArcCard
-                number="3"
-                icon={<Award className="w-5 h-5" />}
-                title="Pre-draft and NBA Combine mastery"
-                desc="Elite trainers, private chefs, luxury accommodations, and interview prep to dominate the draft."
-              />
-              <ArcCard
-                number="4"
-                icon={<Home className="w-5 h-5" />}
-                title="One-stop holistic concierge support"
-                desc="Manage travel, finances, and logistics so you can focus solely on your game."
-              />
-              <ArcCard
-                number="5"
-                icon={<Brain className="w-5 h-5" />}
-                title="Early contract negotiation planning and salary cap education"
-                desc="Learn the business of the NBA early to maximize your future earnings."
-              />
+              {content.points?.map((p: { title: string; items: string[] }, i: number) => (
+                <ArcCard
+                  key={i}
+                  number={(i + 1).toString()}
+                  icon={getIcon(i)}
+                  title={p.title}
+                  desc={p.items?.[0] || ""}
+                />
+              ))}
             </div>
           </div>
 
@@ -116,7 +156,7 @@ export default function CollegeProspectsPage() {
 
             <div className="pt-6 w-full flex justify-center">
               <CtaButton href="/contact" fullWidth className="max-w-4xl">
-                SCHEDULE YOUR CONFIDENTIAL CONTRACT STRATEGY CALL
+                {content.ctaText || "SCHEDULE YOUR CONFIDENTIAL CONTRACT STRATEGY CALL"}
               </CtaButton>
             </div>
           </div>

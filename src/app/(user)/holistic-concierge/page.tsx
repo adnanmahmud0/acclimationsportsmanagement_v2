@@ -1,11 +1,10 @@
-import Image from "next/image";
-import { Metadata } from "next";
-import { GradientHeader } from "@/components/gradient-header";
-import { CtaButton } from "@/components/cta-button";
-import { buildPageMetadata } from "@/lib/seo";
-import { BreadcrumbSchema } from "@/components/json-ld";
+import Image from "next/image"
+import React from "react"
+import { GradientHeader } from "@/components/gradient-header"
+import { CtaButton } from "@/components/cta-button"
+import { buildPageMetadata } from "@/lib/seo"
+import { BreadcrumbSchema } from "@/components/json-ld"
 
-export const metadata: Metadata = buildPageMetadata("/holistic-concierge");
 import {
   Dumbbell,
   Utensils,
@@ -13,17 +12,81 @@ import {
   Plane,
   Tv,
   Headphones,
-} from "lucide-react";
+} from "lucide-react"
 
-export default function HolisticConciergePage() {
+import { FAQSchema } from "@/components/json-ld"
+
+import connectDB from "@/lib/mongodb"
+import Page from "@/models/page"
+import { PageData } from "@/types/cms"
+
+async function getPageData() {
+  await connectDB();
+  const page = await Page.findOne({ slug: "holistic-concierge" }).lean();
+  return page as unknown as PageData | null;
+}
+
+export async function generateMetadata() {
+  const page = await getPageData();
+  if (page?.seo) {
+    return {
+      title: page.seo.title,
+      description: page.seo.description,
+      keywords: page.seo.keywords,
+      openGraph: {
+        title: page.seo.title,
+        description: page.seo.description,
+        images: page.seo.ogImage ? [{ url: page.seo.ogImage }] : [],
+      },
+    };
+  }
+  return buildPageMetadata("/holistic-concierge");
+}
+
+export default async function HolisticConciergePage() {
+  const pageData = await getPageData();
+
+  const content = pageData?.content?.holisticConcierge || {
+    title: "One-Stop Holistic \n Concierge Support",
+    tagline: "We manage your entire off-court world so you can focus only on dominating the game.",
+    services: [
+      { iconType: "dumbbell", title: "Elite Physical Training", desc: "Access to world-class trainers and state-of-the-art facilities to optimize your performance." },
+      { iconType: "plane", title: "Luxury Travel", desc: "Private jet charters and VIP logistics for seamless travel." },
+      { iconType: "utensils", title: "Gourmet Nutrition", desc: "Personal chefs crafting meals tailored to your diet and training schedule." },
+      { iconType: "tv", title: "Media & Brand Management", desc: "Strategic media training and brand partnerships to build your empire." },
+      { iconType: "piggybank", title: "Wealth Management", desc: "Expert financial advisors ensuring your money grows and lasts." },
+      { iconType: "headphones", title: "24/7 Concierge", desc: "Round-the-clock support for any request, anytime, anywhere." },
+    ],
+    ctaText: "SCHEDULE YOUR CONFIDENTIAL CONTRACT STRATEGY CALL",
+    backgroundImage: "/foodsearvice.png"
+  };
+
+  const faqs = pageData?.seo?.faqs || [
+    { question: "What is included in the Holistic Concierge service?", answer: "Our concierge support covers elite physical training, luxury travel logistics, gourmet nutrition with personal chefs, media and brand management, wealth management, and 24/7 personalized support." },
+    { question: "Can the concierge services be customized?", answer: "Yes, every aspect of our holistic support is tailored to the specific needs, diet, training schedule, and lifestyle of the athlete." }
+  ];
+
+  const getIcon = (type: string) => {
+    switch (type) {
+      case "dumbbell": return <Dumbbell className="w-6 h-6" />;
+      case "plane": return <Plane className="w-6 h-6" />;
+      case "utensils": return <Utensils className="w-6 h-6" />;
+      case "tv": return <Tv className="w-6 h-6" />;
+      case "piggybank": return <PiggyBank className="w-6 h-6" />;
+      case "headphones": return <Headphones className="w-6 h-6" />;
+      default: return <Headphones className="w-6 h-6" />;
+    }
+  }
+
   return (
-    <main className="relative min-h-screen overflow-x-hidden pt-12">
+    <main className="relative min-h-screen overflow-x-hidden pt-12 bg-[#05070a]">
       <BreadcrumbSchema items={[{ name: "Holistic Concierge", href: "/holistic-concierge" }]} />
+      <FAQSchema faqs={faqs} />
       {/* Hero Section */}
       <div className="relative">
         <div className="absolute inset-x-0 top-0 z-[-1] h-[85vh]">
           <Image
-            src="/foodsearvice.png"
+            src={content.backgroundImage || "/foodsearvice.png"}
             alt="Concierge Services Background"
             fill
             className="object-cover opacity-90 shadow-[inset_0_0_100px_rgba(0,0,0,0.8)]"
@@ -37,58 +100,36 @@ export default function HolisticConciergePage() {
             {/* Main Header */}
             <div className="space-y-6">
               <GradientHeader tag="h1" size="lg" className="mb-4">
-                One-Stop Holistic <br />
-                Concierge Support
+                {(content.title || "").split('\n').map((line, i) => (
+                  <React.Fragment key={i}>
+                    {line}
+                    {i < (content.title || "").split('\n').length - 1 && <br />}
+                  </React.Fragment>
+                ))}
               </GradientHeader>
               <div className="space-y-6">
-                <h2 className="text-sm font-bold tracking-[0.3em] uppercase text-white/50 mb-4">
-                  We manage your entire off-court world so you can{" "}
-                  <br className="hidden md:block" />
-                  <span className="text-primary">
-                    focus only on dominating the game.
-                  </span>
+                <h2 className="text-sm font-bold tracking-[0.3em] uppercase text-white/50 mb-4 whitespace-pre-line">
+                  {content.tagline}
                 </h2>
               </div>
             </div>
 
             {/* Grid Section */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 py-8 w-full max-w-5xl mx-auto text-left">
-              <ServiceCard
-                icon={<Dumbbell className="w-6 h-6" />}
-                title="Elite Physical Training"
-                desc="Access to world-class trainers and state-of-the-art facilities to optimize your performance."
-              />
-              <ServiceCard
-                icon={<Plane className="w-6 h-6" />}
-                title="Luxury Travel"
-                desc="Private jet charters and VIP logistics for seamless travel."
-              />
-              <ServiceCard
-                icon={<Utensils className="w-6 h-6" />}
-                title="Gourmet Nutrition"
-                desc="Personal chefs crafting meals tailored to your diet and training schedule."
-              />
-              <ServiceCard
-                icon={<Tv className="w-6 h-6" />}
-                title="Media & Brand Management"
-                desc="Strategic media training and brand partnerships to build your empire."
-              />
-              <ServiceCard
-                icon={<PiggyBank className="w-6 h-6" />}
-                title="Wealth Management"
-                desc="Expert financial advisors ensuring your money grows and lasts."
-              />
-              <ServiceCard
-                icon={<Headphones className="w-6 h-6" />}
-                title="24/7 Concierge"
-                desc="Round-the-clock support for any request, anytime, anywhere."
-              />
+              {(content.services || []).map((service, idx) => (
+                <ServiceCard
+                  key={idx}
+                  icon={getIcon(service.iconType)}
+                  title={service.title}
+                  desc={service.desc}
+                />
+              ))}
             </div>
 
             {/* CTA Section */}
             <div className="space-y-6 pt-6">
               <CtaButton href="/contact">
-                SCHEDULE YOUR CONFIDENTIAL CONTRACT STRATEGY CALL
+                {content.ctaText}
               </CtaButton>
             </div>
           </div>

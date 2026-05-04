@@ -39,7 +39,7 @@ export function OneStopShop({ data }: { data?: PageData | null }) {
       {/* Background Image with Overlay */}
       <div className="absolute inset-0 z-[-1]">
         <Image
-          src="/graph.png"
+          src={content.backgroundImage || "/graph.png"}
           alt="Analysis background"
           fill
           className="object-cover opacity-60"

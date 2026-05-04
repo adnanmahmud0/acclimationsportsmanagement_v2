@@ -3,9 +3,8 @@
 import React, { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
 import { toast } from "sonner"
-import { SaveIcon, Loader2Icon, PencilIcon, GlobeIcon, Settings2Icon } from "lucide-react"
+import { SaveIcon, Loader2Icon, PencilIcon, Settings2Icon } from "lucide-react"
 import {
   Dialog,
   DialogContent,
@@ -18,14 +17,16 @@ import { Hero } from "@/components/hero"
 import { OneStopShop } from "@/components/one-stop-shop"
 import { AboutSection } from "@/components/about-section"
 import { ContactSection } from "@/components/contact-section"
-import { PageData } from "@/types/cms"
-import Image from "next/image"
+import { PageData, FAQ } from "@/types/cms"
+import { SeoEditor } from "@/components/seo-editor"
+import { ImageUpload } from "@/components/image-upload"
 
 export function HomePageEditor() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [data, setData] = useState<PageData | null>(null)
   const [editingSection, setEditingSection] = useState<string | null>(null)
+  const [activeTab, setActiveTab] = useState<"live" | "seo">("seo")
 
   useEffect(() => {
     fetchPageData()
@@ -156,13 +157,12 @@ export function HomePageEditor() {
       if (!prev) return null
       return {
         ...prev,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        content: { ...prev.content, [section]: { ...(prev.content[section] as any), [field]: value } }
+        content: { ...prev.content, [section]: { ...(prev.content[section] as unknown as Record<string, unknown>), [field]: value } }
       }
     })
   }
 
-  const updateSeo = (field: keyof PageData["seo"], value: string) => {
+  const updateSeo = (field: keyof PageData["seo"], value: string | FAQ[]) => {
     setData((prev: PageData | null) => {
       if (!prev) return null
       return {
@@ -181,185 +181,78 @@ export function HomePageEditor() {
   }
 
   return (
-    <div className="space-y-12 pb-24 animate-in fade-in duration-700">
+    <div className="space-y-12 pb-24 animate-in fade-in duration-700 w-full max-w-full overflow-x-hidden">
       {/* 1. Header & Quick Publish */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 bg-[#0a0d12]/60 p-6 rounded-3xl border border-white/5 backdrop-blur-xl sticky top-4 z-50 shadow-2xl">
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 bg-[#0a0d12]/60 p-6 rounded-3xl border border-white/5 backdrop-blur-xl sticky top-4 z-50 shadow-2xl">
         <div className="flex items-center gap-4">
           <div className="size-12 bg-blue-600/20 rounded-2xl flex items-center justify-center border border-blue-500/20 shadow-inner">
             <Settings2Icon className="text-blue-500 size-6" />
           </div>
           <div>
-            <h1 className="text-xl font-black text-white uppercase tracking-tight italic">Visual CMS <span className="text-blue-500 text-[10px] not-italic align-top ml-1">LIVE</span></h1>
-            <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.3em]">Direct Page Management</p>
+            <h1 className="text-xl font-black text-white uppercase tracking-tight italic">{data.title} <span className="text-blue-500 text-[10px] not-italic align-top ml-1">EDITOR</span></h1>
+            <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.3em]">Directly manage and publish visual sections live</p>
           </div>
         </div>
+
+        <div className="flex flex-1 items-center justify-center gap-2">
+          <div className="flex bg-white/5 p-1.5 rounded-[1.25rem] border border-white/10 backdrop-blur-md shadow-inner">
+            <button
+              onClick={() => setActiveTab("seo")}
+              className={`px-8 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 ${activeTab === "seo" ? "bg-blue-600 text-white shadow-[0_0_20px_rgba(37,99,235,0.4)]" : "text-white/40 hover:text-white hover:bg-white/5"}`}
+            >
+              SEO & Metadata
+            </button>
+            <button
+              onClick={() => setActiveTab("live")}
+              className={`px-8 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 ${activeTab === "live" ? "bg-blue-600 text-white shadow-[0_0_20px_rgba(37,99,235,0.4)]" : "text-white/40 hover:text-white hover:bg-white/5"}`}
+            >
+              Edit Page
+            </button>
+          </div>
+        </div>
+
         <Button
           onClick={handleSave}
           disabled={saving}
-          className="bg-blue-600 hover:bg-blue-500 text-white border-none shadow-2xl shadow-blue-500/20 transition-all hover:scale-105 active:scale-95 px-10 font-black text-xs h-12 tracking-widest uppercase rounded-2xl"
+          className="bg-blue-600 hover:bg-blue-500 text-white border-none shadow-2xl shadow-blue-500/20 transition-all hover:scale-105 active:scale-95 px-10 font-black text-xs h-12 tracking-widest uppercase rounded-2xl shrink-0"
         >
           {saving ? <Loader2Icon className="size-4 animate-spin" /> : <SaveIcon className="size-4 mr-2" />}
           Publish to Site
         </Button>
       </div>
 
-      {/* 2. SEO Section (First) */}
-      <div className="bg-[#0a0d12]/40 p-6 md:p-10 rounded-[2.5rem] border border-white/5 backdrop-blur-md">
-        <div className="flex items-center gap-3 mb-8">
-          <GlobeIcon className="text-blue-500 size-5" />
-          <h2 className="text-[11px] font-black text-white uppercase tracking-[0.4em]">Metadata Architecture</h2>
+      {activeTab === "seo" ? (
+        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <SeoEditor data={data} updateSeo={updateSeo} />
         </div>
-        <div className="gap-6">
-          <div className="space-y-2">
-            <label className="text-[9px] font-black text-white/20 uppercase tracking-widest">Window Title</label>
-            <Input value={data.seo.title} onChange={(e) => updateSeo("title", e.target.value)} className="bg-white/5 border-white/10 text-white rounded-xl h-11 text-xs focus:border-blue-500/50 transition-all" />
+      ) : (
+        <div className="space-y-1 w-full rounded-[3rem] overflow-hidden border border-white/5 bg-black shadow-3xl animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <div className="bg-white/5 px-8 py-3 flex items-center justify-center gap-3 border-b border-white/5">
+            <div className="size-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_10px_#22c55e]" />
+            <span className="text-[10px] font-black text-white/40 uppercase tracking-[0.4em]">Visual Preview</span>
           </div>
-          <div className="space-y-2">
-            <label className="text-[9px] font-black text-white/20 uppercase tracking-widest flex justify-between">
-              Search Description
-              <span className="text-[8px] opacity-50 lowercase font-normal italic">Recommended: 150-160 characters</span>
-            </label>
-            <Textarea
-              value={data.seo.description}
-              onChange={(e) => updateSeo("description", e.target.value)}
-              placeholder="A brief summary of your page for search engine results."
-              className="bg-white/5 border-white/10 text-white rounded-xl min-h-[110px] text-xs focus:border-blue-500/50 transition-all resize-none p-4 leading-relaxed"
-            />
-          </div>
-          <div className="space-y-3 md:col-span-2 lg:col-span-3 pt-4 border-t border-white/5">
-            <label className="text-[9px] font-black text-white/20 uppercase tracking-widest block mb-2">Search Keywords</label>
-            <div className="flex gap-2 mb-4">
-              <Input
-                placeholder="Type keyword and press Enter..."
-                className="bg-white/5 border-white/10 text-white rounded-xl h-11 text-xs focus:border-blue-500/50 transition-all flex-1"
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault()
-                    const val = (e.target as HTMLInputElement).value.trim()
-                    if (val) {
-                      const current = data.seo.keywords ? data.seo.keywords.split(",").map((k: string) => k.trim()).filter(Boolean) : []
-                      if (!current.includes(val)) {
-                        updateSeo("keywords", [...current, val].join(", "))
-                          ; (e.target as HTMLInputElement).value = ""
-                      }
-                    }
-                  }
-                }}
-              />
-              <Button
-                onClick={() => {
-                  const input = document.querySelector('input[placeholder="Type keyword and press Enter..."]') as HTMLInputElement
-                  const val = input.value.trim()
-                  if (val) {
-                    const current = data.seo.keywords ? data.seo.keywords.split(",").map((k: string) => k.trim()).filter(Boolean) : []
-                    if (!current.includes(val)) {
-                      updateSeo("keywords", [...current, val].join(", "))
-                      input.value = ""
-                    }
-                  }
-                }}
-                className="bg-blue-600 hover:bg-blue-500 text-white rounded-xl px-4 h-11 text-xs font-black uppercase tracking-widest"
-              >
-                +
-              </Button>
-            </div>
 
-            <div className="flex flex-wrap gap-2 min-h-[40px]">
-              {(data.seo.keywords ? data.seo.keywords.split(",").map((k: string) => k.trim()).filter(Boolean) : []).map((keyword: string, idx: number) => (
-                <div key={idx} className="flex items-center gap-2 bg-blue-500/10 border border-blue-500/20 px-3 py-1.5 rounded-full group transition-all hover:bg-blue-500/20">
-                  <span className="text-[11px] font-bold text-blue-400">{keyword}</span>
-                  <button
-                    onClick={() => {
-                      const keywords = data.seo.keywords.split(",").map((k: string) => k.trim()).filter((_: string, i: number) => i !== idx)
-                      updateSeo("keywords", keywords.join(", "))
-                    }}
-                    className="text-blue-500/40 hover:text-red-500 transition-colors text-xs font-black leading-none"
-                  >
-                    ×
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
+          {/* HERO SECTION */}
+          <PreviewWrapper onEdit={() => setEditingSection("hero")}>
+            <Hero data={data} />
+          </PreviewWrapper>
+
+          {/* SERVICE SECTION */}
+          <PreviewWrapper onEdit={() => setEditingSection("oneStopShop")}>
+            <OneStopShop data={data} />
+          </PreviewWrapper>
+
+          {/* ABOUT SECTION */}
+          <PreviewWrapper onEdit={() => setEditingSection("about")}>
+            <AboutSection data={data} />
+          </PreviewWrapper>
+
+          {/* CONTACT SECTION */}
+          <PreviewWrapper onEdit={() => setEditingSection("contact")}>
+            <ContactSection data={data} />
+          </PreviewWrapper>
         </div>
-
-        {/* Search Engine Preview - Real-time Visualization */}
-        <div className="mt-10 pt-8 border-t border-white/5">
-          <div className="grid lg:grid-cols-2 gap-12">
-            {/* Google Preview */}
-            <div className="space-y-6">
-              <label className="text-[9px] font-black text-white/20 uppercase tracking-widest block mb-4">Google Search Preview</label>
-              <div className="max-w-2xl bg-white rounded-2xl p-6 md:p-8 shadow-2xl">
-                <div className="flex flex-col gap-1.5">
-                  <div className="flex items-center gap-2 text-[14px] text-[#202124]">
-                    <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center overflow-hidden border border-gray-100 p-0.5">
-                      <Image src="/logo/AcclimationLogo-Vartical.png" alt="Logo" width={24} height={24} className="object-contain" />
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-[12px] leading-tight font-normal">Acclimation Sports Management</span>
-                      <span className="text-[12px] leading-tight text-[#5f6368] truncate">https://acclimationsports.com</span>
-                    </div>
-                  </div>
-                  <h3 className="text-[20px] text-[#1a0dab] hover:underline cursor-pointer font-medium leading-tight mt-1 line-clamp-1">
-                    {data.seo.title || "Acclimation Sports Management | Elite NBA Representation"}
-                  </h3>
-                  <p className="text-[14px] text-[#4d5156] leading-snug mt-1 line-clamp-2 min-h-[40px]">
-                    {data.seo.description || "Leading NBA agency providing precision economic analysis, contract negotiation, and holistic player support for elite athletes."}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Social Media Card Preview */}
-            <div className="space-y-6">
-              <label className="text-[9px] font-black text-white/20 uppercase tracking-widest block mb-4">Social Media Preview (Facebook/X)</label>
-              <div className="max-w-md bg-[#18191a] rounded-xl overflow-hidden border border-white/10 shadow-2xl font-sans">
-                <div className="relative aspect-[1.91/1] bg-white flex items-center justify-center overflow-hidden p-8">
-                   <Image src="/logo/AcclimationLogo-Vartical.png" alt="Logo" width={140} height={140} className="object-contain" />
-                </div>
-                <div className="p-4 bg-[#242526] border-t border-white/5">
-                  <div className="text-[11px] text-[#b0b3b8] uppercase tracking-wider mb-1 font-medium">acclimationsports.com</div>
-                  <div className="text-[16px] text-[#e4e6eb] font-bold line-clamp-1 mb-1">
-                    {data.seo.title || "Acclimation Sports Management"}
-                  </div>
-                  <div className="text-[14px] text-[#b0b3b8] line-clamp-1">
-                    {data.seo.description || "Elite NBA representation and contract negotiation."}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <p className="mt-8 text-[10px] text-white/30 italic text-center">Note: These are visualizations. Actual search engine and social media results may vary based on platform algorithms.</p>
-        </div>
-      </div>
-
-      {/* 3. Live Preview Sections with Pencil Icons */}
-      <div className="space-y-1 w-full rounded-[3rem] overflow-hidden border border-white/5 bg-black shadow-3xl">
-        <div className="bg-white/5 px-8 py-3 flex items-center justify-center gap-3 border-b border-white/5">
-          <div className="size-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_10px_#22c55e]" />
-          <span className="text-[10px] font-black text-white/40 uppercase tracking-[0.4em]">Live Visual Preview</span>
-        </div>
-
-        {/* HERO SECTION */}
-        <PreviewWrapper onEdit={() => setEditingSection("hero")}>
-          <Hero data={data} />
-        </PreviewWrapper>
-
-        {/* SERVICE SECTION */}
-        <PreviewWrapper onEdit={() => setEditingSection("oneStopShop")}>
-          <OneStopShop data={data} />
-        </PreviewWrapper>
-
-        {/* ABOUT SECTION */}
-        <PreviewWrapper onEdit={() => setEditingSection("about")}>
-          <AboutSection data={data} />
-        </PreviewWrapper>
-
-        {/* CONTACT SECTION */}
-        <PreviewWrapper onEdit={() => setEditingSection("contact")}>
-          <ContactSection data={data} />
-        </PreviewWrapper>
-      </div>
+      )}
 
       {/* MODAL EDITORS */}
       <Dialog open={editingSection !== null} onOpenChange={(open) => !open && setEditingSection(null)}>
@@ -373,6 +266,7 @@ export function HomePageEditor() {
           <div className="p-8 space-y-6 max-h-[70vh] overflow-y-auto no-scrollbar">
             {editingSection === "hero" && (
               <>
+                <ImageUpload label="Hero Background Image" value={data.content.backgroundImage || ""} onChange={(v) => setData(prev => prev ? ({ ...prev, content: { ...prev.content, backgroundImage: v } }) : null)} />
                 <EditField label="Hero Title" type="textarea" value={data.content.hero?.title || ""} onChange={(v) => updateContent("hero", "title", v)} />
                 <EditField label="Tagline" value={data.content.hero?.tagline || ""} onChange={(v) => updateContent("hero", "tagline", v)} />
                 <div className="space-y-4 pt-4 border-t border-white/5">
@@ -488,6 +382,7 @@ export function HomePageEditor() {
             )}
             {editingSection === "oneStopShop" && (
               <>
+                <ImageUpload label="Background Image" value={data.content.oneStopShop?.backgroundImage || ""} onChange={(v) => updateContent("oneStopShop", "backgroundImage", v)} />
                 <EditField label="Section Title" value={data.content.oneStopShop?.title || ""} onChange={(v) => updateContent("oneStopShop", "title", v)} />
                 <EditField label="Description" type="textarea" value={data.content.oneStopShop?.description || ""} onChange={(v) => updateContent("oneStopShop", "description", v)} />
                 <EditField label="CTA Button Text" value={data.content.oneStopShop?.ctaText || ""} onChange={(v) => updateContent("oneStopShop", "ctaText", v)} />
@@ -570,6 +465,8 @@ export function HomePageEditor() {
             )}
             {editingSection === "about" && (
               <>
+                <ImageUpload label="Background Image" value={data.content.about?.backgroundImage || ""} onChange={(v) => updateContent("about", "backgroundImage", v)} />
+                <ImageUpload label="Joe's Profile Image" value={data.content.about?.profileImage || ""} onChange={(v) => updateContent("about", "profileImage", v)} />
                 <EditField label="About Heading" type="textarea" value={data.content.about?.title || ""} onChange={(v) => updateContent("about", "title", v)} />
                 <EditField label="Certification Subtitle" value={data.content.about?.subtitle || ""} onChange={(v) => updateContent("about", "subtitle", v)} />
                 <EditField label="Bio Description" type="textarea" height="h-32" value={data.content.about?.description || ""} onChange={(v) => updateContent("about", "description", v)} />
@@ -657,6 +554,7 @@ export function HomePageEditor() {
             )}
             {editingSection === "contact" && (
               <>
+                <ImageUpload label="Background Image" value={data.content.contact?.backgroundImage || ""} onChange={(v) => updateContent("contact", "backgroundImage", v)} />
                 <EditField label="Contact Heading" value={data.content.contact?.title || ""} onChange={(v) => updateContent("contact", "title", v)} />
                 <EditField label="Tagline" value={data.content.contact?.tagline || ""} onChange={(v) => updateContent("contact", "tagline", v)} />
 

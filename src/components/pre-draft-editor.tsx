@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
-import { SaveIcon, Loader2Icon, Settings2Icon, PlusIcon, Trash2Icon } from "lucide-react"
+import { SaveIcon, Loader2Icon, Settings2Icon, CircleDot, TrendingUp, Target, Mic, FileText, PlusIcon, Trash2Icon } from "lucide-react"
 import { PageData, FAQ } from "@/types/cms"
 import Image from "next/image"
 import { GradientHeader } from "@/components/gradient-header"
@@ -12,7 +12,7 @@ import { CtaButton } from "@/components/cta-button"
 import { SeoEditor } from "@/components/seo-editor"
 import { ImageUpload } from "@/components/image-upload"
 
-export function SalaryCapEditor() {
+export function PreDraftEditor() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [data, setData] = useState<PageData | null>(null)
@@ -24,37 +24,30 @@ export function SalaryCapEditor() {
 
   const fetchPageData = async () => {
     try {
-      const response = await fetch("/api/pages/salary-cap")
+      const response = await fetch("/api/pages/pre-draft")
       const result = await response.json()
       if (result.success && result.data) {
         setData(result.data)
       } else {
         setData({
-          slug: "salary-cap",
-          title: "Salary Cap Analytics",
+          slug: "pre-draft",
+          title: "Pre-Draft Mastery",
           content: {
-            salaryCap: {
-              title: "Master the Salary Cap. \n Maximize Every Dollar.",
-              subtitle: "Proprietary analytical models and expert salary cap strategy that put more money in your pocket.",
-              engineTitle: "The Acclimation Salary Cap Engine",
-              cardTitles: [
-                "Live Salary Cap Forecasting",
-                "Luxury Tax Stress Testing",
-                "Endorsement & NIL Valuation",
-                "Contract Optimization Simulator"
-              ],
+            preDraft: {
+              title: "Pre-Draft and NBA \n Combine Mastery",
+              tagline: "Our Pre-Draft and NBA Combine Mastery program prepares elite prospects to rise on draft boards and enter the NBA with maximum value.",
               points: [
-                "In-house salary cap forecasts",
-                "Custom analytical projections",
-                "Bird Rights optimization",
+                "PROFESSIONAL PLAYER VALUATION REPORT",
+                "CUSTOMIZED NBA COMBINE TRAINING",
+                "TARGETED WORKOUTS WITH NBA TEAMS",
               ],
               ctaText: "SCHEDULE YOUR CONFIDENTIAL CONTRACT STRATEGY CALL"
             }
           },
           seo: {
-            title: "Salary Cap Analytics | Acclimation Sports",
-            description: "Proprietary analytical models and expert salary cap strategy.",
-            keywords: "NBA Salary Cap, Analytics"
+            title: "Pre-Draft & NBA Combine Mastery | Acclimation Sports",
+            description: "Prepare to rise on draft boards.",
+            keywords: "NBA Draft, Pre-Draft Training"
           }
         })
       }
@@ -70,7 +63,7 @@ export function SalaryCapEditor() {
     setSaving(true)
     try {
       const token = localStorage.getItem("accessToken")
-      const response = await fetch("/api/pages/salary-cap", {
+      const response = await fetch("/api/pages/pre-draft", {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -80,7 +73,7 @@ export function SalaryCapEditor() {
       })
       const result = await response.json()
       if (result.success) {
-        toast.success("Salary Cap Analytics Published Successfully!")
+        toast.success("Pre-Draft Mastery Published Successfully!")
       } else {
         toast.error(result.message || "Failed to save")
       }
@@ -92,15 +85,15 @@ export function SalaryCapEditor() {
     }
   }
 
-  const updateContent = (field: string, value: unknown) => {
+  const updateContent = (field: string, value: string | string[]) => {
     setData((prev) => {
       if (!prev) return null
       return {
         ...prev,
         content: {
           ...prev.content,
-          salaryCap: {
-            ...prev.content.salaryCap!,
+          preDraft: {
+            ...prev.content.preDraft!,
             [field]: value
           }
         }
@@ -118,7 +111,18 @@ export function SalaryCapEditor() {
     })
   }
 
-  if (loading || !data || !data.content.salaryCap) {
+  const getIcon = (idx: number) => {
+    const icons = [
+      <CircleDot key={0} className="w-6 h-6 text-primary" />,
+      <TrendingUp key={1} className="w-6 h-6 text-primary" />,
+      <Target key={2} className="w-6 h-6 text-primary" />,
+      <Mic key={3} className="w-6 h-6 text-primary" />,
+      <FileText key={4} className="w-6 h-6 text-primary" />,
+    ]
+    return icons[idx % icons.length]
+  }
+
+  if (loading || !data || !data.content.preDraft) {
     return (
       <div className="flex items-center justify-center h-[60vh]">
         <Loader2Icon className="size-10 animate-spin text-blue-500" />
@@ -126,7 +130,7 @@ export function SalaryCapEditor() {
     )
   }
 
-  const content = data.content.salaryCap
+  const content = data.content.preDraft
 
   return (
     <div className="space-y-12 pb-24 animate-in fade-in duration-700 w-full max-w-full overflow-x-hidden">
@@ -180,51 +184,40 @@ export function SalaryCapEditor() {
             </div>
             
             <div className="relative pt-12 pb-24 bg-[#05070a]">
-              <div className="absolute inset-x-0 top-0 h-[85vh] z-0">
-                <Image src={content.backgroundImage || "/graph.png"} alt="Bg" fill className="object-cover opacity-60" />
+              <div className="absolute inset-0 z-0">
+                <Image src={content.backgroundImage || "/baskateballplayer.png"} alt="Bg" fill className="object-cover opacity-60" />
                 <div className="absolute inset-0 bg-gradient-to-b from-[#05070a]/60 via-[#05070a]/20 to-[#05070a]" />
               </div>
               
-              <div className="container mx-auto px-6 pt-24 pb-12 relative z-10 flex flex-col items-center">
-                <div className="text-center space-y-6 max-w-5xl mx-auto mb-16">
-                  <GradientHeader tag="h1" size="lg" className="mb-4 text-center">
-                    {(content.title || "").split('\n').map((line: string, i: number) => (
-                      <React.Fragment key={i}>{line}{i < (content.title || "").split('\n').length - 1 && <br />}</React.Fragment>
-                    ))}
-                  </GradientHeader>
-                  <p className="text-sm font-bold tracking-[0.3em] uppercase text-white/50 mb-4 whitespace-pre-line leading-relaxed">
-                    {content.subtitle}
-                  </p>
-                </div>
-
-                <div className="w-full max-w-7xl space-y-8 mt-12">
-                  <div className="text-center space-y-4">
-                    <div className="flex items-center justify-center gap-4 text-primary">
-                      <div className="h-[1px] w-12 bg-primary/30" />
-                      <span className="text-sm font-black uppercase tracking-[0.4em]">{content.engineTitle}</span>
-                      <div className="h-[1px] w-12 bg-primary/30" />
-                    </div>
+              <div className="container mx-auto px-6 pt-32 pb-12 relative z-10 flex flex-col items-center">
+                <div className="space-y-16 max-w-6xl mx-auto text-center">
+                  <div className="space-y-6">
+                    <GradientHeader tag="h1" size="lg" className="mb-4 text-center">
+                      {(content.title || "").split('\n').map((line: string, i: number) => (
+                        <React.Fragment key={i}>{line}{i < (content.title || "").split('\n').length - 1 && <br />}</React.Fragment>
+                      ))}
+                    </GradientHeader>
+                    <p className="text-sm font-bold tracking-[0.3em] uppercase text-white/50 mb-4 whitespace-pre-line max-w-4xl mx-auto">
+                      {content.tagline}
+                    </p>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {content.cardTitles.map((title: string, i: number) => (
-                      <div key={i} className="glass-premium p-6 rounded-2xl border border-white/10 h-32 flex flex-col justify-between">
-                        <h3 className="text-[10px] font-black text-white uppercase tracking-widest leading-tight">{title}</h3>
-                        <div className="text-[8px] font-bold text-white/20 uppercase tracking-[0.2em] italic">Engine Module</div>
-                      </div>
-                    ))}
+                  <div className="pt-12 flex justify-center w-full text-white">
+                    <ul className="space-y-8 max-w-4xl text-left w-full">
+                      {(content.points || []).map((point: string, idx: number) => (
+                        <li key={idx} className="flex items-center gap-6 group">
+                          <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:border-primary/40 transition-all shadow-xl">
+                            {getIcon(idx)}
+                          </div>
+                          <span className="text-base md:text-lg font-bold text-white tracking-tight leading-tight uppercase">
+                            {point}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
 
-                  <div className="flex flex-col items-center gap-4 mt-12 text-white">
-                    {content.points.map((p: string, i: number) => (
-                      <div key={i} className="flex items-center gap-3">
-                        <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-                        <p className="text-sm font-bold text-white/70 uppercase tracking-widest">{p}</p>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="flex justify-center mt-12">
+                  <div className="text-center pt-8">
                     <CtaButton href="#">{content.ctaText}</CtaButton>
                   </div>
                 </div>
@@ -247,58 +240,29 @@ export function SalaryCapEditor() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-white/20 uppercase tracking-widest ml-1">Hero Subtitle</label>
+                    <label className="text-[10px] font-black text-white/20 uppercase tracking-widest ml-1">Hero Tagline</label>
                     <textarea
                       className="w-full h-32 bg-white/5 border border-white/10 text-white rounded-2xl p-4 text-sm focus:border-blue-500/50 outline-none transition-all resize-none"
-                      value={content.subtitle}
-                      onChange={(e) => updateContent("subtitle", e.target.value)}
+                      value={content.tagline}
+                      onChange={(e) => updateContent("tagline", e.target.value)}
                     />
                   </div>
                 </div>
               </div>
 
               <div className="bg-[#0a0d12]/40 p-8 rounded-[2.5rem] border border-white/5 space-y-6">
-                 <h2 className="text-[11px] font-black text-white/40 uppercase tracking-[0.4em]">Engine Modules</h2>
-                 <div className="space-y-4">
-                    <div className="space-y-1">
-                       <label className="text-[8px] font-black text-white/20 uppercase tracking-widest ml-1">Engine Section Title</label>
-                       <Input 
-                         value={content.engineTitle} 
-                         onChange={(e) => updateContent("engineTitle", e.target.value)}
-                         className="bg-white/5 border-white/10 text-white h-10 text-xs font-black uppercase"
-                       />
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {content.cardTitles.map((title: string, idx: number) => (
-                        <div key={idx} className="space-y-1">
-                          <label className="text-[8px] font-black text-white/10 uppercase tracking-widest ml-1">Card {idx + 1}</label>
-                          <Input 
-                            value={title} 
-                            onChange={(e) => {
-                              const newTitles = [...content.cardTitles]
-                              newTitles[idx] = e.target.value
-                              updateContent("cardTitles", newTitles)
-                            }}
-                            className="bg-black/40 border-white/10 text-white h-10 text-xs font-bold uppercase"
-                          />
-                        </div>
-                      ))}
-                    </div>
-                 </div>
-              </div>
-
-              <div className="bg-[#0a0d12]/40 p-8 rounded-[2.5rem] border border-white/5 space-y-6">
                  <div className="flex items-center justify-between">
-                   <h2 className="text-[11px] font-black text-white/40 uppercase tracking-[0.4em]">Strategy Points</h2>
+                   <h2 className="text-[11px] font-black text-white/40 uppercase tracking-[0.4em]">Mastery Points</h2>
                    <Button 
-                     onClick={() => updateContent("points", [...content.points, "New Strategy Point"])}
+                     onClick={() => updateContent("points", [...content.points, "New Mastery Point"])}
                      className="bg-blue-600/10 text-blue-500 border border-blue-500/20 text-[10px] font-black uppercase h-8 px-4 rounded-lg"
                    >
                      <PlusIcon className="size-3 mr-2" /> Add Point
                    </Button>
                  </div>
+
                  <div className="grid grid-cols-1 gap-3">
-                   {content.points.map((point: string, idx: number) => (
+                   {(content.points || []).map((point: string, idx: number) => (
                      <div key={idx} className="flex gap-2">
                         <Input
                           className="bg-white/5 border-white/10 text-white h-12 rounded-xl text-xs font-bold uppercase tracking-wider"

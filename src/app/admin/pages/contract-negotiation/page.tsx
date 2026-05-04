@@ -2,7 +2,7 @@ import { ContractNegotiationEditor } from "@/components/contract-negotiation-edi
 
 export default function AdminContractNegotiationPage() {
   return (
-    <div className="p-4 md:p-8 w-full container mx-auto h-full">
+    <div className="w-full max-w-full">
       <ContractNegotiationEditor />
     </div>
   )

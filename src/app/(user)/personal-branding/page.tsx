@@ -3,7 +3,7 @@ import React from "react";
 import { GradientHeader } from "@/components/gradient-header";
 import { CtaButton } from "@/components/cta-button";
 import { buildPageMetadata } from "@/lib/seo";
-import { BreadcrumbSchema } from "@/components/json-ld";
+import { BreadcrumbSchema, FAQSchema } from "@/components/json-ld";
 import connectDB from "@/lib/mongodb";
 import Page from "@/models/page";
 import { PageData, MetricData, ServiceBoxData, HighlightData } from "@/types/cms";
@@ -55,18 +55,19 @@ export default async function PersonalBrandingPage() {
     ],
     resultsTitle: "Personal Brand Strategy | Negotiation:",
     highlights: [
-      { value: "$8.2M", label: "Average Uplift in \n Endorsement Value" },
       { value: "340%", label: "Brand \n Growth" },
-    ]
+    ],
+    backgroundImage: "/glove.png"
   };
 
   return (
     <main className="relative min-h-screen overflow-x-hidden flex flex-col pt-12">
       <BreadcrumbSchema items={[{ name: "Personal Branding", href: "/personal-branding" }]} />
+      {pageData?.seo?.faqs && <FAQSchema faqs={pageData.seo.faqs} />}
       {/* Background Image */}
       <div className="absolute inset-0 z-[-1]">
         <Image
-          src="/glove.png"
+          src={content.backgroundImage || "/glove.png"}
           alt="Personal Branding Background"
           fill
           className="object-cover"
@@ -79,10 +80,10 @@ export default async function PersonalBrandingPage() {
         {/* Hero Section */}
         <div className="text-center space-y-4 mb-8 md:mb-12">
           <GradientHeader tag="h1" size="lg" className="mb-4">
-            {content.title.split('\n').map((line: string, i: number) => (
+            {(content.title || "").split('\n').map((line: string, i: number) => (
               <React.Fragment key={i}>
                 {line}
-                {i < content.title.split('\n').length - 1 && <br className="hidden md:block" />}
+                {i < (content.title || "").split('\n').length - 1 && <br className="hidden md:block" />}
               </React.Fragment>
             ))}
           </GradientHeader>

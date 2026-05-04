@@ -2,7 +2,7 @@ import { MarketingEndorsementsEditor } from "@/components/marketing-endorsements
 
 export default function MarketingEndorsementsAdminPage() {
   return (
-    <div className="p-4 md:p-8 max-w-7xl mx-auto">
+    <div className="w-full max-w-full">
       <MarketingEndorsementsEditor />
     </div>
   )

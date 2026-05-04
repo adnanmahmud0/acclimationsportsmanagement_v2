@@ -1,21 +1,77 @@
+import React from "react";
 import Image from "next/image";
-import { Metadata } from "next";
-import { buildPageMetadata } from "@/lib/seo";
 import { CheckCircle2 } from "lucide-react";
 import { GradientHeader } from "@/components/gradient-header";
 import { CtaButton } from "@/components/cta-button";
+import { buildPageMetadata } from "@/lib/seo";
 import { BreadcrumbSchema } from "@/components/json-ld";
 
-export const metadata: Metadata = buildPageMetadata("/high-school-talent");
+import connectDB from "@/lib/mongodb";
+import Page from "@/models/page";
+import { PageData } from "@/types/cms";
 
-export default function HighSchoolTalentPage() {
+async function getPageData() {
+  await connectDB();
+  const page = await Page.findOne({ slug: "high-school-talent" }).lean();
+  return page as unknown as PageData | null;
+}
+
+export async function generateMetadata() {
+  const page = await getPageData();
+  if (page?.seo) {
+    return {
+      title: page.seo.title,
+      description: page.seo.description,
+      keywords: page.seo.keywords,
+      openGraph: {
+        title: page.seo.title,
+        description: page.seo.description,
+        images: page.seo.ogImage ? [{ url: page.seo.ogImage }] : [],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: page.seo.title,
+        description: page.seo.description,
+        images: page.seo.ogImage ? [page.seo.ogImage] : [],
+      }
+    };
+  }
+  return buildPageMetadata("/high-school-talent");
+}
+
+export default async function HighSchoolTalentPage() {
+  const pageData = await getPageData();
+
+  const content = pageData?.content || {
+    mainTitle: "From Elite High School to the NBA \n Start Building Your Professional Future Now",
+    subDescription: "The Path to the Pros Begins Here",
+    description: "Join the exclusive network of elite prospects who secured multi-million dollar NIL deals and direct NBA pathways before graduation. Our proprietary system turns high school talent into professional assets.",
+    ctaText: "SCHEDULE YOUR CONFIDENTIAL CONTRACT STRATEGY CALL",
+    backgroundImage: "/player.png",
+    tagline: "Acclimation Edge",
+    points: [
+      { title: "Early Representation Advantage", items: ["Secure multi-million dollar NIL deals before your peers even start their recruitment process."] },
+      { title: "Direct NBA Pathway", items: ["Strategic connections to NBA scouts, front offices, and elite veteran agents."] },
+      { title: "Proprietary Valuation", items: ["Maximize your market value with our exclusive NIL-to-NBA valuation algorithm."] },
+      { title: "Family-Centric Strategy", items: ["Comprehensive guidance and concierge support for you and your entire family circle."] },
+    ],
+    stats: [
+      { label: "Guaranteed Scout Introductions", value: "" },
+      { label: "Exclusive NIL Contract Review", value: "" },
+      { label: "24/7 Strategy & Concierge Support", value: "" },
+      { label: "Elite Media & Interview Training", value: "" },
+      { label: "College-to-Pro Multi-Year Transition", value: "" },
+    ]
+  };
+
+
   return (
     <main className="relative min-h-screen overflow-x-hidden pt-12">
       <BreadcrumbSchema items={[{ name: "Elite High School Talent", href: "/high-school-talent" }]} />
       {/* Background Image with Overlay */}
       <div className="absolute inset-0 z-0">
         <Image
-          src="/player.png"
+          src={content.backgroundImage || "/player.png"}
           alt="High School Players Background"
           fill
           className="object-cover opacity-80"
@@ -29,21 +85,20 @@ export default function HighSchoolTalentPage() {
           {/* Header Content */}
           <div className="space-y-8">
             <GradientHeader tag="h1" size="lg" className="mb-4">
-              From Elite High School to the NBA <br />
-              <span className="   pr-12 flex">
-                Start Building Your Professional Future Now
-              </span>
+              {(content.mainTitle || "").split('\n').map((line, i) => (
+                <React.Fragment key={i}>
+                  {line}
+                  {i < (content.mainTitle || "").split('\n').length - 1 && <br />}
+                </React.Fragment>
+              ))}
             </GradientHeader>
 
             <div className="space-y-4">
               <h2 className="text-sm font-bold tracking-[0.3em] uppercase text-white/50 mb-4">
-                The Path to the Pros Begins Here
+                {content.subDescription}
               </h2>
               <p className="md:text-lg text-white/80 font-medium leading-relaxed max-w-4xl mx-auto">
-                Join the exclusive network of elite prospects who secured
-                multi-million dollar NIL deals and direct NBA pathways before
-                graduation. Our proprietary system turns high school talent into
-                professional assets.
+                {content.description}
               </p>
             </div>
           </div>
@@ -56,7 +111,7 @@ export default function HighSchoolTalentPage() {
                 <div className="flex items-center gap-3 text-primary">
                   <div className="h-[1px] w-8 bg-primary/40" />
                   <span className="text-xs font-black uppercase tracking-[0.4em]">
-                    Acclimation Edge
+                    {content.tagline}
                   </span>
                 </div>
                 <GradientHeader tag="h2" size="md">
@@ -66,22 +121,13 @@ export default function HighSchoolTalentPage() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <ChoiceItem
-                  title="Early Representation Advantage"
-                  desc="Secure multi-million dollar NIL deals before your peers even start their recruitment process."
-                />
-                <ChoiceItem
-                  title="Direct NBA Pathway"
-                  desc="Strategic connections to NBA scouts, front offices, and elite veteran agents."
-                />
-                <ChoiceItem
-                  title="Proprietary Valuation"
-                  desc="Maximize your market value with our exclusive NIL-to-NBA valuation algorithm."
-                />
-                <ChoiceItem
-                  title="Family-Centric Strategy"
-                  desc="Comprehensive guidance and concierge support for you and your entire family circle."
-                />
+                {content.points?.map((point, i) => (
+                  <ChoiceItem
+                    key={i}
+                    title={point.title}
+                    desc={point.items?.[0] || ""}
+                  />
+                ))}
               </div>
             </div>
 
@@ -100,13 +146,7 @@ export default function HighSchoolTalentPage() {
                   </div>
 
                   <ul className="space-y-6">
-                    {[
-                      "Guaranteed Scout Introductions",
-                      "Exclusive NIL Contract Review",
-                      "24/7 Strategy & Concierge Support",
-                      "Elite Media & Interview Training",
-                      "College-to-Pro Multi-Year Transition",
-                    ].map((benefit, idx) => (
+                    {content.stats?.map((benefit, idx) => (
                       <li
                         key={idx}
                         className="flex items-center gap-5 text-white/70 font-bold uppercase tracking-widest text-sm border-b border-white/[0.03] pb-6 last:border-0 hover:text-white transition-all duration-300 group/item"
@@ -114,7 +154,7 @@ export default function HighSchoolTalentPage() {
                         <div className="w-2 h-2 rounded-full border border-primary/40 flex items-center justify-center group-hover/item:border-primary transition-colors">
                           <div className="w-1 h-1 rounded-full bg-primary/40 group-hover/item:bg-primary" />
                         </div>
-                        {benefit}
+                        {benefit.label}
                       </li>
                     ))}
                   </ul>
@@ -132,7 +172,7 @@ export default function HighSchoolTalentPage() {
           <div className="space-y-12">
             <div className="pt-6 flex justify-center">
               <CtaButton href="/contact" className="w-full max-w-3xl">
-                SCHEDULE YOUR CONFIDENTIAL CONTRACT STRATEGY CALL
+                {content.ctaText}
               </CtaButton>
             </div>
           </div>

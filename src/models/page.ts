@@ -31,6 +31,12 @@ const pageSchema = new Schema<IPage>(
       title: { type: String, default: "" },
       description: { type: String, default: "" },
       keywords: { type: String, default: "" },
+      faqs: [
+        {
+          question: { type: String, default: "" },
+          answer: { type: String, default: "" },
+        },
+      ],
     },
   },
   { timestamps: true }

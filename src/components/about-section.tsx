@@ -33,16 +33,22 @@ export function AboutSection({ data }: { data?: PageData | null }) {
   return (
     <section className="relative py-24 overflow-hidden bg-[#05070a]" id="about">
       {/* Subtle Background elements */}
+      {content.backgroundImage && (
+        <div className="absolute inset-0 z-0">
+          <Image src={content.backgroundImage} alt="About Background" fill className="object-cover opacity-20" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#05070a] via-transparent to-[#05070a]" />
+        </div>
+      )}
       <div className="absolute top-1/4 -right-20 w-96 h-96 bg-primary/10 blur-[120px] rounded-full" />
       <div className="absolute bottom-1/4 -left-20 w-96 h-96 bg-secondary/10 blur-[120px] rounded-full" />
 
-      <div className="container mx-auto px-6 max-w-7xl relative">
+      <div className="w-full mx-auto px-6 max-w-7xl relative">
         <div className="text-center mb-16 space-y-4">
           <GradientHeader tag="h2" size="lg" className="mb-6">
-            {content.title.split('\n').map((line: string, i: number) => (
+            {(content.title || "").split('\n').map((line: string, i: number) => (
               <React.Fragment key={i}>
                 {line}
-                {i < content.title.split('\n').length - 1 && <br />}
+                {i < (content.title || "").split('\n').length - 1 && <br />}
               </React.Fragment>
             ))}
           </GradientHeader>
@@ -58,9 +64,9 @@ export function AboutSection({ data }: { data?: PageData | null }) {
           {/* Image Column */}
           <div className="lg:col-span-5 flex justify-center">
             <div className="relative group">
-              <div className="relative w-full aspect-[4/5] min-w-[270px] md:min-w-[520px] rounded-2xl overflow-hidden border border-white/10 glass shadow-2xl">
+              <div className="relative w-full aspect-[4/5] max-w-[520px] rounded-2xl overflow-hidden border border-white/10 glass shadow-2xl mx-auto">
                 <Image
-                  src="/owner/me.jpg"
+                  src={content.profileImage || "/owner/me.jpg"}
                   alt="Joe Grekoski"
                   fill
                   className="object-cover object-top hover:scale-105 transition-transform duration-700"

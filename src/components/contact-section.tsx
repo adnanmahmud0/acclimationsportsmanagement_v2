@@ -23,7 +23,7 @@ export function ContactSection({ data }: { data?: PageData | null }) {
          {/* Background Image with Overlay */}
          <div className="absolute inset-0 z-0">
             <Image
-               src="/bascatecoart_v6.png"
+               src={content.backgroundImage || "/bascatecoart_v6.png"}
                alt="Contact Background"
                fill
                className="object-cover opacity-80"
@@ -31,7 +31,7 @@ export function ContactSection({ data }: { data?: PageData | null }) {
             <div className="absolute inset-0 bg-gradient-to-b from-[#05070a]/95 via-[#05070a]/60 to-[#05070a]" />
          </div>
 
-         <div className="container mx-auto px-6 relative z-10 flex flex-col items-center">
+         <div className="w-full mx-auto px-6 relative z-10 flex flex-col items-center">
             {/* Header Section */}
             <div className="text-center space-y-6 mb-20 max-w-4xl mx-auto">
                <GradientHeader tag="h2" size="lg" className="mb-4">
@@ -60,10 +60,10 @@ export function ContactSection({ data }: { data?: PageData | null }) {
                         {content.phone}
                      </a>
                      <p className="text-white/50 text-sm font-bold leading-relaxed tracking-wide uppercase">
-                        {content.phoneDesc?.split('\n').map((line: string, i: number) => (
+                        {(content.phoneDesc || "").split('\n').map((line: string, i: number) => (
                            <React.Fragment key={i}>
                               {line}
-                              {i < content.phoneDesc.split('\n').length - 1 && <br />}
+                              {i < (content.phoneDesc || "").split('\n').length - 1 && <br />}
                            </React.Fragment>
                         ))}
                      </p>
@@ -85,10 +85,10 @@ export function ContactSection({ data }: { data?: PageData | null }) {
                         {content.email}
                      </a>
                      <p className="text-white/50 text-sm font-bold leading-relaxed tracking-wide uppercase">
-                        {content.emailDesc?.split('\n').map((line: string, i: number) => (
+                        {(content.emailDesc || "").split('\n').map((line: string, i: number) => (
                            <React.Fragment key={i}>
                               {line}
-                              {i < content.emailDesc.split('\n').length - 1 && <br />}
+                              {i < (content.emailDesc || "").split('\n').length - 1 && <br />}
                            </React.Fragment>
                         ))}
                      </p>
@@ -104,10 +104,10 @@ export function ContactSection({ data }: { data?: PageData | null }) {
                   <div className="space-y-4 relative z-10">
                      <h3 className="text-white font-black text-xl uppercase tracking-[0.2em] pt-4">{content.locationTitle}</h3>
                      <div className="text-white/90 font-bold text-lg leading-relaxed pt-2">
-                        {content.location?.split('\n').map((line: string, i: number) => (
+                        {(content.location || "").split('\n').map((line: string, i: number) => (
                            <React.Fragment key={i}>
                               {line}
-                              {i < content.location.split('\n').length - 1 && <br />}
+                              {i < (content.location || "").split('\n').length - 1 && <br />}
                            </React.Fragment>
                         ))}
                      </div>
