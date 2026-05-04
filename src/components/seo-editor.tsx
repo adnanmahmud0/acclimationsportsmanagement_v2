@@ -12,7 +12,7 @@ import { Textarea as UITextarea } from "@/components/ui/textarea"
 
 interface SeoEditorProps {
   data: PageData
-  updateSeo: (field: keyof PageData["seo"], value: string | FAQ[]) => void
+  updateSeo: (field: keyof PageData["seo"], value: string | FAQ[] | boolean) => void
 }
 
 export function SeoEditor({ data, updateSeo }: SeoEditorProps) {
@@ -44,6 +44,36 @@ export function SeoEditor({ data, updateSeo }: SeoEditorProps) {
             placeholder="A brief summary of your page for search engine results."
             className="bg-white/5 border-white/10 text-white rounded-xl min-h-[110px] text-xs focus:border-blue-500/50 transition-all resize-none p-4 leading-relaxed"
           />
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-6 pt-4 border-t border-white/5">
+          <div className="space-y-2">
+            <label className="text-[9px] font-black text-white/20 uppercase tracking-widest flex justify-between">
+              Canonical URL
+              <span className="text-[8px] opacity-50 lowercase font-normal italic">Prevent duplicate content</span>
+            </label>
+            <UIInput 
+              value={data.seo.canonicalUrl || ""} 
+              onChange={(e) => updateSeo("canonicalUrl", e.target.value)} 
+              placeholder="https://acclimationsports.com/..."
+              className="bg-white/5 border-white/10 text-white rounded-xl h-11 text-xs focus:border-blue-500/50 transition-all" 
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-[9px] font-black text-white/20 uppercase tracking-widest">Search Engine Indexing</label>
+            <div className="flex items-center gap-3 h-11 bg-white/5 border border-white/10 rounded-xl px-4">
+              <input 
+                type="checkbox" 
+                checked={!data.seo.noIndex} 
+                onChange={(e) => updateSeo("noIndex", !e.target.checked)}
+                className="size-4 rounded border-white/20 bg-white/5 text-blue-500 focus:ring-blue-500/50"
+              />
+              <span className="text-xs font-bold text-white/70">
+                {data.seo.noIndex ? "Hidden from Search Results" : "Index Page (Publicly Visible)"}
+              </span>
+            </div>
+          </div>
         </div>
 
         <div className="space-y-2 pt-4 border-t border-white/5">

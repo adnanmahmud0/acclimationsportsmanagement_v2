@@ -176,5 +176,7 @@ export interface PageData {
     keywords: string;
     ogImage?: string;
     faqs?: FAQ[];
+    canonicalUrl?: string;
+    noIndex?: boolean;
   };
 }

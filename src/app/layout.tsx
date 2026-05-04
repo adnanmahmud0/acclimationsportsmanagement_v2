@@ -46,6 +46,7 @@ export const metadata: Metadata = {
 };
 
 import { Toaster } from "@/components/ui/sonner";
+import { ViewTracker } from "@/components/view-tracker";
 
 export default function RootLayout({
   children,
@@ -59,6 +60,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-[#05070a] text-white">
         <OrganizationSchema />
+        <ViewTracker />
         {children}
         <Toaster />
       </body>

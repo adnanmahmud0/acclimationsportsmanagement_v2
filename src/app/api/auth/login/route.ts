@@ -89,16 +89,18 @@ export async function POST(req: Request) {
     // Set tokens in cookies for middleware
     response.cookies.set("accessToken", accessToken, {
       httpOnly: false, // Set to false so client can read it if needed, but middleware can always see it
-      secure: process.env.NODE_ENV === "production",
+      secure: false, // Changed to false for local testing over http/ip
       sameSite: "strict",
       maxAge: 24 * 60 * 60, // 1 day
+      path: "/",
     });
 
     response.cookies.set("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: false, // Changed to false for local testing
       sameSite: "strict",
       maxAge: 7 * 24 * 60 * 60, // 7 days
+      path: "/",
     });
 
     return response;

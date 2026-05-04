@@ -3,7 +3,7 @@ import Image from "next/image";
 import { CheckCircle2 } from "lucide-react";
 import { GradientHeader } from "@/components/gradient-header";
 import { CtaButton } from "@/components/cta-button";
-import { buildPageMetadata } from "@/lib/seo";
+import { buildMetadataFromPage } from "@/lib/seo";
 import { BreadcrumbSchema } from "@/components/json-ld";
 
 import connectDB from "@/lib/mongodb";
@@ -18,25 +18,7 @@ async function getPageData() {
 
 export async function generateMetadata() {
   const page = await getPageData();
-  if (page?.seo) {
-    return {
-      title: page.seo.title,
-      description: page.seo.description,
-      keywords: page.seo.keywords,
-      openGraph: {
-        title: page.seo.title,
-        description: page.seo.description,
-        images: page.seo.ogImage ? [{ url: page.seo.ogImage }] : [],
-      },
-      twitter: {
-        card: "summary_large_image",
-        title: page.seo.title,
-        description: page.seo.description,
-        images: page.seo.ogImage ? [page.seo.ogImage] : [],
-      }
-    };
-  }
-  return buildPageMetadata("/high-school-talent");
+  return buildMetadataFromPage(page, "/high-school-talent");
 }
 
 export default async function HighSchoolTalentPage() {

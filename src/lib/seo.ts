@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { PageData } from "@/types/cms";
 import {
     seoDefaultRoute,
     seoRoutes,
@@ -83,4 +84,22 @@ export function buildPageMetadata(path: SeoRoutePath | string): Metadata {
     const route = seoRoutes[normalizedPath as SeoRoutePath] ?? seoDefaultRoute;
 
     return buildMetadata(route, normalizedPath);
+}
+
+export function buildMetadataFromPage(page: PageData | null, fallbackPath: string): Metadata {
+    if (!page?.seo) {
+        return buildPageMetadata(fallbackPath);
+    }
+
+    const route = {
+        title: page.seo.title,
+        description: page.seo.description,
+        keywords: page.seo.keywords ? page.seo.keywords.split(",").map((k: string) => k.trim()) : [],
+        image: page.seo.ogImage,
+        noIndex: page.seo.noIndex,
+    };
+
+    const canonicalPath = page.seo.canonicalUrl || fallbackPath;
+
+    return buildMetadata(route, canonicalPath);
 }

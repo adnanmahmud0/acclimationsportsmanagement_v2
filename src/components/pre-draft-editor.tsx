@@ -101,7 +101,7 @@ export function PreDraftEditor() {
     })
   }
 
-  const updateSeo = (field: keyof PageData["seo"], value: string | FAQ[]) => {
+  const updateSeo = (field: keyof PageData["seo"], value: string | FAQ[] | boolean) => {
     setData((prev) => {
       if (!prev) return null
       return {

@@ -8,7 +8,11 @@ export interface IPage {
     title: string;
     description: string;
     keywords?: string;
+    canonicalUrl?: string;
+    noIndex?: boolean;
+    faqs?: Array<{ question: string; answer: string }>;
   };
+  views?: number;
 }
 
 const pageSchema = new Schema<IPage>(
@@ -31,12 +35,18 @@ const pageSchema = new Schema<IPage>(
       title: { type: String, default: "" },
       description: { type: String, default: "" },
       keywords: { type: String, default: "" },
+      canonicalUrl: { type: String, default: "" },
+      noIndex: { type: Boolean, default: false },
       faqs: [
         {
           question: { type: String, default: "" },
           answer: { type: String, default: "" },
         },
       ],
+    },
+    views: {
+      type: Number,
+      default: 0,
     },
   },
   { timestamps: true }

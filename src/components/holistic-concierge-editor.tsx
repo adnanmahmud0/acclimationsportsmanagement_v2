@@ -104,7 +104,7 @@ export function HolisticConciergeEditor({ slug }: HolisticConciergeEditorProps) 
     })
   }
 
-  const updateSeo = (field: keyof PageData["seo"], value: string | FAQ[]) => {
+  const updateSeo = (field: keyof PageData["seo"], value: string | FAQ[] | boolean) => {
     setData((prev: PageData | null) => {
       if (!prev) return null
       return { ...prev, seo: { ...prev.seo, [field]: value } }

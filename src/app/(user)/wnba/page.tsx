@@ -2,7 +2,7 @@ import Image from "next/image";
 import React from "react";
 import { GradientHeader } from "@/components/gradient-header";
 import { CtaButton } from "@/components/cta-button";
-import { buildPageMetadata } from "@/lib/seo";
+import { buildMetadataFromPage } from "@/lib/seo";
 import { BreadcrumbSchema, FAQSchema } from "@/components/json-ld";
 import connectDB from "@/lib/mongodb";
 import Page from "@/models/page";
@@ -16,25 +16,7 @@ async function getPageData() {
 
 export async function generateMetadata() {
   const page = await getPageData();
-  if (page?.seo) {
-    return {
-      title: page.seo.title,
-      description: page.seo.description,
-      keywords: page.seo.keywords,
-      openGraph: {
-        title: page.seo.title,
-        description: page.seo.description,
-        images: page.seo.ogImage ? [{ url: page.seo.ogImage }] : [],
-      },
-      twitter: {
-        card: "summary_large_image",
-        title: page.seo.title,
-        description: page.seo.description,
-        images: page.seo.ogImage ? [page.seo.ogImage] : [],
-      }
-    };
-  }
-  return buildPageMetadata("/wnba");
+  return buildMetadataFromPage(page, "/wnba");
 }
 
 export default async function WNBAPage() {

@@ -23,7 +23,7 @@ export async function middleware(request: NextRequest) {
     const token = request.cookies.get("accessToken")?.value;
 
     if (!token) {
-      return NextResponse.redirect(new URL("/login", request.url));
+      return NextResponse.redirect(new URL("/login?reason=no_token", request.url));
     }
 
     try {
@@ -37,7 +37,7 @@ export async function middleware(request: NextRequest) {
       return NextResponse.next();
     } catch (error) {
       console.error("Middleware Auth Error:", error);
-      return NextResponse.redirect(new URL("/login", request.url));
+      return NextResponse.redirect(new URL("/login?reason=invalid_token", request.url));
     }
   }
 

@@ -2,7 +2,7 @@ import Image from "next/image"
 import React from "react"
 import { GradientHeader } from "@/components/gradient-header"
 import { CtaButton } from "@/components/cta-button"
-import { buildPageMetadata } from "@/lib/seo"
+import { buildMetadataFromPage } from "@/lib/seo"
 import { BreadcrumbSchema } from "@/components/json-ld"
 
 import {
@@ -28,19 +28,7 @@ async function getPageData() {
 
 export async function generateMetadata() {
   const page = await getPageData();
-  if (page?.seo) {
-    return {
-      title: page.seo.title,
-      description: page.seo.description,
-      keywords: page.seo.keywords,
-      openGraph: {
-        title: page.seo.title,
-        description: page.seo.description,
-        images: page.seo.ogImage ? [{ url: page.seo.ogImage }] : [],
-      },
-    };
-  }
-  return buildPageMetadata("/holistic-concierge");
+  return buildMetadataFromPage(page, "/holistic-concierge");
 }
 
 export default async function HolisticConciergePage() {
