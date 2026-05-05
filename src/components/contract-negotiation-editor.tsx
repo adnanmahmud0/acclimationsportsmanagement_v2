@@ -96,7 +96,7 @@ export function ContractNegotiationEditor() {
       if (!prev) return null
       return {
         ...prev,
-        content: { ...prev.content, [field]: value }
+        content: { ...(prev.content || {}), [field]: value }
       }
     })
   }
@@ -106,7 +106,7 @@ export function ContractNegotiationEditor() {
       if (!prev) return null
       return {
         ...prev,
-        seo: { ...prev.seo, [field]: value }
+        seo: { ...(prev.seo || {}), [field]: value }
       }
     })
   }
@@ -172,21 +172,21 @@ export function ContractNegotiationEditor() {
             
             <div className="relative pt-12 pb-24 bg-[#05070a]">
               <div className="absolute inset-0 z-0">
-                <Image src={data.content.backgroundImage || "/effect.png"} alt="Bg" fill className="object-cover opacity-30" />
+                <Image src={data?.content?.backgroundImage || "/effect.png"} alt="Bg" fill className="object-cover opacity-30" />
               </div>
               <div className="container mx-auto px-6 pt-24 relative z-10 flex flex-col items-center">
                 <div className="space-y-8 max-w-5xl mx-auto text-center">
                   <GradientHeader tag="h1" size="lg" className="mb-4 text-center leading-tight">
-                    {(data.content.mainTitle || "").split('\n').map((line, i) => (
-                      <React.Fragment key={i}>{line}{i < (data.content.mainTitle || "").split('\n').length - 1 && <br />}</React.Fragment>
+                    {(data?.content?.mainTitle || "").split('\n').map((line, i) => (
+                      <React.Fragment key={i}>{line}{i < (data?.content?.mainTitle || "").split('\n').length - 1 && <br />}</React.Fragment>
                     ))}
                   </GradientHeader>
                   <p className="text-sm font-bold tracking-[0.3em] uppercase text-white/50 mb-4 max-w-3xl mx-auto leading-relaxed">
-                    {data.content.subDescription}
+                    {data?.content?.subDescription || ""}
                   </p>
                   <div className="flex flex-col items-center">
                     <ul className="text-left space-y-2">
-                      {data.content.points?.map((point: { title: string; items: string[] }, i: number) => (
+                      {data?.content?.points?.map((point: { title: string; items: string[] }, i: number) => (
                         <li key={i} className="flex items-center gap-4 text-white/80">
                           <div className="w-2 h-2 rounded-full bg-primary shadow-[0_0_10px_rgba(0,210,255,1)]" />
                           <span className="text-lg font-bold tracking-tight">{point.title}</span>
@@ -200,7 +200,7 @@ export function ContractNegotiationEditor() {
               <div className="container mx-auto px-6 mt-20 relative z-10">
                 <h2 className="text-center text-sm font-black uppercase tracking-[0.4em] text-primary mb-12">Negotiation Process</h2>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-                  {data.content.processSteps?.map((item: ProcessStep) => (
+                  {data?.content?.processSteps?.map((item: ProcessStep) => (
                     <div key={item.step} className="flex flex-col items-center text-center">
                       <div className="w-12 h-12 rounded-full bg-[#0a0d12] border border-primary/40 flex items-center justify-center font-black text-primary mb-4 shadow-[0_0_15px_rgba(0,210,255,0.2)]">
                         {item.step}
@@ -211,7 +211,7 @@ export function ContractNegotiationEditor() {
                   ))}
                 </div>
                 <div className="flex justify-center mt-16">
-                  <CtaButton href="#">{data.content.ctaText}</CtaButton>
+                  <CtaButton href="#">{data?.content?.ctaText || ""}</CtaButton>
                 </div>
               </div>
             </div>
@@ -227,7 +227,7 @@ export function ContractNegotiationEditor() {
                     <label className="text-[10px] font-black text-white/20 uppercase tracking-widest ml-1">Main Heading (use \n for line breaks)</label>
                     <textarea
                       className="w-full h-32 bg-white/5 border border-white/10 text-white rounded-2xl p-4 text-sm focus:border-blue-500/50 outline-none transition-all resize-none font-bold"
-                      value={data.content.mainTitle}
+                      value={data?.content?.mainTitle || ""}
                       onChange={(e) => updateContent("mainTitle", e.target.value)}
                     />
                   </div>
@@ -235,7 +235,7 @@ export function ContractNegotiationEditor() {
                     <label className="text-[10px] font-black text-white/20 uppercase tracking-widest ml-1">Sub-Description / Tagline</label>
                     <textarea
                       className="w-full h-32 bg-white/5 border border-white/10 text-white rounded-2xl p-4 text-sm focus:border-blue-500/50 outline-none transition-all resize-none font-medium"
-                      value={data.content.subDescription}
+                      value={data?.content?.subDescription || ""}
                       onChange={(e) => updateContent("subDescription", e.target.value)}
                     />
                   </div>
@@ -245,31 +245,33 @@ export function ContractNegotiationEditor() {
               <div className="bg-[#0a0d12]/40 p-8 rounded-[2.5rem] border border-white/5 space-y-6">
                  <div className="flex items-center justify-between">
                    <h2 className="text-[11px] font-black text-white/40 uppercase tracking-[0.4em]">Core Strategy Points</h2>
-                   <Button 
-                     onClick={() => updateContent("points", [...(data.content.points || []), { title: "New Point", items: [] }])}
-                     className="bg-blue-600/10 text-blue-500 border border-blue-500/20 text-[10px] font-black uppercase h-8 px-4 rounded-lg"
-                   >
-                     <PlusIcon className="size-3 mr-2" /> Add Point
-                   </Button>
+                    <Button 
+                      onClick={() => updateContent("points", [...(data?.content?.points || []), { title: "New Point", items: [] }])}
+                      className="bg-blue-600/10 text-blue-500 border border-blue-500/20 text-[10px] font-black uppercase h-8 px-4 rounded-lg"
+                    >
+                      <PlusIcon className="size-3 mr-2" /> Add Point
+                    </Button>
                  </div>
 
                  <div className="grid grid-cols-1 gap-3">
-                   {(data.content.points || []).map((point: { title: string; items: string[] }, idx: number) => (
+                   {(data?.content?.points || []).map((point: { title: string; items: string[] }, idx: number) => (
                      <div key={idx} className="flex gap-2">
-                        <Input
+                         <Input
                           className="bg-white/5 border-white/10 text-white h-12 rounded-xl text-xs font-bold uppercase tracking-wider"
                           value={point.title}
                           onChange={(e) => {
-                            const newPoints = [...(data.content.points || [])]
-                            newPoints[idx].title = e.target.value
-                            updateContent("points", newPoints)
+                            const newPoints = [...(data?.content?.points || [])]
+                            if (newPoints[idx]) {
+                              newPoints[idx].title = e.target.value
+                              updateContent("points", newPoints)
+                            }
                           }}
                         />
-                        <Button
+                         <Button
                           variant="ghost"
                           size="icon"
                           onClick={() => {
-                            const newPoints = data.content.points?.filter((_: unknown, i: number) => i !== idx) || []
+                            const newPoints = data?.content?.points?.filter((_: unknown, i: number) => i !== idx) || []
                             updateContent("points", newPoints)
                           }}
                           className="text-red-500/40 hover:text-red-500 hover:bg-red-500/10 h-12 w-12 rounded-xl"
@@ -284,7 +286,7 @@ export function ContractNegotiationEditor() {
               <div className="bg-[#0a0d12]/40 p-8 rounded-[2.5rem] border border-white/5 space-y-6">
                  <h2 className="text-[11px] font-black text-white/40 uppercase tracking-[0.4em]">Negotiation Process Steps</h2>
                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {data.content.processSteps?.map((step: ProcessStep, idx: number) => (
+                    {data?.content?.processSteps?.map((step: ProcessStep, idx: number) => (
                       <div key={idx} className="bg-white/5 p-6 rounded-2xl border border-white/5 space-y-4">
                         <div className="text-[10px] font-black text-primary uppercase tracking-widest border-b border-white/5 pb-2">Step {step.step}</div>
                         <div className="space-y-3">
@@ -293,9 +295,11 @@ export function ContractNegotiationEditor() {
                              <Input 
                                value={step.title} 
                                onChange={(e) => {
-                                 const newSteps = [...(data.content.processSteps || [])]
-                                 newSteps[idx].title = e.target.value
-                                 updateContent("processSteps", newSteps)
+                                 const newSteps = [...(data?.content?.processSteps || [])]
+                                 if (newSteps[idx]) {
+                                   newSteps[idx].title = e.target.value
+                                   updateContent("processSteps", newSteps)
+                                 }
                                }}
                                className="bg-black/40 border-white/10 text-white h-10 text-xs font-black uppercase"
                              />
@@ -305,9 +309,11 @@ export function ContractNegotiationEditor() {
                              <Input 
                                value={step.subtitle} 
                                onChange={(e) => {
-                                 const newSteps = [...(data.content.processSteps || [])]
-                                 newSteps[idx].subtitle = e.target.value
-                                 updateContent("processSteps", newSteps)
+                                 const newSteps = [...(data?.content?.processSteps || [])]
+                                 if (newSteps[idx]) {
+                                   newSteps[idx].subtitle = e.target.value
+                                   updateContent("processSteps", newSteps)
+                                 }
                                }}
                                className="bg-black/40 border-white/10 text-white h-10 text-xs font-bold uppercase tracking-widest"
                              />
@@ -325,7 +331,7 @@ export function ContractNegotiationEditor() {
                 
                 <ImageUpload
                   label="Background Image"
-                  value={data.content.backgroundImage || ""}
+                  value={data?.content?.backgroundImage || ""}
                   onChange={(v) => updateContent("backgroundImage", v)}
                 />
 
@@ -333,7 +339,7 @@ export function ContractNegotiationEditor() {
                   <label className="text-[10px] font-black text-white/20 uppercase tracking-widest ml-1">CTA Button Text</label>
                   <Input
                     className="bg-white/5 border-white/10 text-white h-12 rounded-xl text-sm font-bold uppercase tracking-widest"
-                    value={data.content.ctaText}
+                    value={data?.content?.ctaText || ""}
                     onChange={(e) => updateContent("ctaText", e.target.value)}
                   />
                 </div>

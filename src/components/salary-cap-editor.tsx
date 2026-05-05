@@ -118,7 +118,7 @@ export function SalaryCapEditor() {
     })
   }
 
-  if (loading || !data || !data.content.salaryCap) {
+  if (loading || !data) {
     return (
       <div className="flex items-center justify-center h-[60vh]">
         <Loader2Icon className="size-10 animate-spin text-blue-500" />
@@ -126,7 +126,15 @@ export function SalaryCapEditor() {
     )
   }
 
-  const content = data.content.salaryCap
+  const content = data?.content?.salaryCap || {
+    title: "",
+    subtitle: "",
+    engineTitle: "",
+    cardTitles: [],
+    points: [],
+    ctaText: "",
+    backgroundImage: ""
+  }
 
   return (
     <div className="space-y-12 pb-24 animate-in fade-in duration-700 w-full max-w-full overflow-x-hidden">

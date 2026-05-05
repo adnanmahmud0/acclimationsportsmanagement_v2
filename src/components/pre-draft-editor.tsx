@@ -122,7 +122,7 @@ export function PreDraftEditor() {
     return icons[idx % icons.length]
   }
 
-  if (loading || !data || !data.content.preDraft) {
+  if (loading || !data) {
     return (
       <div className="flex items-center justify-center h-[60vh]">
         <Loader2Icon className="size-10 animate-spin text-blue-500" />
@@ -130,7 +130,13 @@ export function PreDraftEditor() {
     )
   }
 
-  const content = data.content.preDraft
+  const content = data?.content?.preDraft || {
+    title: "",
+    tagline: "",
+    points: [],
+    ctaText: "",
+    backgroundImage: ""
+  }
 
   return (
     <div className="space-y-12 pb-24 animate-in fade-in duration-700 w-full max-w-full overflow-x-hidden">

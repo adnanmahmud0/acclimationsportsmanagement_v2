@@ -120,7 +120,7 @@ export function PersonalBrandingEditor() {
     })
   }
 
-  if (loading || !data || !data.content.personalBranding) {
+  if (loading || !data) {
     return (
       <div className="flex items-center justify-center h-[60vh]">
         <Loader2Icon className="size-10 animate-spin text-blue-500" />
@@ -128,7 +128,16 @@ export function PersonalBrandingEditor() {
     )
   }
 
-  const content = data.content.personalBranding
+  const content = data?.content?.personalBranding || {
+    title: "",
+    tagline: "",
+    metrics: [],
+    services: [],
+    resultsTitle: "",
+    highlights: [],
+    ctaText: "",
+    backgroundImage: ""
+  }
 
   return (
     <div className="space-y-12 pb-24 animate-in fade-in duration-700 w-full max-w-full overflow-x-hidden">

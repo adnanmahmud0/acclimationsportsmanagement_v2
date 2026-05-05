@@ -4,10 +4,11 @@ import React, { useState, useEffect, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
-import { SaveIcon, Loader2Icon, Settings2Icon, PhoneIcon, MailIcon, MapPinIcon } from "lucide-react"
+import { SaveIcon, Loader2Icon, Settings2Icon, PhoneIcon } from "lucide-react"
 import { PageData, FAQ } from "@/types/cms"
 import { SeoEditor } from "@/components/seo-editor"
 import { ImageUpload } from "@/components/image-upload"
+import { ContactSection } from "@/components/contact-section"
 
 export function ContactPageEditor() {
   const [loading, setLoading] = useState(true)
@@ -27,14 +28,19 @@ export function ContactPageEditor() {
           slug: "contact",
           title: "Contact",
           content: {
-            mainTitle: "Ready to Take the Next Step?",
-            subDescription: "Any questions or remarks? Just contact us!",
-            backgroundImage: "/aurabasketcoart.png",
-            points: [
-              { title: "Joe's Direct Line", items: ["512-518-6547", "Call or text Joe anytime — 24/7 for serious inquiries"] },
-              { title: "Email", items: ["Joseph.Grekoski@AcclimationGroup.com", "Fast responses for NBA, college & high school athletes"] },
-              { title: "Office Location", items: ["Acclimation Sports Agency", "Fort Lauderdale, Florida 33308"] },
-            ]
+            contact: {
+              title: "Ready to Take the Next Step?",
+              tagline: "Any questions or remarks? Just contact us!",
+              phone: "512-518-6547",
+              phoneTitle: "Joe's Direct Line",
+              phoneDesc: "Call or text Joe anytime —\n24/7 for serious inquiries",
+              email: "Joseph.Grekoski@AcclimationGroup.com",
+              emailTitle: "Email",
+              emailDesc: "Fast responses for NBA,\ncollege & high school athletes",
+              location: "Acclimation Sports Agency\nFort Lauderdale, Florida 33308",
+              locationTitle: "Office Location",
+              backgroundImage: "/bascatecoart_v6.png"
+            }
           },
           seo: {
             title: "Contact Acclimation Sports Management | Joe Grekoski",
@@ -80,13 +86,14 @@ export function ContactPageEditor() {
     })
   }
 
-  const updatePoint = (idx: number, itemIdx: number, value: string) => {
+  const updateContent = (field: string, value: string) => {
     setData((prev) => {
       if (!prev) return null
-      const newPoints = [...(prev.content.points || [])]
-      newPoints[idx] = { ...newPoints[idx], items: [...(newPoints[idx].items || [])] }
-      newPoints[idx].items[itemIdx] = value
-      return { ...prev, content: { ...prev.content, points: newPoints } }
+      const content = { ...prev.content }
+      const contactData = { ...(content.contact || {}), [field]: value }
+      // @ts-expect-error - contactData might be partial but is being built
+      content.contact = contactData
+      return { ...prev, content }
     })
   }
 
@@ -98,10 +105,6 @@ export function ContactPageEditor() {
     )
   }
 
-  const phone = data.content.points?.[0]
-  const email = data.content.points?.[1]
-  const location = data.content.points?.[2]
-
   return (
     <div className="space-y-12 pb-24 animate-in fade-in duration-700 w-full">
       {/* Header */}
@@ -112,7 +115,7 @@ export function ContactPageEditor() {
           </div>
           <div>
             <h1 className="text-xl font-black text-white uppercase tracking-tight italic">Contact Page <span className="text-blue-500 text-[10px] not-italic align-top ml-1">EDITOR</span></h1>
-            <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.3em]">Manage contact info and SEO</p>
+            <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.3em]">Manage contact information, visual branding, and SEO</p>
           </div>
         </div>
 
@@ -146,166 +149,92 @@ export function ContactPageEditor() {
       {activeTab === "seo" ? (
         <SeoEditor data={data} updateSeo={updateSeo} />
       ) : (
-        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-          {/* Page Basics */}
-          <div className="bg-[#0a0d12]/40 p-8 rounded-[2.5rem] border border-white/5 space-y-6">
-            <h2 className="text-[11px] font-black text-white/40 uppercase tracking-[0.4em]">Page Header</h2>
-
-            <ImageUpload
-              label="Background Image"
-              value={data?.content?.backgroundImage || ""}
-              onChange={(v) => setData(prev => prev ? ({ ...prev, content: { ...prev.content, backgroundImage: v } }) : null)}
-            />
-
-            <div className="space-y-2">
-              <label className="text-[10px] font-black text-white/20 uppercase tracking-widest ml-1">Main Heading</label>
-              <Input
-                className="bg-white/5 border-white/10 text-white h-12 rounded-xl text-sm"
-                value={data?.content?.mainTitle || ""}
-                onChange={(e) => setData(prev => prev ? ({ ...prev, content: { ...prev.content, mainTitle: e.target.value } }) : null)}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-[10px] font-black text-white/20 uppercase tracking-widest ml-1">Sub-Description</label>
-              <Input
-                className="bg-white/5 border-white/10 text-white h-12 rounded-xl text-sm"
-                value={data?.content?.subDescription || ""}
-                onChange={(e) => setData(prev => prev ? ({ ...prev, content: { ...prev.content, subDescription: e.target.value } }) : null)}
-              />
-            </div>
-          </div>
-
-          {/* Contact Info Cards */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Phone */}
-            <div className="bg-[#0a0d12]/40 p-8 rounded-[2.5rem] border border-white/5 space-y-5">
-              <div className="flex items-center gap-3">
-                <div className="size-9 bg-blue-600/20 rounded-xl flex items-center justify-center border border-blue-500/20">
-                  <PhoneIcon className="size-4 text-blue-500" />
+        <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
+          
+          {/* Section 4: Contact Section */}
+          <section className="space-y-8">
+            <PreviewBlock title="Contact Page Preview">
+              <ContactSection data={data} />
+            </PreviewBlock>
+            
+            <div className="bg-[#0a0d12]/40 p-8 rounded-[2.5rem] border border-white/5 space-y-12">
+              <div className="flex items-center gap-3 border-b border-white/5 pb-4">
+                <div className="size-8 bg-cyan-600/20 rounded-lg flex items-center justify-center border border-cyan-500/20">
+                  <PhoneIcon className="size-4 text-cyan-500" />
                 </div>
-                <h2 className="text-[11px] font-black text-white/40 uppercase tracking-[0.4em]">Phone Card</h2>
+                <h2 className="text-[11px] font-black text-white/40 uppercase tracking-[0.4em]">Direct Communication Hardening</h2>
               </div>
-
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-white/20 uppercase tracking-widest ml-1">Card Title</label>
-                <Input
-                  className="bg-white/5 border-white/10 text-white h-11 rounded-xl text-xs"
-                  value={phone?.title || ""}
-                  onChange={(e) => setData(prev => {
-                    if (!prev) return null
-                    const pts = [...(prev.content.points || [])]
-                    pts[0] = { ...pts[0], title: e.target.value }
-                    return { ...prev, content: { ...prev.content, points: pts } }
-                  })}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-white/20 uppercase tracking-widest ml-1">Phone Number</label>
-                <Input
-                  className="bg-white/5 border-white/10 text-white h-11 rounded-xl text-xs"
-                  value={phone?.items?.[0] || ""}
-                  onChange={(e) => updatePoint(0, 0, e.target.value)}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-white/20 uppercase tracking-widest ml-1">Description</label>
-                <textarea
-                  className="w-full h-24 bg-white/5 border border-white/10 text-white rounded-xl p-3 text-xs focus:border-blue-500/50 outline-none transition-all resize-none"
-                  value={phone?.items?.[1] || ""}
-                  onChange={(e) => updatePoint(0, 1, e.target.value)}
-                />
-              </div>
-            </div>
-
-            {/* Email */}
-            <div className="bg-[#0a0d12]/40 p-8 rounded-[2.5rem] border border-white/5 space-y-5">
-              <div className="flex items-center gap-3">
-                <div className="size-9 bg-blue-600/20 rounded-xl flex items-center justify-center border border-blue-500/20">
-                  <MailIcon className="size-4 text-blue-500" />
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <div className="space-y-6">
+                   <h3 className="text-[10px] font-black text-cyan-500 uppercase tracking-widest ml-1">Branding & Headers</h3>
+                   <ImageUpload label="Contact BG" value={data?.content?.contact?.backgroundImage || ""} onChange={(v) => updateContent("backgroundImage", v)} />
+                   <EditField label="Main Heading" value={data?.content?.contact?.title || ""} onChange={(v) => updateContent("title", v)} />
+                   <EditField label="Sub-Tagline" value={data?.content?.contact?.tagline || ""} onChange={(v) => updateContent("tagline", v)} />
                 </div>
-                <h2 className="text-[11px] font-black text-white/40 uppercase tracking-[0.4em]">Email Card</h2>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-white/20 uppercase tracking-widest ml-1">Card Title</label>
-                <Input
-                  className="bg-white/5 border-white/10 text-white h-11 rounded-xl text-xs"
-                  value={email?.title || ""}
-                  onChange={(e) => setData(prev => {
-                    if (!prev) return null
-                    const pts = [...(prev.content.points || [])]
-                    pts[1] = { ...pts[1], title: e.target.value }
-                    return { ...prev, content: { ...prev.content, points: pts } }
-                  })}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-white/20 uppercase tracking-widest ml-1">Email Address</label>
-                <Input
-                  className="bg-white/5 border-white/10 text-white h-11 rounded-xl text-xs"
-                  value={email?.items?.[0] || ""}
-                  onChange={(e) => updatePoint(1, 0, e.target.value)}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-white/20 uppercase tracking-widest ml-1">Description</label>
-                <textarea
-                  className="w-full h-24 bg-white/5 border border-white/10 text-white rounded-xl p-3 text-xs focus:border-blue-500/50 outline-none transition-all resize-none"
-                  value={email?.items?.[1] || ""}
-                  onChange={(e) => updatePoint(1, 1, e.target.value)}
-                />
-              </div>
-            </div>
-
-            {/* Location */}
-            <div className="bg-[#0a0d12]/40 p-8 rounded-[2.5rem] border border-white/5 space-y-5">
-              <div className="flex items-center gap-3">
-                <div className="size-9 bg-blue-600/20 rounded-xl flex items-center justify-center border border-blue-500/20">
-                  <MapPinIcon className="size-4 text-blue-500" />
+                <div className="space-y-6">
+                   <h3 className="text-[10px] font-black text-cyan-500 uppercase tracking-widest ml-1">Contact Intelligence</h3>
+                   <div className="space-y-4">
+                      {/* Phone */}
+                      <div className="bg-white/5 p-6 rounded-3xl border border-white/5 space-y-4">
+                        <EditField label="Phone Title" value={data?.content?.contact?.phoneTitle || ""} onChange={(v) => updateContent("phoneTitle", v)} />
+                        <EditField label="Phone Number" value={data?.content?.contact?.phone || ""} onChange={(v) => updateContent("phone", v)} />
+                        <EditField label="Phone Description" type="textarea" height="h-20" value={data?.content?.contact?.phoneDesc || ""} onChange={(v) => updateContent("phoneDesc", v)} />
+                      </div>
+                      {/* Email */}
+                      <div className="bg-white/5 p-6 rounded-3xl border border-white/5 space-y-4">
+                        <EditField label="Email Title" value={data?.content?.contact?.emailTitle || ""} onChange={(v) => updateContent("emailTitle", v)} />
+                        <EditField label="Email Address" value={data?.content?.contact?.email || ""} onChange={(v) => updateContent("email", v)} />
+                        <EditField label="Email Description" type="textarea" height="h-20" value={data?.content?.contact?.emailDesc || ""} onChange={(v) => updateContent("emailDesc", v)} />
+                      </div>
+                      {/* Location */}
+                      <div className="bg-white/5 p-6 rounded-3xl border border-white/5 space-y-4">
+                        <EditField label="Location Title" value={data?.content?.contact?.locationTitle || ""} onChange={(v) => updateContent("locationTitle", v)} />
+                        <EditField label="Full Office Address" type="textarea" height="h-24" value={data?.content?.contact?.location || ""} onChange={(v) => updateContent("location", v)} />
+                      </div>
+                   </div>
                 </div>
-                <h2 className="text-[11px] font-black text-white/40 uppercase tracking-[0.4em]">Location Card</h2>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-white/20 uppercase tracking-widest ml-1">Card Title</label>
-                <Input
-                  className="bg-white/5 border-white/10 text-white h-11 rounded-xl text-xs"
-                  value={location?.title || ""}
-                  onChange={(e) => setData(prev => {
-                    if (!prev) return null
-                    const pts = [...(prev.content.points || [])]
-                    pts[2] = { ...pts[2], title: e.target.value }
-                    return { ...prev, content: { ...prev.content, points: pts } }
-                  })}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-white/20 uppercase tracking-widest ml-1">Business Name</label>
-                <Input
-                  className="bg-white/5 border-white/10 text-white h-11 rounded-xl text-xs"
-                  value={location?.items?.[0] || ""}
-                  onChange={(e) => updatePoint(2, 0, e.target.value)}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-white/20 uppercase tracking-widest ml-1">Address</label>
-                <textarea
-                  className="w-full h-24 bg-white/5 border border-white/10 text-white rounded-xl p-3 text-xs focus:border-blue-500/50 outline-none transition-all resize-none"
-                  value={location?.items?.[1] || ""}
-                  onChange={(e) => updatePoint(2, 1, e.target.value)}
-                />
               </div>
             </div>
-          </div>
+          </section>
+
         </div>
       )}
     </div>
   )
 }
+
+function PreviewBlock({ title, children }: { title: string, children: React.ReactNode }) {
+  return (
+    <div className="w-full rounded-[3rem] overflow-hidden border border-white/5 bg-black shadow-3xl">
+      <div className="bg-white/5 px-8 py-3 flex items-center justify-center gap-3 border-b border-white/5">
+        <div className="size-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_10px_#22c55e]" />
+        <span className="text-[10px] font-black text-white/40 uppercase tracking-[0.4em]">{title}</span>
+      </div>
+      <div className="relative pointer-events-none opacity-90 transition-all">
+        {children}
+      </div>
+    </div>
+  )
+}
+
+function EditField({ label, value, onChange, type = "text", height = "h-24" }: { label: string, value: string, onChange: (v: string) => void, type?: "text" | "textarea", height?: string }) {
+  return (
+    <div className="space-y-2">
+      <label className="text-[10px] font-black text-white/20 uppercase tracking-widest ml-1">{label}</label>
+      {type === "text" ? (
+        <Input 
+          value={value} 
+          onChange={(e) => onChange(e.target.value)} 
+          className="bg-white/5 border-white/10 text-white rounded-xl h-11 text-xs font-bold" 
+        />
+      ) : (
+        <textarea
+          className={`flex w-full ${height} rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500/50 transition-all no-scrollbar font-medium resize-none`}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+        />
+      )}
+    </div>
+  )
+}
+

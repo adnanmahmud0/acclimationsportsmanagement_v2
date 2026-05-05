@@ -17,7 +17,7 @@ export function FounderCard() {
       <div className="glass p-4 rounded-2xl border border-white/10 flex items-center gap-4 text-left hover:border-primary/50 transition-all hover:scale-105 shadow-2xl group max-w-[280px]">
         <div className="w-12 h-12 rounded-lg overflow-hidden border border-primary/30 shrink-0">
           <Image 
-            src="/owner/me.png" 
+            src="/owner/me.jpg" 
             alt="Joe Grekoski" 
             width={48} 
             height={48} 

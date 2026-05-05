@@ -131,7 +131,7 @@ export function HolisticConciergeEditor({ slug }: HolisticConciergeEditorProps) 
     )
   }
 
-  const content = data.content.holisticConcierge || {
+  const content = data?.content?.holisticConcierge || {
     title: "",
     tagline: "",
     services: [],

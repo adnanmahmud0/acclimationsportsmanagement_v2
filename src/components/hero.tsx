@@ -116,7 +116,7 @@ export function Hero({ data }: { data?: PageData | null }) {
             <Link href="/contact" className="group relative">
               <div className="absolute inset-0 bg-primary/40 blur-2xl rounded-full scale-75 group-hover:scale-100 transition-transform duration-500" />
               <button className="relative px-10 py-4 bg-primary text-background font-black text-base tracking-widest rounded-full shadow-[0_0_30px_rgba(0,210,255,0.6)] hover:shadow-[0_0_50px_rgba(0,210,255,0.8)] hover:scale-105 active:scale-95 transition-all flex items-center gap-3 font-sans!">
-              GET STARTED
+                {content.ctaText || "GET STARTED"}
                 <ArrowRight className="w-5 h-5" />
               </button>
             </Link>

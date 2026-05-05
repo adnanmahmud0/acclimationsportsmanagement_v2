@@ -124,7 +124,7 @@ export function MarketingEndorsementsEditor() {
     }
   };
 
-  if (loading || !data || !data.content.marketingEndorsements) {
+  if (loading || !data) {
     return (
       <div className="flex items-center justify-center h-[60vh]">
         <Loader2Icon className="size-10 animate-spin text-blue-500" />
@@ -132,7 +132,15 @@ export function MarketingEndorsementsEditor() {
     )
   }
 
-  const content = data.content.marketingEndorsements
+  const content = data?.content?.marketingEndorsements || {
+    title: "",
+    tagline: "",
+    items: [],
+    transitionQuote: "",
+    readyHeading: "",
+    ctaText: "",
+    backgroundImage: ""
+  }
 
   return (
     <div className="space-y-12 pb-24 animate-in fade-in duration-700 w-full max-w-full overflow-x-hidden">

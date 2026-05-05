@@ -19,6 +19,7 @@ export interface HeroData {
     title: string;
     data: ChartPoint[];
   };
+  ctaText?: string;
 }
 
 export interface ServicePoint {

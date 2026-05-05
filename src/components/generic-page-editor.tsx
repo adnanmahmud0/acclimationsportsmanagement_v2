@@ -167,13 +167,13 @@ export function GeneralPageEditor({ slug, title }: GeneralPageEditorProps) {
                   
                   {data?.content?.subDescription && (
                     <p className="text-sm font-bold tracking-[0.3em] uppercase text-white/50">
-                      {data.content.subDescription}
+                      {data?.content?.subDescription}
                     </p>
                   )}
 
                   {data?.content?.description && (
                     <p className="text-white/60 font-medium leading-relaxed max-w-2xl mx-auto">
-                      {data.content.description}
+                      {data?.content?.description}
                     </p>
                   )}
 
@@ -196,7 +196,7 @@ export function GeneralPageEditor({ slug, title }: GeneralPageEditorProps) {
                   <textarea
                     className="w-full h-32 bg-white/5 border border-white/10 text-white rounded-2xl p-4 text-sm focus:border-blue-500/50 outline-none transition-all resize-none font-bold"
                     value={data?.content?.mainTitle || ""}
-                    onChange={(e) => setData(prev => prev ? ({ ...prev, content: { ...prev.content, mainTitle: e.target.value } }) : null)}
+                    onChange={(e) => setData(prev => prev ? ({ ...prev, content: { ...(prev.content || {}), mainTitle: e.target.value } }) : null)}
                   />
                 </div>
 
@@ -205,7 +205,7 @@ export function GeneralPageEditor({ slug, title }: GeneralPageEditorProps) {
                   <Input
                     className="bg-white/5 border-white/10 text-white h-12 rounded-xl text-sm"
                     value={data?.content?.subDescription || ""}
-                    onChange={(e) => setData(prev => prev ? ({ ...prev, content: { ...prev.content, subDescription: e.target.value } }) : null)}
+                    onChange={(e) => setData(prev => prev ? ({ ...prev, content: { ...(prev.content || {}), subDescription: e.target.value } }) : null)}
                   />
                 </div>
 
@@ -214,7 +214,7 @@ export function GeneralPageEditor({ slug, title }: GeneralPageEditorProps) {
                   <textarea
                     className="w-full h-40 bg-white/5 border border-white/10 text-white rounded-2xl p-4 text-sm focus:border-blue-500/50 outline-none transition-all resize-none"
                     value={data?.content?.description || ""}
-                    onChange={(e) => setData(prev => prev ? ({ ...prev, content: { ...prev.content, description: e.target.value } }) : null)}
+                    onChange={(e) => setData(prev => prev ? ({ ...prev, content: { ...(prev.content || {}), description: e.target.value } }) : null)}
                   />
                 </div>
               </div>
@@ -225,7 +225,7 @@ export function GeneralPageEditor({ slug, title }: GeneralPageEditorProps) {
                    <Button 
                      onClick={() => {
                        const newPoints = [...(data?.content?.points || []), { title: "New Point", items: ["New detail..."] }]
-                        setData(prev => prev ? ({ ...prev, content: { ...prev.content, points: newPoints } }) : null)
+                        setData(prev => prev ? ({ ...prev, content: { ...(prev.content || {}), points: newPoints } }) : null)
                      }}
                      className="bg-blue-600/10 text-blue-500 border border-blue-500/20 text-[10px] font-black uppercase h-8 px-4 rounded-lg"
                    >
@@ -257,7 +257,7 @@ export function GeneralPageEditor({ slug, title }: GeneralPageEditorProps) {
                                onChange={(e) => {
                                  const newPoints = [...(data?.content?.points || [])]
                                  newPoints[idx].title = e.target.value
-                                 setData(prev => prev ? ({ ...prev, content: { ...prev.content, points: newPoints } }) : null)
+                                 setData(prev => prev ? ({ ...prev, content: { ...(prev.content || {}), points: newPoints } }) : null)
                                }}
                              />
                           </div>
@@ -269,7 +269,7 @@ export function GeneralPageEditor({ slug, title }: GeneralPageEditorProps) {
                                onChange={(e) => {
                                  const newPoints = [...(data?.content?.points || [])]
                                  newPoints[idx].items = [e.target.value]
-                                 setData(prev => prev ? ({ ...prev, content: { ...prev.content, points: newPoints } }) : null)
+                                 setData(prev => prev ? ({ ...prev, content: { ...(prev.content || {}), points: newPoints } }) : null)
                                }}
                              />
                           </div>
@@ -287,7 +287,7 @@ export function GeneralPageEditor({ slug, title }: GeneralPageEditorProps) {
                 <ImageUpload
                   label="Page Background Image"
                   value={data?.content?.backgroundImage || ""}
-                  onChange={(v) => setData(prev => prev ? ({ ...prev, content: { ...prev.content, backgroundImage: v } }) : null)}
+                  onChange={(v) => setData(prev => prev ? ({ ...prev, content: { ...(prev.content || {}), backgroundImage: v } }) : null)}
                 />
 
                 <div className="space-y-2">
@@ -295,7 +295,7 @@ export function GeneralPageEditor({ slug, title }: GeneralPageEditorProps) {
                   <Input
                     className="bg-white/5 border-white/10 text-white h-12 rounded-xl text-sm font-bold uppercase tracking-widest"
                     value={data?.content?.ctaText || ""}
-                    onChange={(e) => setData(prev => prev ? ({ ...prev, content: { ...prev.content, ctaText: e.target.value } }) : null)}
+                    onChange={(e) => setData(prev => prev ? ({ ...prev, content: { ...(prev.content || {}), ctaText: e.target.value } }) : null)}
                   />
                 </div>
               </div>
@@ -306,7 +306,7 @@ export function GeneralPageEditor({ slug, title }: GeneralPageEditorProps) {
                   <Button 
                     onClick={() => {
                       const newStats = [...(data?.content?.stats || []), { label: "Label", value: "Value" }]
-                      setData(prev => prev ? ({ ...prev, content: { ...prev.content, stats: newStats } }) : null)
+                      setData(prev => prev ? ({ ...prev, content: { ...(prev.content || {}), stats: newStats } }) : null)
                     }}
                     className="bg-blue-600/10 text-blue-500 border border-blue-500/20 text-[10px] font-black uppercase h-8 px-4 rounded-lg"
                   >
@@ -325,7 +325,7 @@ export function GeneralPageEditor({ slug, title }: GeneralPageEditorProps) {
                           onChange={(e) => {
                             const newStats = [...(data?.content?.stats || [])]
                             newStats[idx].label = e.target.value
-                            setData(prev => prev ? ({ ...prev, content: { ...prev.content, stats: newStats } }) : null)
+                            setData(prev => prev ? ({ ...prev, content: { ...(prev.content || {}), stats: newStats } }) : null)
                           }}
                         />
                       </div>
@@ -337,7 +337,7 @@ export function GeneralPageEditor({ slug, title }: GeneralPageEditorProps) {
                           onChange={(e) => {
                             const newStats = [...(data?.content?.stats || [])]
                             newStats[idx].value = e.target.value
-                            setData(prev => prev ? ({ ...prev, content: { ...prev.content, stats: newStats } }) : null)
+                            setData(prev => prev ? ({ ...prev, content: { ...(prev.content || {}), stats: newStats } }) : null)
                           }}
                         />
                       </div>
@@ -346,7 +346,7 @@ export function GeneralPageEditor({ slug, title }: GeneralPageEditorProps) {
                         size="icon"
                         onClick={() => {
                           const newStats = data?.content?.stats?.filter((_, i) => i !== idx)
-                          setData(prev => prev ? ({ ...prev, content: { ...prev.content, stats: newStats } }) : null)
+                          setData(prev => prev ? ({ ...prev, content: { ...(prev.content || {}), stats: newStats } }) : null)
                         }}
                         className="text-red-500/40 hover:text-red-500 hover:bg-red-500/10 h-10 rounded-xl"
                       >
