@@ -60,6 +60,7 @@ export function Hero({ data }: { data?: PageData | null }) {
           fill
           className="object-cover object-top opacity-80"
           priority
+          unoptimized
         />
         <div className="absolute inset-0 bg-gradient-to-b from-[#05070a]/60 via-[#05070a]/20 to-[#05070a]" />
       </div>

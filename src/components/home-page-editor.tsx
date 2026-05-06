@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
@@ -26,117 +26,34 @@ import { PageData, FAQ } from "@/types/cms"
 import { SeoEditor } from "@/components/seo-editor"
 import { ImageUpload } from "@/components/image-upload"
 
+import { mergePageData } from "@/lib/data-utils"
+
 export function HomePageEditor() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [data, setData] = useState<PageData | null>(null)
   const [activeTab, setActiveTab] = useState<"live" | "seo">("seo")
 
-  useEffect(() => {
-    fetchPageData()
-  }, [])
-
-  const fetchPageData = async () => {
+  const fetchPageData = useCallback(async () => {
     try {
       const response = await fetch("/api/pages/home")
       const result = await response.json()
       if (result.success) {
-        setData(result.data)
+        setData(mergePageData(result.data))
       } else {
-        setData({
-          slug: "home",
-          title: "Home Page",
-          content: {
-            hero: {
-              title: "Where Economic Precision \n Meets NBA Domination",
-              tagline: "A New Kind of Basketball Agency",
-              ctaText: "GET STARTED",
-              features: ["20+ Years Economic Edge", "Real-Time Salary Cap Forecasting", "Litigation-Grade Strategy", "In-House Analytics", "Lower Fees & More In Your Pocket"],
-              cards: [
-                { title: "NBA Contract Negotiation", desc: "Data-driven deals with litigation-grade strategy.", type: "shield" },
-                { title: "Brand Development", desc: "Turn your talent into a premium economic asset.", type: "trending" },
-                { title: "Marketing and Endorsements", desc: "Proprietary analytics ensure you're never underpaid.", type: "handshake" },
-                { title: "Holistic Support", desc: "Elite trainers, chefs, wealth advisors & strategists.", type: "trophy" },
-              ],
-              chart: {
-                title: "Projected Career Value Growth",
-                data: [
-                  { year: 1, value: 2.5, label: "Year 1: $2.5M" },
-                  { year: 4, value: 8.1, label: "Year 4: $8.1M" },
-                  { year: 8, value: 15.3, label: "Year 8: $15.3M" },
-                  { year: 12, value: 22.7, label: "Year 12: $22.7M" },
-                ]
-              }
-            },
-            oneStopShop: {
-              title: "One-Stop Shop for Everything",
-              description: "We do it all — contract negotiation, salary-cap strategy, brand & endorsement deals, pre-draft mastery, analytics, and full concierge support.",
-              ctaText: "SCHEDULE YOUR CONFIDENTIAL CONTRACT STRATEGY CALL",
-              points: [
-                {
-                  title: "Pre-Draft and NBA Combine Mastery",
-                  items: ["Data-driven positioning", "Medical evaluation strategy", "Elite scouting access", "Athletic profiling that sets your entire NBA career foundation."]
-                },
-                {
-                  title: "Proprietary Salary Cap and Analytical Models",
-                  items: ["Real-time forecasting", "Luxury-tax modeling", "Endorsement valuation algorithms", "Market value simulations", "In-house analytics that consistently put more money in your pocket."]
-                },
-                {
-                  title: "Litigation-Grade NBA Contract Negotiation",
-                  items: ["Precision tactics", "Courtroom-proven leverage", "Unprecedented leverage", "Better deals at significantly lower fees", "Career-longevity protection"]
-                },
-                {
-                  title: "Generational Wealth and Business Empire",
-                  items: ["Off-court brand architecture", "Endorsement empire building", "Private-jet concierge support", "Elite trainers, CPAs & wealth advisors", "Legacy planning", "Dynamics"]
-                }
-              ]
-            },
-            about: {
-              title: "About Acclimation Sports Management\nLed by Joe Grekoski",
-              subtitle: "I am a certified agent from the National Basketball Players Association (NBPA).",
-              description: "Joe Grekoski is the founder of Acclimation Group and Acclimation Sports Management...",
-              focusText: "While other agents focus only on basketball, Joe Grekoski built Acclimation Sports Management as the true one-stop shop. You just play basketball. We handle everything else.",
-              ctaText: "SCHEDULE YOUR CONFIDENTIAL CONTRACT STRATEGY CALL",
-              bullets: [
-                "Launched Acclimation Group and built it into a premier advisory firm serving top law firms worldwide.",
-                "Advised on the sale of IP assets to professional sports teams using advanced social media sentiment analysis.",
-                "Featured on CBS News discussing college basketball economics and player valuation.",
-                "Expert in determining fair market rates for endorsement deals and NIL valuation.",
-                "Brings courtroom-tested economic analysis to NBA contract negotiation.",
-                "His goal is clear: to help elite NBA players, college prospects, and 5-star high-school talents succeed."
-              ],
-              specialties: [
-                "Intellectual Property Expert",
-                "Personal Brand Valuation Specialist",
-                "Endorsement Market Rate Authority",
-                "IP Asset Valuation for Professional Sports Teams",
-                "Featured on CBS News",
-                "You Just Play Basketball",
-                "Acclimation Sports Management",
-              ]
-            },
-            contact: {
-              title: "Ready to Take the Next Step?",
-              tagline: "Any questions or remarks? Just contact us!",
-              phone: "512-518-6547",
-              phoneTitle: "Joe's Direct Line",
-              phoneDesc: "Call or text Joe anytime —\n24/7 for serious inquiries",
-              email: "Joseph.Grekoski@AcclimationGroup.com",
-              emailTitle: "Email",
-              emailDesc: "Fast responses for NBA,\ncollege & high school athletes",
-              location: "Acclimation Sports Agency\nFort Lauderdale, Florida 33308",
-              locationTitle: "Office Location"
-            }
-          },
-          seo: { title: "Acclimation Sports Management", description: "Elite NBA representation.", keywords: "NBA Agent" }
-        })
+        setData(mergePageData(null))
       }
     } catch {
       toast.error("Failed to fetch page data")
+      setData(mergePageData(null))
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    fetchPageData()
+  }, [fetchPageData])
 
   const handleSave = async () => {
     setSaving(true)
@@ -160,9 +77,13 @@ export function HomePageEditor() {
   const updateContent = (section: keyof PageData["content"], field: string, value: unknown) => {
     setData((prev: PageData | null) => {
       if (!prev) return null
+      const sectionData = (prev.content?.[section] || {}) as Record<string, unknown>
       return {
         ...prev,
-        content: { ...prev.content, [section]: { ...(prev.content[section] as unknown as Record<string, unknown>), [field]: value } }
+        content: { 
+          ...prev.content, 
+          [section]: { ...sectionData, [field]: value } 
+        }
       }
     })
   }
@@ -385,8 +306,7 @@ export function HomePageEditor() {
                                     <Input type="number" value={point.year} onChange={(e) => {
                                       const newData = [...(data?.content?.hero?.chart?.data || [])]
                                       const val = parseInt(e.target.value)
-                                      newData[idx].year = val
-                                      newData[idx].label = `Year ${val}: $${newData[idx].value}M`
+                                      newData[idx] = { ...newData[idx], year: val, label: `Year ${val}: $${newData[idx].value}M` }
                                       updateContent("hero", "chart", { ...(data?.content?.hero?.chart || { title: "", data: [] }), data: newData })
                                     }} className="bg-white/5 border-white/10 text-white h-9 text-xs font-bold" />
                                   </div>
@@ -395,8 +315,7 @@ export function HomePageEditor() {
                                     <Input type="number" step="0.1" value={point.value} onChange={(e) => {
                                       const newData = [...(data?.content?.hero?.chart?.data || [])]
                                       const val = parseFloat(e.target.value)
-                                      newData[idx].value = val
-                                      newData[idx].label = `Year ${newData[idx].year}: $${val}M`
+                                      newData[idx] = { ...newData[idx], value: val, label: `Year ${newData[idx].year}: $${val}M` }
                                       updateContent("hero", "chart", { ...(data?.content?.hero?.chart || { title: "", data: [] }), data: newData })
                                     }} className="bg-white/5 border-white/10 text-white h-9 text-xs font-bold" />
                                   </div>
@@ -404,7 +323,7 @@ export function HomePageEditor() {
                                <div className="flex items-center gap-3 bg-black/40 p-3 rounded-xl border border-white/5">
                                   <input type="checkbox" checked={!!point.label} id={`label-${idx}`} onChange={(e) => {
                                     const newData = [...(data?.content?.hero?.chart?.data || [])]
-                                    newData[idx].label = e.target.checked ? `Year ${point.year}: $${point.value}M` : ""
+                                    newData[idx] = { ...newData[idx], label: e.target.checked ? `Year ${point.year}: $${point.value}M` : "" }
                                     updateContent("hero", "chart", { ...(data?.content?.hero?.chart || { title: "", data: [] }), data: newData })
                                   }} className="size-4 accent-blue-500 cursor-pointer" />
                                   <label htmlFor={`label-${idx}`} className="text-[9px] font-black text-white/40 uppercase tracking-widest cursor-pointer select-none">Show Floating Label</label>

@@ -7,10 +7,12 @@ import connectDB from "@/lib/mongodb";
 import Page from "@/models/page";
 import { FAQSchema } from "@/components/json-ld";
 
+import { mergePageData } from "@/lib/data-utils";
+
 async function getPageData() {
   await connectDB();
   const page = await Page.findOne({ slug: "home" }).lean();
-  return page || null;
+  return mergePageData(page);
 }
 
 export async function generateMetadata() {

@@ -6,12 +6,15 @@ import { buildMetadataFromPage } from "@/lib/seo";
 import { BreadcrumbSchema, FAQSchema } from "@/components/json-ld";
 import connectDB from "@/lib/mongodb";
 import Page from "@/models/page";
-import { PageData, MetricData, ServiceBoxData, HighlightData } from "@/types/cms";
+import { MetricData, ServiceBoxData, HighlightData } from "@/types/cms";
+
+import { mergePageData } from "@/lib/data-utils";
+import { DEFAULT_PERSONAL_BRANDING_DATA } from "@/lib/defaults";
 
 async function getPageData() {
   await connectDB();
   const page = await Page.findOne({ slug: "personal-branding" }).lean();
-  return page as unknown as PageData | null;
+  return mergePageData(page, DEFAULT_PERSONAL_BRANDING_DATA);
 }
 
 export async function generateMetadata() {
@@ -21,26 +24,7 @@ export async function generateMetadata() {
 
 export default async function PersonalBrandingPage() {
   const pageData = await getPageData();
-  
-  const content = pageData?.content?.personalBranding || {
-    title: "Turn Your Talent Into a \n Premium, Monetizable \n Economic Asset",
-    tagline: "Personal Brand Development: the art of truly identifying the unique value, \n data-backed and scaling strategically and carefully, then to view the potential.",
-    metrics: [
-      { title: "Brand Equity", value: "$1.2M" },
-      { title: "Social Reach", value: "2.4M" },
-      { title: "Endorsement Value", value: "$850K" },
-    ],
-    services: [
-      { title: "Personal Brand Strategy", desc: "Personal brand strategy to guarantee and optimize valuation and monetization." },
-      { title: "Endorsement Deal", desc: "Endorsement negotiation and contract review sent to the highest value." },
-      { title: "Media Training Programs", desc: "Media training programs to ensure you are ready and strategic and confident." },
-    ],
-    resultsTitle: "Personal Brand Strategy | Negotiation:",
-    highlights: [
-      { value: "340%", label: "Brand \n Growth" },
-    ],
-    backgroundImage: "/glove.png"
-  };
+  const content = pageData.content.personalBranding!;
 
   return (
     <main className="relative min-h-screen overflow-x-hidden flex flex-col pt-12">

@@ -6,12 +6,15 @@ import { buildMetadataFromPage } from "@/lib/seo";
 import { BreadcrumbSchema, FAQSchema } from "@/components/json-ld";
 import connectDB from "@/lib/mongodb";
 import Page from "@/models/page";
-import { PageData } from "@/types/cms";
+// Removed PageData import
+
+import { mergePageData } from "@/lib/data-utils";
+import { DEFAULT_SALARY_CAP_DATA } from "@/lib/defaults";
 
 async function getPageData() {
   await connectDB();
   const page = await Page.findOne({ slug: "salary-cap" }).lean();
-  return page as unknown as PageData | null;
+  return mergePageData(page, DEFAULT_SALARY_CAP_DATA);
 }
 
 export async function generateMetadata() {
@@ -21,26 +24,7 @@ export async function generateMetadata() {
 
 export default async function SalaryCapPage() {
   const pageData = await getPageData();
-  
-  const content = pageData?.content?.salaryCap || {
-    title: "Master the Salary Cap. \n Maximize Every Dollar.",
-    subtitle: "Proprietary analytical models and expert salary cap strategy that put more money in your pocket. We deliver precise, real-time salary cap modeling and data-driven strategies to optimize every contract.",
-    engineTitle: "The Acclimation Salary Cap Engine",
-    cardTitles: [
-      "Live Salary Cap Forecasting",
-      "Luxury Tax Stress Testing",
-      "Endorsement & NIL Valuation",
-      "Contract Optimization Simulator"
-    ],
-    points: [
-      "In-house salary cap & luxury tax forecasts",
-      "Custom analytical projections",
-      "Bird Rights and exception optimization",
-      "Trade scenario analysis"
-    ],
-    ctaText: "SCHEDULE YOUR CONFIDENTIAL CONTRACT STRATEGY CALL",
-    backgroundImage: "/graph.png"
-  };
+  const content = pageData.content.salaryCap!;
 
   return (
     <main className="relative min-h-screen overflow-x-hidden bg-[#05070a] text-white">

@@ -17,7 +17,7 @@ export function AboutSection({ data }: { data?: PageData | null }) {
       "Featured on CBS News discussing college basketball economics and player valuation.",
       "Expert in determining fair market rates for endorsement deals and NIL valuation.",
       "Brings courtroom-tested economic analysis to NBA contract negotiation.",
-      "His goal is clear: to help elite NBA players, college prospects, and 5-star high-school talents succeed."
+      "His goal is clear: to help elite NBA players, college prospects, and 5-star high school talents succeed."
     ],
     specialties: [
       "Intellectual Property Expert",
@@ -60,25 +60,26 @@ export function AboutSection({ data }: { data?: PageData | null }) {
           </div>
         </div>
 
-        <div className="grid lg:grid-cols-12 gap-12 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center min-h-[400px]">
           {/* Image Column */}
-          <div className="lg:col-span-5 flex justify-center">
-            <div className="relative group">
-              <div className="relative w-full aspect-[4/5] max-w-[520px] rounded-2xl overflow-hidden border border-white/10 glass shadow-2xl mx-auto">
-                <Image
-                  src={content.profileImage || "/owner/me.jpg"}
-                  alt="Joe Grekoski"
-                  fill
-                  className="object-cover object-top hover:scale-105 transition-transform duration-700"
-                />
-              </div>
+          <div id="joe-profile-column" className="lg:col-span-5 flex justify-center w-full">
+            <div className="relative w-full aspect-[4/5] max-w-[500px] rounded-3xl overflow-hidden shadow-2xl border border-white/10 bg-[#0a0d12]">
+              <Image
+                id="joe-profile-image"
+                src={(content.profileImage && content.profileImage.trim() !== "") ? content.profileImage : "/owner/me.jpg"}
+                alt="Joe Grekoski"
+                fill
+                className="object-cover object-top"
+                unoptimized
+                priority
+              />
             </div>
           </div>
 
           {/* Content Column */}
-          <div className="lg:col-span-7 space-y-8">
+          <div id="joe-content-column" className="lg:col-span-7 space-y-8">
             <div className="space-y-4">
-              <p className="text-lg text-white/90 leading-relaxed">
+              <p className="text-lg text-white/90 leading-relaxed font-medium">
                 {content.description}
               </p>
             </div>

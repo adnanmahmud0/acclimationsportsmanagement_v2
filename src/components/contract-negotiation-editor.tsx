@@ -16,7 +16,7 @@ export function ContractNegotiationEditor() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [data, setData] = useState<PageData | null>(null)
-  const [activeTab, setActiveTab] = useState<"live" | "seo">("seo")
+  const [activeTab, setActiveTab] = useState<"live" | "seo">("live")
 
   useEffect(() => {
     fetchPageData()
@@ -48,6 +48,7 @@ export function ContractNegotiationEditor() {
               { step: 3, title: "Trade & Buyout", subtitle: "Negotiation" },
               { step: 4, title: "Post-Contract", subtitle: "Wealth Coordination" },
             ],
+            processTitle: "Our Negotiation Process",
             ctaText: "SCHEDULE YOUR CONFIDENTIAL CONTRACT STRATEGY CALL"
           },
           seo: {
@@ -172,7 +173,7 @@ export function ContractNegotiationEditor() {
             
             <div className="relative pt-12 pb-24 bg-[#05070a]">
               <div className="absolute inset-0 z-0">
-                <Image src={data?.content?.backgroundImage || "/effect.png"} alt="Bg" fill className="object-cover opacity-30" />
+                <Image src={data?.content?.backgroundImage || "/effect.png"} alt="Bg" fill className="object-cover opacity-30" unoptimized />
               </div>
               <div className="container mx-auto px-6 pt-24 relative z-10 flex flex-col items-center">
                 <div className="space-y-8 max-w-5xl mx-auto text-center">
@@ -198,7 +199,7 @@ export function ContractNegotiationEditor() {
               </div>
 
               <div className="container mx-auto px-6 mt-20 relative z-10">
-                <h2 className="text-center text-sm font-black uppercase tracking-[0.4em] text-primary mb-12">Negotiation Process</h2>
+                <h2 className="text-center text-sm font-black uppercase tracking-[0.4em] text-primary mb-12">{data?.content?.processTitle || "Our Negotiation Process"}</h2>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                   {data?.content?.processSteps?.map((item: ProcessStep) => (
                     <div key={item.step} className="flex flex-col items-center text-center">
@@ -284,11 +285,44 @@ export function ContractNegotiationEditor() {
               </div>
 
               <div className="bg-[#0a0d12]/40 p-8 rounded-[2.5rem] border border-white/5 space-y-6">
-                 <h2 className="text-[11px] font-black text-white/40 uppercase tracking-[0.4em]">Negotiation Process Steps</h2>
+                 <div className="flex items-center justify-between">
+                   <div className="space-y-1 flex-1 mr-8">
+                     <label className="text-[10px] font-black text-white/20 uppercase tracking-widest ml-1">Section Heading</label>
+                     <Input 
+                       value={data?.content?.processTitle || ""} 
+                       onChange={(e) => updateContent("processTitle", e.target.value)}
+                       placeholder="Our Negotiation Process"
+                       className="bg-black/40 border-white/10 text-white h-10 text-xs font-black uppercase"
+                     />
+                   </div>
+                   <Button 
+                    onClick={() => {
+                      const currentSteps = data?.content?.processSteps || []
+                      const nextStep = currentSteps.length > 0 ? Math.max(...currentSteps.map(s => s.step)) + 1 : 1
+                      updateContent("processSteps", [...currentSteps, { step: nextStep, title: "New Step", subtitle: "" }])
+                    }}
+                    className="bg-blue-600/10 text-blue-500 border border-blue-500/20 text-[10px] font-black uppercase h-8 px-4 rounded-lg mt-5"
+                   >
+                     <PlusIcon className="size-3 mr-2" /> Add Step
+                   </Button>
+                 </div>
                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {data?.content?.processSteps?.map((step: ProcessStep, idx: number) => (
                       <div key={idx} className="bg-white/5 p-6 rounded-2xl border border-white/5 space-y-4">
-                        <div className="text-[10px] font-black text-primary uppercase tracking-widest border-b border-white/5 pb-2">Step {step.step}</div>
+                        <div className="flex items-center justify-between border-b border-white/5 pb-2">
+                          <div className="text-[10px] font-black text-primary uppercase tracking-widest">Step {step.step}</div>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => {
+                              const newSteps = data?.content?.processSteps?.filter((_: unknown, i: number) => i !== idx) || []
+                              updateContent("processSteps", newSteps)
+                            }}
+                            className="text-red-500/40 hover:text-red-500 hover:bg-red-500/10 h-6 w-6 rounded-md"
+                          >
+                            <Trash2Icon className="size-3" />
+                          </Button>
+                        </div>
                         <div className="space-y-3">
                            <div className="space-y-1">
                              <label className="text-[8px] font-black text-white/20 uppercase tracking-widest ml-1">Title</label>

@@ -11,12 +11,14 @@ import { GradientHeader } from "@/components/gradient-header"
 import { CtaButton } from "@/components/cta-button"
 import { SeoEditor } from "@/components/seo-editor"
 import { ImageUpload } from "@/components/image-upload"
+import { mergePageData } from "@/lib/data-utils"
+import { DEFAULT_SALARY_CAP_DATA } from "@/lib/defaults"
 
 export function SalaryCapEditor() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [data, setData] = useState<PageData | null>(null)
-  const [activeTab, setActiveTab] = useState<"live" | "seo">("seo")
+  const [activeTab, setActiveTab] = useState<"live" | "seo">("live")
 
   useEffect(() => {
     fetchPageData()
@@ -27,36 +29,9 @@ export function SalaryCapEditor() {
       const response = await fetch("/api/pages/salary-cap")
       const result = await response.json()
       if (result.success && result.data) {
-        setData(result.data)
+        setData(mergePageData(result.data, DEFAULT_SALARY_CAP_DATA))
       } else {
-        setData({
-          slug: "salary-cap",
-          title: "Salary Cap Analytics",
-          content: {
-            salaryCap: {
-              title: "Master the Salary Cap. \n Maximize Every Dollar.",
-              subtitle: "Proprietary analytical models and expert salary cap strategy that put more money in your pocket.",
-              engineTitle: "The Acclimation Salary Cap Engine",
-              cardTitles: [
-                "Live Salary Cap Forecasting",
-                "Luxury Tax Stress Testing",
-                "Endorsement & NIL Valuation",
-                "Contract Optimization Simulator"
-              ],
-              points: [
-                "In-house salary cap forecasts",
-                "Custom analytical projections",
-                "Bird Rights optimization",
-              ],
-              ctaText: "SCHEDULE YOUR CONFIDENTIAL CONTRACT STRATEGY CALL"
-            }
-          },
-          seo: {
-            title: "Salary Cap Analytics | Acclimation Sports",
-            description: "Proprietary analytical models and expert salary cap strategy.",
-            keywords: "NBA Salary Cap, Analytics"
-          }
-        })
+        setData(DEFAULT_SALARY_CAP_DATA)
       }
     } catch (error) {
       console.error(error)
@@ -95,12 +70,13 @@ export function SalaryCapEditor() {
   const updateContent = (field: string, value: unknown) => {
     setData((prev) => {
       if (!prev) return null
+      const currentSC = prev.content.salaryCap || DEFAULT_SALARY_CAP_DATA.content.salaryCap!
       return {
         ...prev,
         content: {
           ...prev.content,
           salaryCap: {
-            ...prev.content.salaryCap!,
+            ...currentSC,
             [field]: value
           }
         }
@@ -189,7 +165,7 @@ export function SalaryCapEditor() {
             
             <div className="relative pt-12 pb-24 bg-[#05070a]">
               <div className="absolute inset-x-0 top-0 h-[85vh] z-0">
-                <Image src={content.backgroundImage || "/graph.png"} alt="Bg" fill className="object-cover opacity-60" />
+                <Image src={content.backgroundImage || "/graph.png"} alt="Bg" fill className="object-cover opacity-60" unoptimized />
                 <div className="absolute inset-0 bg-gradient-to-b from-[#05070a]/60 via-[#05070a]/20 to-[#05070a]" />
               </div>
               
@@ -266,10 +242,18 @@ export function SalaryCapEditor() {
               </div>
 
               <div className="bg-[#0a0d12]/40 p-8 rounded-[2.5rem] border border-white/5 space-y-6">
-                 <h2 className="text-[11px] font-black text-white/40 uppercase tracking-[0.4em]">Engine Modules</h2>
+                 <div className="flex items-center justify-between">
+                   <h2 className="text-[11px] font-black text-white/40 uppercase tracking-[0.4em]">Engine Modules</h2>
+                   <Button 
+                    onClick={() => updateContent("cardTitles", [...content.cardTitles, "New Engine Module"])}
+                    className="bg-blue-600/10 text-blue-500 border border-blue-500/20 text-[10px] font-black uppercase h-8 px-4 rounded-lg"
+                   >
+                     <PlusIcon className="size-3 mr-2" /> Add Module
+                   </Button>
+                 </div>
                  <div className="space-y-4">
                     <div className="space-y-1">
-                       <label className="text-[8px] font-black text-white/20 uppercase tracking-widest ml-1">Engine Section Title</label>
+                       <label className="text-[10px] font-black text-white/20 uppercase tracking-widest ml-1">Engine Section Title</label>
                        <Input 
                          value={content.engineTitle} 
                          onChange={(e) => updateContent("engineTitle", e.target.value)}
@@ -278,17 +262,30 @@ export function SalaryCapEditor() {
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {content.cardTitles.map((title: string, idx: number) => (
-                        <div key={idx} className="space-y-1">
+                        <div key={idx} className="space-y-1 relative group/item">
                           <label className="text-[8px] font-black text-white/10 uppercase tracking-widest ml-1">Card {idx + 1}</label>
-                          <Input 
-                            value={title} 
-                            onChange={(e) => {
-                              const newTitles = [...content.cardTitles]
-                              newTitles[idx] = e.target.value
-                              updateContent("cardTitles", newTitles)
-                            }}
-                            className="bg-black/40 border-white/10 text-white h-10 text-xs font-bold uppercase"
-                          />
+                          <div className="flex gap-2">
+                            <Input 
+                              value={title} 
+                              onChange={(e) => {
+                                const newTitles = [...content.cardTitles]
+                                newTitles[idx] = e.target.value
+                                updateContent("cardTitles", newTitles)
+                              }}
+                              className="bg-black/40 border-white/10 text-white h-10 text-xs font-bold uppercase flex-1"
+                            />
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => {
+                                const newTitles = content.cardTitles.filter((_, i) => i !== idx)
+                                updateContent("cardTitles", newTitles)
+                              }}
+                              className="text-red-500 opacity-0 group-hover/item:opacity-100 transition-opacity bg-black/40 border border-white/10 size-10 rounded-xl"
+                            >
+                              <Trash2Icon className="size-3" />
+                            </Button>
+                          </div>
                         </div>
                       ))}
                     </div>

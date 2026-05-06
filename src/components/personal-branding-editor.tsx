@@ -12,12 +12,15 @@ import { GradientHeader } from "@/components/gradient-header"
 import { CtaButton } from "@/components/cta-button"
 import { SeoEditor } from "@/components/seo-editor"
 import { ImageUpload } from "@/components/image-upload"
+import { mergePageData } from "@/lib/data-utils"
+import { DEFAULT_PERSONAL_BRANDING_DATA } from "@/lib/defaults"
+import { PlusIcon, Trash2Icon } from "lucide-react"
 
 export function PersonalBrandingEditor() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [data, setData] = useState<PageData | null>(null)
-  const [activeTab, setActiveTab] = useState<"live" | "seo">("seo")
+  const [activeTab, setActiveTab] = useState<"live" | "seo">("live")
 
   useEffect(() => {
     fetchPageData()
@@ -28,37 +31,9 @@ export function PersonalBrandingEditor() {
       const response = await fetch("/api/pages/personal-branding")
       const result = await response.json()
       if (result.success && result.data) {
-        setData(result.data)
+        setData(mergePageData(result.data, DEFAULT_PERSONAL_BRANDING_DATA))
       } else {
-        setData({
-          slug: "personal-branding",
-          title: "Personal Branding",
-          content: {
-            personalBranding: {
-              title: "Turn Your Talent Into a \n Premium Asset",
-              tagline: "Personal Brand Development: Identifying unique value and scaling strategically.",
-              metrics: [
-                { title: "Brand Equity", value: "$1.2M" },
-                { title: "Social Reach", value: "2.4M" },
-              ],
-              services: [
-                { title: "Personal Brand Strategy", desc: "Optimize valuation." },
-                { title: "Endorsement Negotiation", desc: "Contract review." },
-              ],
-              resultsTitle: "Personal Brand Strategy | Negotiation:",
-              highlights: [
-                { value: "$8.2M", label: "Endorsement Value Uplift" },
-                { value: "340%", label: "Brand Growth" },
-              ],
-              ctaText: "SCHEDULE YOUR CALL"
-            }
-          },
-          seo: {
-            title: "Personal Branding | Acclimation Sports",
-            description: "Turn your talent into a premium asset.",
-            keywords: "Personal Branding, NBA Brand"
-          }
-        })
+        setData(DEFAULT_PERSONAL_BRANDING_DATA)
       }
     } catch (error) {
       console.error(error)
@@ -97,12 +72,13 @@ export function PersonalBrandingEditor() {
   const updateContent = (field: string, value: unknown) => {
     setData((prev) => {
       if (!prev) return null
+      const currentPB = prev.content.personalBranding || DEFAULT_PERSONAL_BRANDING_DATA.content.personalBranding!
       return {
         ...prev,
         content: {
           ...prev.content,
           personalBranding: {
-            ...prev.content.personalBranding!,
+            ...currentPB,
             [field]: value
           }
         }
@@ -192,7 +168,7 @@ export function PersonalBrandingEditor() {
             
             <div className="relative pt-12 pb-24 bg-[#05070a]">
               <div className="absolute inset-0 z-0">
-                <Image src={content.backgroundImage || "/glove.png"} alt="Bg" fill className="object-cover opacity-50" />
+                <Image src={content.backgroundImage || "/glove.png"} alt="Bg" fill className="object-cover opacity-50" unoptimized />
               </div>
               
               <div className="container mx-auto px-6 pt-24 pb-12 relative z-10 flex flex-col items-center">
@@ -220,7 +196,7 @@ export function PersonalBrandingEditor() {
                   <div className="flex flex-col lg:flex-row gap-12 items-end">
                     <div className="flex-1 space-y-8">
                       <h2 className="text-2xl md:text-3xl font-black text-white uppercase tracking-tight">
-                        {content.resultsTitle?.split('|')[0]} | <span className="text-primary">{content.resultsTitle?.split('|')[1]}</span>
+                        {(content.resultsTitle || "Personal Brand Strategy | Negotiation:").split('|')[0]} | <span className="text-primary">{(content.resultsTitle || "").split('|')[1] || ""}</span>
                       </h2>
                       <div className="grid md:grid-cols-3 gap-6">
                         {content.services.map((s: { title: string; desc: string }, i: number) => (
@@ -281,10 +257,29 @@ export function PersonalBrandingEditor() {
               </div>
 
               <div className="bg-[#0a0d12]/40 p-8 rounded-[2.5rem] border border-white/5 space-y-6">
-                 <h2 className="text-[11px] font-black text-white/40 uppercase tracking-[0.4em]">Brand Metrics</h2>
+                 <div className="flex items-center justify-between">
+                   <h2 className="text-[11px] font-black text-white/40 uppercase tracking-[0.4em]">Brand Metrics</h2>
+                   <Button 
+                    onClick={() => updateContent("metrics", [...content.metrics, { title: "New Metric", value: "0" }])}
+                    className="bg-blue-600/10 text-blue-500 border border-blue-500/20 text-[10px] font-black uppercase h-8 px-4 rounded-lg"
+                   >
+                     <PlusIcon className="size-3 mr-2" /> Add Metric
+                   </Button>
+                 </div>
                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {content.metrics.map((m: { title: string; value: string }, idx: number) => (
-                      <div key={idx} className="bg-white/5 p-4 rounded-xl space-y-3">
+                      <div key={idx} className="bg-white/5 p-4 rounded-xl space-y-3 relative group/item">
+                         <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => {
+                            const newMetrics = content.metrics.filter((_, i) => i !== idx)
+                            updateContent("metrics", newMetrics)
+                          }}
+                          className="absolute -top-2 -right-2 text-red-500 opacity-0 group-hover/item:opacity-100 transition-opacity bg-[#0a0d12] border border-white/10 size-6 rounded-full"
+                         >
+                           <Trash2Icon className="size-3" />
+                         </Button>
                          <div className="space-y-1">
                            <label className="text-[8px] font-black text-white/10 uppercase tracking-widest ml-1">Metric Title</label>
                            <Input 
@@ -315,10 +310,29 @@ export function PersonalBrandingEditor() {
               </div>
 
               <div className="bg-[#0a0d12]/40 p-8 rounded-[2.5rem] border border-white/5 space-y-6">
-                 <h2 className="text-[11px] font-black text-white/40 uppercase tracking-[0.4em]">Strategy Boxes</h2>
+                 <div className="flex items-center justify-between">
+                   <h2 className="text-[11px] font-black text-white/40 uppercase tracking-[0.4em]">Strategy Boxes</h2>
+                   <Button 
+                    onClick={() => updateContent("services", [...content.services, { title: "New Service", desc: "" }])}
+                    className="bg-blue-600/10 text-blue-500 border border-blue-500/20 text-[10px] font-black uppercase h-8 px-4 rounded-lg"
+                   >
+                     <PlusIcon className="size-3 mr-2" /> Add Box
+                   </Button>
+                 </div>
                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {content.services.map((s: { title: string; desc: string }, idx: number) => (
-                      <div key={idx} className="bg-white/5 p-4 rounded-xl space-y-3 border border-white/5">
+                      <div key={idx} className="bg-white/5 p-4 rounded-xl space-y-3 border border-white/5 relative group/item">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => {
+                            const newServices = content.services.filter((_, i) => i !== idx)
+                            updateContent("services", newServices)
+                          }}
+                          className="absolute -top-2 -right-2 text-red-500 opacity-0 group-hover/item:opacity-100 transition-opacity bg-[#0a0d12] border border-white/10 size-6 rounded-full z-10"
+                        >
+                          <Trash2Icon className="size-3" />
+                        </Button>
                         <Input value={s.title} onChange={(e) => {
                           const newServices = [...content.services]
                           newServices[idx].title = e.target.value
@@ -344,6 +358,14 @@ export function PersonalBrandingEditor() {
                   onChange={(v) => updateContent("backgroundImage", v)}
                 />
                 <div className="space-y-2">
+                  <label className="text-[10px] font-black text-white/20 uppercase tracking-widest ml-1">Results Section Title (use | for color split)</label>
+                  <Input
+                    className="bg-white/5 border-white/10 text-white h-12 rounded-xl text-sm font-bold uppercase tracking-widest"
+                    value={content.resultsTitle}
+                    onChange={(e) => updateContent("resultsTitle", e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
                   <label className="text-[10px] font-black text-white/20 uppercase tracking-widest ml-1">CTA Button Text</label>
                   <Input
                     className="bg-white/5 border-white/10 text-white h-12 rounded-xl text-sm font-bold uppercase tracking-widest"
@@ -354,10 +376,29 @@ export function PersonalBrandingEditor() {
               </div>
 
               <div className="bg-[#0a0d12]/40 p-8 rounded-[2.5rem] border border-white/5 space-y-6">
-                <h2 className="text-[11px] font-black text-white/40 uppercase tracking-[0.4em]">Results Highlights</h2>
+                <div className="flex items-center justify-between">
+                  <h2 className="text-[11px] font-black text-white/40 uppercase tracking-[0.4em]">Results Highlights</h2>
+                  <Button 
+                    onClick={() => updateContent("highlights", [...content.highlights, { value: "0%", label: "" }])}
+                    className="bg-blue-600/10 text-blue-500 border border-blue-500/20 text-[10px] font-black uppercase h-8 px-4 rounded-lg"
+                  >
+                    <PlusIcon className="size-3 mr-2" /> Add Result
+                  </Button>
+                </div>
                 <div className="space-y-4">
                    {content.highlights.map((h: { value: string; label: string }, idx: number) => (
-                      <div key={idx} className="bg-white/5 p-4 rounded-xl space-y-3">
+                      <div key={idx} className="bg-white/5 p-4 rounded-xl space-y-3 relative group/item">
+                         <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => {
+                            const newHighlights = content.highlights.filter((_, i) => i !== idx)
+                            updateContent("highlights", newHighlights)
+                          }}
+                          className="absolute -top-2 -right-2 text-red-500 opacity-0 group-hover/item:opacity-100 transition-opacity bg-[#0a0d12] border border-white/10 size-6 rounded-full z-10"
+                         >
+                           <Trash2Icon className="size-3" />
+                         </Button>
                          <Input value={h.value} onChange={(e) => {
                            const newHighlights = [...content.highlights]
                            newHighlights[idx].value = e.target.value

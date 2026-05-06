@@ -156,6 +156,7 @@ export interface PageContent {
   description?: string;
   points?: Array<{ title: string; items: string[] }>; // Standardized points structure
   processSteps?: ProcessStep[];
+  processTitle?: string;
   ctaText?: string;
   backgroundImage?: string;
   tagline?: string;

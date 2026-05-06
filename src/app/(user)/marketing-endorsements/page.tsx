@@ -7,12 +7,14 @@ import { buildMetadataFromPage } from "@/lib/seo";
 import { BreadcrumbSchema, FAQSchema } from "@/components/json-ld";
 import connectDB from "@/lib/mongodb";
 import Page from "@/models/page";
-import { PageData, MarketingEndorsementItem } from "@/types/cms";
+import { MarketingEndorsementItem } from "@/types/cms";
+import { mergePageData } from "@/lib/data-utils";
+import { DEFAULT_MARKETING_ENDORSEMENTS_DATA } from "@/lib/defaults";
 
 async function getPageData() {
   await connectDB();
   const page = await Page.findOne({ slug: "marketing-endorsements" }).lean();
-  return page as unknown as PageData | null;
+  return mergePageData(page, DEFAULT_MARKETING_ENDORSEMENTS_DATA);
 }
 
 export async function generateMetadata() {
@@ -22,22 +24,7 @@ export async function generateMetadata() {
 
 export default async function MarketingEndorsementsPage() {
   const pageData = await getPageData();
-  
-  const content = pageData?.content?.marketingEndorsements || {
-    title: "Marketing and \n Endorsement Deals",
-    tagline: "We build and monetize your personal brand so you earn maximum value from endorsements, sponsorships, and marketing opportunities. elite high school talent turn their talent into real off-court income.",
-    items: [
-      { title: "Professional brand valuation and market positioning", desc: "Analysis of your market value and strategic positioning", iconType: "chart" },
-      { title: "Media training and personal branding development", iconType: "mic" },
-      { title: "Targeted endorsement strategy and deal sourcing", desc: "Negotiation of sponsorships, NIL deals, and long-term partnerships", iconType: "handshake" },
-      { title: "Full integration with your NBA contract for maximum career earnings", desc: "Seamless alignment with your professional contract", iconType: "network" },
-      { title: "Long-term portfolio growth and legacy building", desc: "Strategies to ensure sustained off-court success", iconType: "trophy" },
-    ],
-    transitionQuote: "Whether you're chasing your first major shoe deal, building your NIL portfolio, or expanding your brand as a NBA player, we make sure you're never undervalued in the marketplace.",
-    readyHeading: "Ready to unlock your full earning potential off the court?",
-    ctaText: "SCHEDULE YOUR CONFIDENTIAL CONTRACT STRATEGY CALL",
-    backgroundImage: "/endorsements_v2.png"
-  };
+  const content = pageData.content.marketingEndorsements!;
 
   return (
     <main className="relative min-h-screen overflow-x-hidden pt-12">

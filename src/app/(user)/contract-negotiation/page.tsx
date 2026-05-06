@@ -38,6 +38,7 @@ export default async function ContractNegotiationPage() {
       { step: 3, title: "Trade & Buyout", subtitle: "Negotiation" },
       { step: 4, title: "Post-Contract", subtitle: "Wealth Coordination" },
     ],
+    processTitle: "Our Negotiation Process",
     ctaText: "SCHEDULE YOUR CONFIDENTIAL CONTRACT STRATEGY CALL",
     backgroundImage: "/effect.png"
   };
@@ -98,7 +99,7 @@ export default async function ContractNegotiationPage() {
           {/* Horizontal Timeline */}
           <div className="relative pt-12">
             <h2 className="text-center text-sm font-black uppercase tracking-[0.4em] text-primary mb-10">
-              Our Negotiation Process
+              {content.processTitle || "Our Negotiation Process"}
             </h2>
             {/* Connecting Line */}
             <div className="absolute top-[4.5rem] left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/30 to-transparent hidden md:block" />

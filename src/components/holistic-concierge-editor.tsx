@@ -5,9 +5,12 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
 import { SaveIcon, Loader2Icon, Settings2Icon, PlusIcon, Trash2Icon, Dumbbell, Plane, Utensils, Tv, PiggyBank, Headphones } from "lucide-react"
-import { PageData, FAQ, HolisticConciergeData } from "@/types/cms"
+import { PageData, FAQ } from "@/types/cms"
 import { SeoEditor } from "@/components/seo-editor"
 import { ImageUpload } from "@/components/image-upload"
+import { mergePageData } from "@/lib/data-utils"
+import { DEFAULT_HOLISTIC_CONCIERGE_DATA } from "@/lib/defaults"
+// Removed redundant icons import
 import { GradientHeader } from "@/components/gradient-header"
 import { CtaButton } from "@/components/cta-button"
 import Image from "next/image"
@@ -20,7 +23,7 @@ export function HolisticConciergeEditor({ slug }: HolisticConciergeEditorProps) 
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [data, setData] = useState<PageData | null>(null)
-  const [activeTab, setActiveTab] = useState<"live" | "seo">("seo")
+  const [activeTab, setActiveTab] = useState<"live" | "seo">("live")
 
   const fetchPageData = useCallback(async () => {
     setLoading(true)
@@ -28,29 +31,9 @@ export function HolisticConciergeEditor({ slug }: HolisticConciergeEditorProps) 
       const response = await fetch(`/api/pages/${slug}`)
       const result = await response.json()
       if (result.success && result.data) {
-        setData(result.data)
+        setData(mergePageData(result.data, DEFAULT_HOLISTIC_CONCIERGE_DATA))
       } else {
-        setData({
-          slug,
-          title: "Holistic Concierge",
-          content: {
-            holisticConcierge: {
-              title: "Elite Lifestyle Support for the Global Athlete",
-              tagline: "Off-the-court excellence so you can focus 100% on your game.",
-              backgroundImage: "/foodsearvice.png",
-              ctaText: "SCHEDULE YOUR CONFIDENTIAL CONCIERGE CONSULTATION",
-              services: [
-                { iconType: "dumbbell", title: "Elite Personal Training", desc: "Private access to world-class strength and conditioning coaches." },
-                { iconType: "utensils", title: "Private Nutritionists", desc: "Customized performance-based meal plans and private chefs." },
-              ]
-            }
-          },
-          seo: {
-            title: "Holistic Concierge | Acclimation Sports",
-            description: "World-class concierge support for NBA and professional athletes.",
-            keywords: "NBA, Concierge, Athlete Support, Private Chefs"
-          }
-        })
+        setData(DEFAULT_HOLISTIC_CONCIERGE_DATA)
       }
     } catch {
       toast.error("Failed to fetch page data")
@@ -82,21 +65,16 @@ export function HolisticConciergeEditor({ slug }: HolisticConciergeEditorProps) 
     }
   }
 
-  const updateContent = (field: keyof HolisticConciergeData, value: unknown) => {
+  const updateContent = (field: string, value: unknown) => {
     setData((prev) => {
       if (!prev) return null
+      const currentHC = prev.content.holisticConcierge || DEFAULT_HOLISTIC_CONCIERGE_DATA.content.holisticConcierge!
       return {
         ...prev,
         content: {
           ...prev.content,
           holisticConcierge: {
-            ...(prev.content.holisticConcierge || {
-              title: "",
-              tagline: "",
-              services: [],
-              ctaText: "",
-              backgroundImage: ""
-            }),
+            ...currentHC,
             [field]: value
           }
         }
@@ -183,7 +161,6 @@ export function HolisticConciergeEditor({ slug }: HolisticConciergeEditorProps) 
         <SeoEditor data={data} updateSeo={updateSeo} />
       ) : (
         <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
-          {/* Visual Preview Area */}
           <div className="w-full rounded-[3rem] overflow-hidden border border-white/5 bg-black shadow-3xl">
             <div className="bg-white/5 px-8 py-3 flex items-center justify-center gap-3 border-b border-white/5">
               <div className="size-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_10px_#22c55e]" />
@@ -192,7 +169,7 @@ export function HolisticConciergeEditor({ slug }: HolisticConciergeEditorProps) 
             
             <div className="relative pt-12 pb-24 bg-[#05070a]">
               <div className="absolute inset-x-0 top-0 z-0 h-[85vh]">
-                <Image src={content.backgroundImage || "/foodsearvice.png"} alt="Bg" fill className="object-cover opacity-90" />
+                <Image src={content.backgroundImage || "/foodsearvice.png"} alt="Bg" fill className="object-cover opacity-90" unoptimized />
                 <div className="absolute inset-0 bg-gradient-to-b from-[#05070a]/90 via-[#05070a]/40 to-[#05070a]" />
               </div>
               
@@ -235,7 +212,6 @@ export function HolisticConciergeEditor({ slug }: HolisticConciergeEditorProps) 
             </div>
           </div>
 
-          {/* Form Content */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 space-y-8">
               <div className="bg-[#0a0d12]/40 p-8 rounded-[2.5rem] border border-white/5 space-y-6">
@@ -264,33 +240,31 @@ export function HolisticConciergeEditor({ slug }: HolisticConciergeEditorProps) 
                  <div className="flex items-center justify-between">
                    <h2 className="text-[11px] font-black text-white/40 uppercase tracking-[0.4em]">Concierge Services</h2>
                    <Button 
-                     onClick={() => updateContent("services", [...content.services, { iconType: "headphones", title: "New Service", desc: "Service description" }])}
-                     className="bg-blue-600/10 text-blue-500 border border-blue-500/20 text-[10px] font-black uppercase h-8 px-4 rounded-lg"
+                    onClick={() => updateContent("services", [...content.services, { title: "New Service", desc: "", iconType: "headphones" }])}
+                    className="bg-blue-600/10 text-blue-500 border border-blue-500/20 text-[10px] font-black uppercase h-8 px-4 rounded-lg"
                    >
                      <PlusIcon className="size-3 mr-2" /> Add Service
                    </Button>
                  </div>
-
                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                   {(content.services || []).map((service: { iconType: string; title: string; desc: string }, idx: number) => (
-                     <div key={idx} className="bg-white/5 p-6 rounded-2xl border border-white/5 relative group">
-                        <Button
+                    {content.services.map((s: { title: string; desc: string; iconType: string }, idx: number) => (
+                      <div key={idx} className="bg-white/5 p-4 rounded-xl space-y-3 relative group/item">
+                         <Button
                           variant="ghost"
                           size="icon"
                           onClick={() => {
                             const newServices = content.services.filter((_: unknown, i: number) => i !== idx)
                             updateContent("services", newServices)
                           }}
-                          className="absolute top-4 right-4 text-red-500/40 hover:text-red-500 hover:bg-red-500/10 opacity-0 group-hover:opacity-100 transition-all"
-                        >
-                          <Trash2Icon className="size-4" />
-                        </Button>
-
-                        <div className="space-y-4">
-                          <div className="space-y-1">
-                             <label className="text-[8px] font-black text-white/10 uppercase tracking-widest">Icon</label>
+                          className="absolute -top-2 -right-2 text-red-500 opacity-0 group-hover/item:opacity-100 transition-opacity bg-[#0a0d12] border border-white/10 size-6 rounded-full z-10"
+                         >
+                           <Trash2Icon className="size-3" />
+                         </Button>
+                         <div className="grid grid-cols-2 gap-2">
+                           <div className="space-y-1">
+                             <label className="text-[8px] font-black text-white/10 uppercase tracking-widest ml-1">Icon</label>
                              <select 
-                               value={service.iconType} 
+                               value={s.iconType} 
                                onChange={(e) => {
                                  const newServices = [...content.services]
                                  newServices[idx].iconType = e.target.value
@@ -302,37 +276,37 @@ export function HolisticConciergeEditor({ slug }: HolisticConciergeEditorProps) 
                                <option value="plane">Plane</option>
                                <option value="utensils">Utensils</option>
                                <option value="tv">TV</option>
-                               <option value="piggybank">Piggy Bank</option>
-                               <option value="headphones">Headphones</option>
+                               <option value="piggybank">Wealth</option>
+                               <option value="headphones">Support</option>
                              </select>
-                          </div>
-                          <div className="space-y-1">
-                             <label className="text-[8px] font-black text-white/10 uppercase tracking-widest">Title</label>
-                             <Input
-                               className="bg-black/40 border-white/10 text-white h-10 rounded-xl text-xs font-black uppercase"
-                               value={service.title}
+                           </div>
+                           <div className="space-y-1">
+                             <label className="text-[8px] font-black text-white/10 uppercase tracking-widest ml-1">Title</label>
+                             <Input 
+                               value={s.title} 
                                onChange={(e) => {
                                  const newServices = [...content.services]
                                  newServices[idx].title = e.target.value
                                  updateContent("services", newServices)
                                }}
+                               className="bg-black/40 border-white/10 text-white h-10 text-xs font-black uppercase"
                              />
-                          </div>
-                          <div className="space-y-1">
-                             <label className="text-[8px] font-black text-white/10 uppercase tracking-widest">Description</label>
-                             <textarea
-                               className="w-full h-20 bg-black/40 border border-white/10 text-white rounded-xl p-3 text-xs focus:border-blue-500/50 outline-none transition-all resize-none"
-                               value={service.desc}
-                               onChange={(e) => {
-                                 const newServices = [...content.services]
-                                 newServices[idx].desc = e.target.value
-                                 updateContent("services", newServices)
-                               }}
-                             />
-                          </div>
-                        </div>
-                     </div>
-                   ))}
+                           </div>
+                         </div>
+                         <div className="space-y-1">
+                           <label className="text-[8px] font-black text-white/10 uppercase tracking-widest ml-1">Description</label>
+                           <textarea
+                             value={s.desc}
+                             onChange={(e) => {
+                               const newServices = [...content.services]
+                               newServices[idx].desc = e.target.value
+                               updateContent("services", newServices)
+                             }}
+                             className="w-full bg-black/40 border border-white/10 rounded-xl h-20 p-3 text-xs text-white resize-none font-bold"
+                           />
+                         </div>
+                      </div>
+                    ))}
                  </div>
               </div>
             </div>

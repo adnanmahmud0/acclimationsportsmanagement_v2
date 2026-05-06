@@ -151,6 +151,7 @@ export function GeneralPageEditor({ slug, title }: GeneralPageEditorProps) {
                     alt="Bg Preview" 
                     fill 
                     className="object-cover opacity-30"
+                    unoptimized
                   />
                   <div className="absolute inset-0 bg-gradient-to-b from-[#05070a]/80 via-transparent to-[#05070a]" />
                </div>

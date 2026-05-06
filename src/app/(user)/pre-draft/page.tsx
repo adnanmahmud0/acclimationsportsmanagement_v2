@@ -8,12 +8,13 @@ import { BreadcrumbSchema, FAQSchema } from "@/components/json-ld"
 
 import connectDB from "@/lib/mongodb"
 import Page from "@/models/page"
-import { PageData } from "@/types/cms"
+import { mergePageData } from "@/lib/data-utils";
+import { DEFAULT_PRE_DRAFT_DATA } from "@/lib/defaults";
 
 async function getPageData() {
   await connectDB();
   const page = await Page.findOne({ slug: "pre-draft" }).lean();
-  return page as unknown as PageData | null;
+  return mergePageData(page, DEFAULT_PRE_DRAFT_DATA);
 }
 
 export async function generateMetadata() {
@@ -23,25 +24,8 @@ export async function generateMetadata() {
 
 export default async function PreDraftPage() {
   const pageData = await getPageData();
-
-  const content = pageData?.content?.preDraft || {
-    title: "Pre-Draft and NBA \n Combine Mastery",
-    tagline: "Our Pre-Draft and NBA Combine Mastery program prepares elite high school and college basketball prospects to rise on draft boards and enter the NBA with maximum value.",
-    points: [
-      "PROFESSIONAL PLAYER VALUATION AND DRAFT PROJECTION REPORT",
-      "CUSTOMIZED NBA COMBINE AND PRO DAY TRAINING WITH TOP COACHES",
-      "TARGETED WORKOUTS WITH NBA TEAMS THAT NEED YOUR SKILL SET",
-      "MEDIA TRAINING, INTERVIEW PREPARATION, AND PERSONAL BRANDING",
-      "SEAMLESS TRANSITION INTO AGGRESSIVE ROOKIE CONTRACT NEGOTIATION"
-    ],
-    ctaText: "SCHEDULE YOUR CONFIDENTIAL CONTRACT STRATEGY CALL",
-    backgroundImage: "/pre_draft_v2.png"
-  };
-
-  const faqs = pageData?.seo?.faqs || [
-    { question: "What does NBA Combine preparation include?", answer: "Our Pre-Draft Mastery program includes player valuation reports, customized NBA Combine training with top coaches, targeted workouts with NBA teams, media and interview preparation, and seamless transition into rookie contract negotiation." },
-    { question: "How do you prepare prospects for the NBA Draft?", answer: "We provide professional player valuation and draft projection reports, customized combine training, targeted workouts, media training, and aggressive rookie contract negotiation planning." },
-  ];
+  const content = pageData.content.preDraft!;
+  const faqs = pageData.seo.faqs || [];
 
   const getIcon = (idx: number) => {
     const icons = [
