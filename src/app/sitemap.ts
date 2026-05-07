@@ -1,30 +1,57 @@
 import type { MetadataRoute } from "next";
+import connectDB from "@/lib/mongodb";
+import Page from "@/models/page";
+import Setting from "@/models/setting";
+import { seoSiteConfig } from "@/lib/seoConfig";
 
-import { siteMetadata } from "@/lib/seo";
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+    try {
+        await connectDB();
 
-const routes: { path: string; changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"]; priority: number; lastModified: Date }[] = [
-    { path: "/",                      changeFrequency: "weekly",  priority: 1.0,  lastModified: new Date("2026-04-24") },
-    { path: "/contact",               changeFrequency: "monthly", priority: 0.9,  lastModified: new Date("2026-04-18") },
+        // Fetch domain from settings, fallback to config, or default
+        const domainSetting = await Setting.findOne({ key: "siteDomain" }).lean();
+        const baseUrl = domainSetting?.value || seoSiteConfig.url || "https://www.acclimationsportsmanagement.com";
 
-    { path: "/nba-players",           changeFrequency: "monthly", priority: 0.85, lastModified: new Date("2026-04-11") },
-    { path: "/college-prospects",     changeFrequency: "monthly", priority: 0.85, lastModified: new Date("2026-04-11") },
-    { path: "/high-school-talent",    changeFrequency: "monthly", priority: 0.85, lastModified: new Date("2026-04-11") },
-    { path: "/wnba",                  changeFrequency: "monthly", priority: 0.85, lastModified: new Date("2026-04-11") },
-    { path: "/contract-negotiation",  changeFrequency: "monthly", priority: 0.8,  lastModified: new Date("2026-04-11") },
-    { path: "/salary-cap",            changeFrequency: "monthly", priority: 0.8,  lastModified: new Date("2026-04-15") },
-    { path: "/personal-branding",     changeFrequency: "monthly", priority: 0.8,  lastModified: new Date("2026-04-11") },
-    { path: "/marketing-endorsements",changeFrequency: "monthly", priority: 0.8,  lastModified: new Date("2026-04-11") },
-    { path: "/pre-draft",             changeFrequency: "monthly", priority: 0.8,  lastModified: new Date("2026-04-11") },
-    { path: "/holistic-concierge",    changeFrequency: "monthly", priority: 0.75, lastModified: new Date("2026-04-11") },
-    { path: "/two-way-contracts",     changeFrequency: "monthly", priority: 0.75, lastModified: new Date("2026-04-11") },
-    { path: "/g-league-elite",        changeFrequency: "monthly", priority: 0.75, lastModified: new Date("2026-04-16") },
-];
+        // Fetch all dynamic pages
+        const pages = await Page.find({}, { slug: 1, updatedAt: 1 }).lean();
 
-export default function sitemap(): MetadataRoute.Sitemap {
-    return routes.map(({ path, changeFrequency, priority, lastModified }) => ({
-        url: path === "/" ? siteMetadata.url : `${siteMetadata.url}${path}`,
-        lastModified,
-        changeFrequency,
-        priority,
-    }));
+        // Static routes based on seoConfig or common routes
+        const staticRoutes: MetadataRoute.Sitemap = [
+            {
+                url: baseUrl,
+                lastModified: new Date(),
+                changeFrequency: "weekly",
+                priority: 1,
+            },
+            {
+                url: `${baseUrl}/contact`,
+                lastModified: new Date(),
+                changeFrequency: "monthly",
+                priority: 0.8,
+            },
+        ];
+
+        // Dynamic routes from DB
+        const dynamicRoutes: MetadataRoute.Sitemap = pages
+            .filter((p) => p.slug && p.slug !== "home" && p.slug !== "contact")
+            .map((p) => ({
+                url: `${baseUrl}/${p.slug}`,
+                lastModified: p.updatedAt ? new Date(p.updatedAt) : new Date(),
+                changeFrequency: "monthly" as const,
+                priority: 0.9,
+            }));
+
+        return [...staticRoutes, ...dynamicRoutes];
+    } catch (error) {
+        console.error("Error generating sitemap:", error);
+        // Fallback to basic static routes if DB fails
+        return [
+            {
+                url: seoSiteConfig.url,
+                lastModified: new Date(),
+                changeFrequency: "weekly",
+                priority: 1,
+            },
+        ];
+    }
 }

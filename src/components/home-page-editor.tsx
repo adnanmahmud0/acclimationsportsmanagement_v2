@@ -1,17 +1,22 @@
 "use client"
 
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
-import { SaveIcon, Loader2Icon, PencilIcon, Settings2Icon } from "lucide-react"
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog"
+import { 
+  SaveIcon, 
+  Loader2Icon, 
+  Settings2Icon,
+  EyeIcon,
+  LayoutIcon,
+  UsersIcon,
+  PhoneIcon,
+  PlusIcon,
+  Trash2Icon,
+  TrendingUpIcon,
+  BarChart3Icon
+} from "lucide-react"
 
 import { Hero } from "@/components/hero"
 import { OneStopShop } from "@/components/one-stop-shop"
@@ -21,117 +26,34 @@ import { PageData, FAQ } from "@/types/cms"
 import { SeoEditor } from "@/components/seo-editor"
 import { ImageUpload } from "@/components/image-upload"
 
+import { mergePageData } from "@/lib/data-utils"
+
 export function HomePageEditor() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [data, setData] = useState<PageData | null>(null)
-  const [editingSection, setEditingSection] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState<"live" | "seo">("seo")
 
-  useEffect(() => {
-    fetchPageData()
-  }, [])
-
-  const fetchPageData = async () => {
+  const fetchPageData = useCallback(async () => {
     try {
       const response = await fetch("/api/pages/home")
       const result = await response.json()
       if (result.success) {
-        setData(result.data)
+        setData(mergePageData(result.data))
       } else {
-        setData({
-          slug: "home",
-          title: "Home Page",
-          content: {
-            hero: {
-              title: "Where Economic Precision \n Meets NBA Domination",
-              tagline: "A New Kind of Basketball Agency",
-              features: ["20+ Years Economic Edge", "Real-Time Salary Cap Forecasting", "Litigation-Grade Strategy", "In-House Analytics", "Lower Fees & More In Your Pocket"],
-              cards: [
-                { title: "NBA Contract Negotiation", desc: "Data-driven deals with litigation-grade strategy.", type: "shield" },
-                { title: "Brand Development", desc: "Turn your talent into a premium economic asset.", type: "trending" },
-                { title: "Marketing and Endorsements", desc: "Proprietary analytics ensure you're never underpaid.", type: "handshake" },
-                { title: "Holistic Support", desc: "Elite trainers, chefs, wealth advisors & strategists.", type: "trophy" },
-              ],
-              chart: {
-                title: "Projected Career Value Growth",
-                data: [
-                  { year: 1, value: 2.5, label: "Year 1: $2.5M" },
-                  { year: 4, value: 8.1, label: "Year 4: $8.1M" },
-                  { year: 8, value: 15.3, label: "Year 8: $15.3M" },
-                  { year: 12, value: 22.7, label: "Year 12: $22.7M" },
-                ]
-              }
-            },
-            oneStopShop: {
-              title: "One-Stop Shop for Everything",
-              description: "We do it all — contract negotiation, salary-cap strategy, brand & endorsement deals, pre-draft mastery, analytics, and full concierge support.",
-              ctaText: "SCHEDULE YOUR CONFIDENTIAL CONTRACT STRATEGY CALL",
-              points: [
-                {
-                  title: "Pre-Draft and NBA Combine Mastery",
-                  items: ["Data-driven positioning", "Medical evaluation strategy", "Elite scouting access", "Athletic profiling that sets your entire NBA career foundation."]
-                },
-                {
-                  title: "Proprietary Salary Cap and Analytical Models",
-                  items: ["Real-time forecasting", "Luxury-tax modeling", "Endorsement valuation algorithms", "Market value simulations", "In-house analytics that consistently put more money in your pocket."]
-                },
-                {
-                  title: "Litigation-Grade NBA Contract Negotiation",
-                  items: ["Precision tactics", "Courtroom-proven leverage", "Unprecedented leverage", "Better deals at significantly lower fees", "Career-longevity protection"]
-                },
-                {
-                  title: "Generational Wealth and Business Empire",
-                  items: ["Off-court brand architecture", "Endorsement empire building", "Private-jet concierge support", "Elite trainers, CPAs & wealth advisors", "Legacy planning", "Dynamics"]
-                }
-              ]
-            },
-            about: {
-              title: "About Acclimation Sports Management\nLed by Joe Grekoski",
-              subtitle: "I am a certified agent from the National Basketball Players Association (NBPA).",
-              description: "Joe Grekoski is the founder of Acclimation Group and Acclimation Sports Management...",
-              focusText: "While other agents focus only on basketball, Joe Grekoski built Acclimation Sports Management as the true one-stop shop. You just play basketball. We handle everything else.",
-              ctaText: "SCHEDULE YOUR CONFIDENTIAL CONTRACT STRATEGY CALL",
-              bullets: [
-                "Launched Acclimation Group and built it into a premier advisory firm serving top law firms worldwide.",
-                "Advised on the sale of IP assets to professional sports teams using advanced social media sentiment analysis.",
-                "Featured on CBS News discussing college basketball economics and player valuation.",
-                "Expert in determining fair market rates for endorsement deals and NIL valuation.",
-                "Brings courtroom-tested economic analysis to NBA contract negotiation.",
-                "His goal is clear: to help elite NBA players, college prospects, and 5-star high-school talents succeed."
-              ],
-              specialties: [
-                "Intellectual Property Expert",
-                "Personal Brand Valuation Specialist",
-                "Endorsement Market Rate Authority",
-                "IP Asset Valuation for Professional Sports Teams",
-                "Featured on CBS News",
-                "You Just Play Basketball",
-                "Acclimation Sports Management",
-              ]
-            },
-            contact: {
-              title: "Ready to Take the Next Step?",
-              tagline: "Any questions or remarks? Just contact us!",
-              phone: "512-518-6547",
-              phoneTitle: "Joe's Direct Line",
-              phoneDesc: "Call or text Joe anytime —\n24/7 for serious inquiries",
-              email: "Joseph.Grekoski@AcclimationGroup.com",
-              emailTitle: "Email",
-              emailDesc: "Fast responses for NBA,\ncollege & high school athletes",
-              location: "Acclimation Sports Agency\nFort Lauderdale, Florida 33308",
-              locationTitle: "Office Location"
-            }
-          },
-          seo: { title: "Acclimation Sports Management", description: "Elite NBA representation.", keywords: "NBA Agent" }
-        })
+        setData(mergePageData(null))
       }
     } catch {
       toast.error("Failed to fetch page data")
+      setData(mergePageData(null))
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    fetchPageData()
+  }, [fetchPageData])
 
   const handleSave = async () => {
     setSaving(true)
@@ -155,9 +77,13 @@ export function HomePageEditor() {
   const updateContent = (section: keyof PageData["content"], field: string, value: unknown) => {
     setData((prev: PageData | null) => {
       if (!prev) return null
+      const sectionData = (prev.content?.[section] || {}) as Record<string, unknown>
       return {
         ...prev,
-        content: { ...prev.content, [section]: { ...(prev.content[section] as unknown as Record<string, unknown>), [field]: value } }
+        content: { 
+          ...prev.content, 
+          [section]: { ...sectionData, [field]: value } 
+        }
       }
     })
   }
@@ -226,393 +152,397 @@ export function HomePageEditor() {
           <SeoEditor data={data} updateSeo={updateSeo} />
         </div>
       ) : (
-        <div className="space-y-1 w-full rounded-[3rem] overflow-hidden border border-white/5 bg-black shadow-3xl animate-in fade-in slide-in-from-bottom-4 duration-500">
-          <div className="bg-white/5 px-8 py-3 flex items-center justify-center gap-3 border-b border-white/5">
-            <div className="size-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_10px_#22c55e]" />
-            <span className="text-[10px] font-black text-white/40 uppercase tracking-[0.4em]">Visual Preview</span>
-          </div>
-
-          {/* HERO SECTION */}
-          <PreviewWrapper onEdit={() => setEditingSection("hero")}>
-            <Hero data={data} />
-          </PreviewWrapper>
-
-          {/* SERVICE SECTION */}
-          <PreviewWrapper onEdit={() => setEditingSection("oneStopShop")}>
-            <OneStopShop data={data} />
-          </PreviewWrapper>
-
-          {/* ABOUT SECTION */}
-          <PreviewWrapper onEdit={() => setEditingSection("about")}>
-            <AboutSection data={data} />
-          </PreviewWrapper>
-
-          {/* CONTACT SECTION */}
-          <PreviewWrapper onEdit={() => setEditingSection("contact")}>
-            <ContactSection data={data} />
-          </PreviewWrapper>
-        </div>
-      )}
-
-      {/* MODAL EDITORS */}
-      <Dialog open={editingSection !== null} onOpenChange={(open) => !open && setEditingSection(null)}>
-        <DialogContent className="bg-[#0a0d12] border-white/10 text-white sm:max-w-[600px] rounded-[2rem] overflow-hidden p-0">
-          <DialogHeader className="p-8 border-b border-white/5">
-            <DialogTitle className="text-xl font-black uppercase italic tracking-tighter">
-              Edit Section: <span className="text-blue-500">{editingSection?.toUpperCase()}</span>
-            </DialogTitle>
-          </DialogHeader>
-
-          <div className="p-8 space-y-6 max-h-[70vh] overflow-y-auto no-scrollbar">
-            {editingSection === "hero" && (
-              <>
-                <ImageUpload label="Hero Background Image" value={data.content.backgroundImage || ""} onChange={(v) => setData(prev => prev ? ({ ...prev, content: { ...prev.content, backgroundImage: v } }) : null)} />
-                <EditField label="Hero Title" type="textarea" value={data.content.hero?.title || ""} onChange={(v) => updateContent("hero", "title", v)} />
-                <EditField label="Tagline" value={data.content.hero?.tagline || ""} onChange={(v) => updateContent("hero", "tagline", v)} />
-                <div className="space-y-4 pt-4 border-t border-white/5">
-                  <label className="text-[10px] font-black text-white/40 uppercase tracking-widest block">Core Features Bar</label>
-                  <div className="space-y-3">
-                    {(data.content.hero?.features || []).map((feature: string, idx: number) => (
-                      <div key={idx} className="flex gap-2">
-                        <Input
-                          value={feature}
-                          onChange={(e) => {
-                            const newFeatures = [...(data.content.hero?.features || [])]
-                            newFeatures[idx] = e.target.value
-                            updateContent("hero", "features", newFeatures)
-                          }}
-                          className="bg-white/5 border-white/10 text-white rounded-xl h-10 text-xs"
-                        />
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => {
-                            const newFeatures = (data.content.hero?.features || []).filter((_: string, i: number) => i !== idx)
-                            updateContent("hero", "features", newFeatures)
-                          }}
-                          className="text-red-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg"
-                        >
-                          ×
-                        </Button>
-                      </div>
-                    ))}
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        const newFeatures = [...(data.content.hero?.features || []), "New Feature"]
-                        updateContent("hero", "features", newFeatures)
-                      }}
-                      className="w-full border-dashed border-white/10 text-white/40 hover:text-white hover:border-white/20 h-10 rounded-xl text-[10px] font-black uppercase tracking-widest"
-                    >
-                      + Add Feature
-                    </Button>
-                  </div>
+        <div className="space-y-24 animate-in fade-in slide-in-from-bottom-4 duration-500">
+          
+          {/* --- 1. HERO SECTION --- */}
+          <section className="space-y-8">
+            <PreviewBlock title="1. Hero Section Preview">
+              <Hero data={data} />
+            </PreviewBlock>
+            
+            <div className="bg-[#0a0d12]/40 p-10 rounded-[3rem] border border-white/5 space-y-12 shadow-2xl">
+              <div className="flex items-center gap-3 border-b border-white/5 pb-6">
+                <div className="size-10 bg-blue-600/20 rounded-xl flex items-center justify-center border border-blue-500/20">
+                  <LayoutIcon className="size-5 text-blue-500" />
                 </div>
+                <div>
+                   <h2 className="text-sm font-black text-white uppercase tracking-tight italic">Hero Section Editor</h2>
+                   <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">Manage branding, cards, and economic charts</p>
+                </div>
+              </div>
 
-                <div className="space-y-4 pt-4 border-t border-white/5">
-                  <label className="text-[10px] font-black text-white/40 uppercase tracking-widest block">Service Cards</label>
-                  <div className="space-y-6">
-                    {data.content.hero?.cards?.map((card: { title: string, type: string, desc: string }, idx: number) => (
-                      <div key={idx} className="bg-white/5 p-4 rounded-2xl space-y-3 relative border border-white/5">
-                        <div className="grid md:grid-cols-2 gap-3">
+              {/* A. HERO BRANDING & BUTTON */}
+              <div className="bg-white/5 p-8 rounded-[2rem] border border-white/5 space-y-8">
+                 <div className="flex items-center gap-2 mb-2">
+                    <div className="size-1.5 bg-blue-500 rounded-full animate-pulse" />
+                    <h3 className="text-[10px] font-black text-blue-500 uppercase tracking-widest">Main Branding & Call to Action</h3>
+                 </div>
+                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div className="space-y-6">
+                      <ImageUpload label="Hero Background" value={data?.content?.backgroundImage || ""} onChange={(v) => setData(prev => prev ? ({ ...prev, content: { ...(prev.content || {}), backgroundImage: v } }) : null)} />
+                      <EditField label="Hero Title (use \n for line breaks)" type="textarea" value={data?.content?.hero?.title || ""} onChange={(v) => updateContent("hero", "title", v)} />
+                    </div>
+                    <div className="space-y-6">
+                      <EditField label="Tagline" value={data?.content?.hero?.tagline || ""} onChange={(v) => updateContent("hero", "tagline", v)} />
+                      <EditField label="Hero Button Text (CTA)" value={data?.content?.hero?.ctaText || ""} onChange={(v) => updateContent("hero", "ctaText", v)} />
+                      
+                      <div className="space-y-3 pt-4 border-t border-white/5">
+                        <label className="text-[10px] font-black text-white/20 uppercase tracking-widest ml-1">Scrolling Features Bar</label>
+                        <div className="grid grid-cols-1 gap-2">
+                          {(data?.content?.hero?.features || []).map((feature: string, idx: number) => (
+                            <div key={idx} className="flex gap-2">
+                              <Input value={feature} onChange={(e) => {
+                                const newFeatures = [...(data?.content?.hero?.features || [])]
+                                newFeatures[idx] = e.target.value
+                                updateContent("hero", "features", newFeatures)
+                              }} className="bg-white/5 border-white/10 text-white rounded-xl h-10 text-xs" />
+                              <Button variant="ghost" size="icon" onClick={() => {
+                                const newFeatures = (data?.content?.hero?.features || []).filter((_: string, i: number) => i !== idx)
+                                updateContent("hero", "features", newFeatures)
+                              }} className="text-red-500/40 hover:text-red-500 hover:bg-red-500/10 h-10 w-10 rounded-xl">
+                                ×
+                              </Button>
+                            </div>
+                          ))}
+                          <Button variant="outline" onClick={() => updateContent("hero", "features", [...(data?.content?.hero?.features || []), "New Feature"])} className="border-dashed border-white/10 text-white/40 hover:text-white h-10 rounded-xl text-[10px] font-black uppercase tracking-widest">
+                            + Add Feature
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                 </div>
+              </div>
+
+              {/* B. SERVICE MASTERY CARDS */}
+              <div className="bg-white/5 p-8 rounded-[2rem] border border-white/5 space-y-8">
+                 <div className="flex items-center gap-2 mb-2">
+                    <div className="size-1.5 bg-purple-500 rounded-full animate-pulse" />
+                    <h3 className="text-[10px] font-black text-purple-500 uppercase tracking-widest">Service Mastery Cards</h3>
+                 </div>
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {data?.content?.hero?.cards?.map((card: { title: string, type: string, desc: string }, idx: number) => (
+                      <div key={idx} className="bg-black/40 p-6 rounded-3xl border border-white/5 space-y-4">
+                        <div className="grid grid-cols-2 gap-4">
                           <EditField label="Card Title" value={card.title} onChange={(v) => {
-                            const newCards = [...(data.content.hero?.cards || [])]
+                            const newCards = [...(data?.content?.hero?.cards || [])]
                             newCards[idx].title = v
                             updateContent("hero", "cards", newCards)
                           }} />
                           <div className="space-y-2">
-                            <label className="text-[10px] font-black text-white/40 uppercase tracking-widest">Icon Type</label>
-                            <select
-                              value={card.type}
-                              onChange={(e) => {
-                                const newCards = [...(data.content.hero?.cards || [])]
-                                newCards[idx].type = e.target.value
-                                updateContent("hero", "cards", newCards)
-                              }}
-                              className="w-full bg-white/5 border border-white/10 text-white rounded-xl h-12 text-sm px-4 focus:border-blue-500/50 outline-none"
-                            >
-                              <option value="shield">Shield</option>
-                              <option value="trending">Trending</option>
-                              <option value="handshake">Handshake</option>
-                              <option value="trophy">Trophy</option>
+                            <label className="text-[10px] font-black text-white/20 uppercase tracking-widest ml-1">Icon Type</label>
+                            <select value={card.type} onChange={(e) => {
+                              const newCards = [...(data?.content?.hero?.cards || [])]
+                              newCards[idx].type = e.target.value
+                              updateContent("hero", "cards", newCards)
+                            }} className="w-full bg-black border border-white/10 text-white rounded-xl h-11 text-[10px] px-3 focus:border-blue-500/50 outline-none">
+                               <option value="shield">Shield (Negotiation)</option>
+                               <option value="trending">Trending (Brand)</option>
+                               <option value="handshake">Handshake (Endorsements)</option>
+                               <option value="trophy">Trophy (Holistic)</option>
                             </select>
                           </div>
                         </div>
-                        <EditField label="Description" type="textarea" height="h-16" value={card.desc} onChange={(v) => {
-                          const newCards = [...(data.content.hero?.cards || [])]
-                          newCards[idx].desc = v
-                          updateContent("hero", "cards", newCards)
+                        <EditField label="Description" type="textarea" height="h-20" value={card.desc} onChange={(v) => {
+                           const newCards = [...(data?.content?.hero?.cards || [])]
+                           newCards[idx].desc = v
+                           updateContent("hero", "cards", newCards)
                         }} />
+                      </div>
+                    ))}
+                 </div>
+              </div>
+
+              {/* C. ECONOMIC GROWTH CHART DATA (NOW HIGHLY VISIBLE) */}
+              <div className="bg-blue-600/10 p-10 rounded-[2.5rem] border border-blue-500/30 space-y-8 relative overflow-hidden group">
+                 <div className="absolute top-0 right-0 p-8 opacity-5">
+                    <BarChart3Icon className="size-32 text-blue-500" />
+                 </div>
+                 
+                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
+                    <div className="flex items-center gap-4">
+                       <div className="size-12 bg-blue-600/20 rounded-2xl flex items-center justify-center border border-blue-500/20 shadow-2xl">
+                          <TrendingUpIcon className="size-6 text-blue-500" />
+                       </div>
+                       <div>
+                          <h3 className="text-sm font-black text-white uppercase tracking-tight italic">Economic Growth Chart Data</h3>
+                          <p className="text-[10px] font-black text-blue-500 uppercase tracking-widest">Add or modify career valuation points</p>
+                       </div>
+                    </div>
+                    <Button onClick={() => {
+                        const currentData = data?.content?.hero?.chart?.data || []
+                        const nextYear = currentData.length > 0 ? Math.max(...currentData.map((d: { year: number }) => d.year)) + 1 : 1
+                        const newData = [...currentData, { year: nextYear, value: 0, label: `Year ${nextYear}: $0M` }]
+                        updateContent("hero", "chart", { ...(data?.content?.hero?.chart || { title: "", data: [] }), data: newData })
+                      }} className="bg-blue-600 hover:bg-blue-500 text-white font-black uppercase tracking-widest text-[10px] h-12 px-8 rounded-xl shadow-2xl shadow-blue-500/20 transition-all active:scale-95">
+                        <PlusIcon className="size-4 mr-2" /> Add Data Point
+                    </Button>
+                 </div>
+
+                 <div className="space-y-6 relative z-10">
+                    <div className="max-w-md">
+                       <EditField label="Chart Heading" value={data?.content?.hero?.chart?.title || ""} onChange={(v) => {
+                          const newChart = { ...(data?.content?.hero?.chart || { title: "", data: [] }), title: v }
+                          updateContent("hero", "chart", newChart)
+                       }} />
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                       {(data?.content?.hero?.chart?.data || []).map((point: { year: number, value: number, label?: string }, idx: number) => (
+                         <div key={idx} className="bg-[#05070a]/80 backdrop-blur-md p-6 rounded-2xl border border-white/5 hover:border-blue-500/30 transition-all group/point relative">
+                            <Button variant="ghost" size="icon" onClick={() => {
+                               const newData = (data?.content?.hero?.chart?.data || []).filter((_: unknown, i: number) => i !== idx)
+                               updateContent("hero", "chart", { ...(data?.content?.hero?.chart || { title: "", data: [] }), data: newData })
+                            }} className="absolute top-2 right-2 size-8 text-red-500/30 hover:text-red-500 hover:bg-red-500/10 rounded-lg opacity-0 group-hover/point:opacity-100 transition-all">
+                               <Trash2Icon className="size-4" />
+                            </Button>
+                            
+                            <div className="space-y-4">
+                               <div className="flex justify-between items-center mb-2">
+                                  <span className="text-[10px] font-black text-blue-500 uppercase tracking-widest">Point {idx + 1}</span>
+                               </div>
+                               <div className="grid grid-cols-2 gap-3">
+                                  <div className="space-y-1">
+                                    <label className="text-[8px] font-black text-white/20 uppercase tracking-widest">Year</label>
+                                    <Input type="number" value={point.year} onChange={(e) => {
+                                      const newData = [...(data?.content?.hero?.chart?.data || [])]
+                                      const val = parseInt(e.target.value)
+                                      newData[idx] = { ...newData[idx], year: val, label: `Year ${val}: $${newData[idx].value}M` }
+                                      updateContent("hero", "chart", { ...(data?.content?.hero?.chart || { title: "", data: [] }), data: newData })
+                                    }} className="bg-white/5 border-white/10 text-white h-9 text-xs font-bold" />
+                                  </div>
+                                  <div className="space-y-1">
+                                    <label className="text-[8px] font-black text-white/20 uppercase tracking-widest">Value ($M)</label>
+                                    <Input type="number" step="0.1" value={point.value} onChange={(e) => {
+                                      const newData = [...(data?.content?.hero?.chart?.data || [])]
+                                      const val = parseFloat(e.target.value)
+                                      newData[idx] = { ...newData[idx], value: val, label: `Year ${newData[idx].year}: $${val}M` }
+                                      updateContent("hero", "chart", { ...(data?.content?.hero?.chart || { title: "", data: [] }), data: newData })
+                                    }} className="bg-white/5 border-white/10 text-white h-9 text-xs font-bold" />
+                                  </div>
+                               </div>
+                               <div className="flex items-center gap-3 bg-black/40 p-3 rounded-xl border border-white/5">
+                                  <input type="checkbox" checked={!!point.label} id={`label-${idx}`} onChange={(e) => {
+                                    const newData = [...(data?.content?.hero?.chart?.data || [])]
+                                    newData[idx] = { ...newData[idx], label: e.target.checked ? `Year ${point.year}: $${point.value}M` : "" }
+                                    updateContent("hero", "chart", { ...(data?.content?.hero?.chart || { title: "", data: [] }), data: newData })
+                                  }} className="size-4 accent-blue-500 cursor-pointer" />
+                                  <label htmlFor={`label-${idx}`} className="text-[9px] font-black text-white/40 uppercase tracking-widest cursor-pointer select-none">Show Floating Label</label>
+                               </div>
+                            </div>
+                         </div>
+                       ))}
+                    </div>
+                 </div>
+              </div>
+            </div>
+          </section>
+
+          {/* --- 2. ONE STOP SHOP SECTION --- */}
+          <section className="space-y-8">
+            <PreviewBlock title="2. One-Stop Shop Preview">
+              <OneStopShop data={data} />
+            </PreviewBlock>
+            
+            <div className="bg-[#0a0d12]/40 p-8 rounded-[2.5rem] border border-white/5 space-y-12">
+              <div className="flex items-center gap-3 border-b border-white/5 pb-4">
+                <div className="size-8 bg-emerald-600/20 rounded-lg flex items-center justify-center border border-emerald-500/20">
+                  <EyeIcon className="size-4 text-emerald-500" />
+                </div>
+                <h2 className="text-[11px] font-black text-white/40 uppercase tracking-[0.4em]">Proprietary Service Mastery</h2>
+              </div>
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+                <div className="space-y-6">
+                  <h3 className="text-[10px] font-black text-emerald-500 uppercase tracking-widest ml-1">Section Branding</h3>
+                  <ImageUpload label="Section BG" value={data?.content?.oneStopShop?.backgroundImage || ""} onChange={(v) => updateContent("oneStopShop", "backgroundImage", v)} />
+                  <EditField label="Section Title" value={data?.content?.oneStopShop?.title || ""} onChange={(v) => updateContent("oneStopShop", "title", v)} />
+                  <EditField label="Description" type="textarea" height="h-32" value={data?.content?.oneStopShop?.description || ""} onChange={(v) => updateContent("oneStopShop", "description", v)} />
+                  <EditField label="CTA Button Text" value={data?.content?.oneStopShop?.ctaText || ""} onChange={(v) => updateContent("oneStopShop", "ctaText", v)} />
+                </div>
+                <div className="lg:col-span-2 space-y-6">
+                   <div className="flex items-center justify-between">
+                     <h3 className="text-[10px] font-black text-emerald-500 uppercase tracking-widest ml-1">Service Categories & Details</h3>
+                     <Button onClick={() => {
+                       const currentPoints = data?.content?.oneStopShop?.points || []
+                       const newPoints = [...currentPoints, { title: "New Service", items: ["New detail..."] }]
+                       updateContent("oneStopShop", "points", newPoints)
+                     }} className="bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 text-[9px] h-7 font-black uppercase">
+                        <PlusIcon className="size-3 mr-1" /> Add Service
+                     </Button>
+                   </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-h-[600px] overflow-y-auto no-scrollbar pr-2">
+                    {(data?.content?.oneStopShop?.points || []).map((point: { title: string, items: string[] }, idx: number) => (
+                      <div key={idx} className="bg-white/5 p-6 rounded-[2rem] border border-white/5 space-y-4 group relative">
+                        <Button variant="ghost" size="icon" onClick={() => {
+                          const newPoints = (data?.content?.oneStopShop?.points || []).filter((_: unknown, i: number) => i !== idx)
+                          updateContent("oneStopShop", "points", newPoints)
+                        }} className="absolute top-4 right-4 size-8 text-red-500/40 hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all">
+                           <Trash2Icon className="size-4" />
+                        </Button>
+                        <EditField label="Service Title" value={point.title} onChange={(v) => {
+                          const newPoints = [...(data?.content?.oneStopShop?.points || [])]
+                          newPoints[idx].title = v
+                          updateContent("oneStopShop", "points", newPoints)
+                        }} />
+                        <div className="space-y-3">
+                          <div className="flex justify-between items-center">
+                            <label className="text-[8px] font-black text-white/20 uppercase tracking-widest">Detail Bullets</label>
+                            <Button onClick={() => {
+                              const newPoints = [...(data?.content?.oneStopShop?.points || [])]
+                              newPoints[idx].items = [...newPoints[idx].items, "New point..."]
+                              updateContent("oneStopShop", "points", newPoints)
+                            }} className="size-6 bg-white/5 text-white/30 hover:text-white rounded-lg p-0"><PlusIcon className="size-3" /></Button>
+                          </div>
+                          {point.items?.map((item: string, i: number) => (
+                            <div key={i} className="flex gap-2">
+                              <Input value={item} onChange={(e) => {
+                                const newPoints = [...(data?.content?.oneStopShop?.points || [])]
+                                newPoints[idx].items[i] = e.target.value
+                                updateContent("oneStopShop", "points", newPoints)
+                              }} className="bg-black/40 border-white/10 text-white h-8 text-[10px]" />
+                              <Button variant="ghost" size="icon" onClick={() => {
+                                const newPoints = [...(data?.content?.oneStopShop?.points || [])]
+                                newPoints[idx].items = newPoints[idx].items.filter((_: string, index: number) => index !== i)
+                                updateContent("oneStopShop", "points", newPoints)
+                              }} className="size-8 text-red-500/30 hover:text-red-500"><Trash2Icon className="size-3" /></Button>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     ))}
                   </div>
                 </div>
+              </div>
+            </div>
+          </section>
 
-                <div className="space-y-4 pt-4 border-t border-white/5">
-                  <label className="text-[10px] font-black text-white/40 uppercase tracking-widest block">Career Growth Chart</label>
-                  <div className="bg-white/5 p-4 rounded-2xl space-y-4 border border-white/5">
-                    <EditField label="Chart Title" value={data.content.hero?.chart?.title || ""} onChange={(v) => {
-                      const newChart = { ...(data.content.hero?.chart || { title: "", data: [] }), title: v }
-                      updateContent("hero", "chart", newChart)
-                    }} />
-
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                      {(data.content.hero?.chart?.data || []).map((point: { year: number, value: number, label?: string }, idx: number) => (
-                        <div key={idx} className="space-y-2">
-                          <label className="text-[8px] font-black text-white/20 uppercase tracking-widest">Year {point.year} Value ($M)</label>
-                          <Input
-                            type="number"
-                            step="0.1"
-                            value={point.value}
-                            onChange={(e) => {
-                              const newData = [...(data.content.hero?.chart?.data || [])]
-                              newData[idx].value = parseFloat(e.target.value)
-                              newData[idx].label = `Year ${point.year}: $${e.target.value}M`
-                              updateContent("hero", "chart", { ...(data.content.hero?.chart || { title: "", data: [] }), data: newData })
-                            }}
-                            className="bg-white/10 border-white/10 text-white rounded-lg h-9 text-xs"
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+          {/* --- 3. ABOUT SECTION --- */}
+          <section className="space-y-8">
+            <PreviewBlock title="3. About Section Preview">
+              <AboutSection data={data} />
+            </PreviewBlock>
+            
+            <div className="bg-[#0a0d12]/40 p-8 rounded-[2.5rem] border border-white/5 space-y-12">
+              <div className="flex items-center gap-3 border-b border-white/5 pb-4">
+                <div className="size-8 bg-orange-600/20 rounded-lg flex items-center justify-center border border-orange-500/20">
+                  <UsersIcon className="size-4 text-orange-500" />
                 </div>
-              </>
-            )}
-            {editingSection === "oneStopShop" && (
-              <>
-                <ImageUpload label="Background Image" value={data.content.oneStopShop?.backgroundImage || ""} onChange={(v) => updateContent("oneStopShop", "backgroundImage", v)} />
-                <EditField label="Section Title" value={data.content.oneStopShop?.title || ""} onChange={(v) => updateContent("oneStopShop", "title", v)} />
-                <EditField label="Description" type="textarea" value={data.content.oneStopShop?.description || ""} onChange={(v) => updateContent("oneStopShop", "description", v)} />
-                <EditField label="CTA Button Text" value={data.content.oneStopShop?.ctaText || ""} onChange={(v) => updateContent("oneStopShop", "ctaText", v)} />
+                <h2 className="text-[11px] font-black text-white/40 uppercase tracking-[0.4em]">Executive Bio & Achievements</h2>
+              </div>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <div className="space-y-6">
+                   <h3 className="text-[10px] font-black text-orange-500 uppercase tracking-widest ml-1">Profile Branding</h3>
+                   <div className="grid grid-cols-2 gap-4">
+                     <ImageUpload label="Joe's Profile" value={data?.content?.about?.profileImage || ""} onChange={(v) => updateContent("about", "profileImage", v)} />
+                     <ImageUpload label="Background BG" value={data?.content?.about?.backgroundImage || ""} onChange={(v) => updateContent("about", "backgroundImage", v)} />
+                   </div>
+                   <EditField label="Heading (use \n for breaks)" type="textarea" value={data?.content?.about?.title || ""} onChange={(v) => updateContent("about", "title", v)} />
+                   <EditField label="NBPA Certification Subtitle" value={data?.content?.about?.subtitle || ""} onChange={(v) => updateContent("about", "subtitle", v)} />
+                   <EditField label="Main Bio Description" type="textarea" height="h-48" value={data?.content?.about?.description || ""} onChange={(v) => updateContent("about", "description", v)} />
+                </div>
+                <div className="space-y-8">
+                   <div className="space-y-4">
+                     <h3 className="text-[10px] font-black text-orange-500 uppercase tracking-widest ml-1">Achievement Bullets</h3>
+                     <div className="space-y-3 max-h-[400px] overflow-y-auto no-scrollbar pr-2">
+                       {(data?.content?.about?.bullets || []).map((bullet: string, idx: number) => (
+                         <div key={idx} className="flex gap-2">
+                           <textarea value={bullet} onChange={(e) => {
+                             const newBullets = [...(data?.content?.about?.bullets || [])]
+                             newBullets[idx] = e.target.value
+                             updateContent("about", "bullets", newBullets)
+                           }} className="flex-1 bg-white/5 border border-white/10 text-white text-[10px] rounded-xl p-3 h-16 resize-none focus:border-orange-500/30 transition-all" />
+                           <Button variant="ghost" size="icon" onClick={() => {
+                             const newBullets = (data?.content?.about?.bullets || []).filter((_: string, i: number) => i !== idx)
+                             updateContent("about", "bullets", newBullets)
+                           }} className="text-red-500/40 hover:text-red-500 size-10"><Trash2Icon className="size-4" /></Button>
+                         </div>
+                       ))}
+                       <Button variant="outline" onClick={() => updateContent("about", "bullets", [...(data?.content?.about?.bullets || []), "New achievement..."])} className="w-full border-dashed border-white/10 text-white/40 hover:text-white h-12 rounded-2xl text-[10px] font-black uppercase tracking-widest">
+                         + Add Achievement
+                       </Button>
+                     </div>
+                   </div>
 
-                <div className="space-y-6 pt-4 border-t border-white/5">
-                  <label className="text-[10px] font-black text-white/40 uppercase tracking-widest block">Service Categories</label>
-                  {(data.content.oneStopShop?.points || []).map((point: { title: string, items: string[] }, idx: number) => (
-                    <div key={idx} className="bg-white/5 p-4 rounded-2xl space-y-4 border border-white/5 relative group">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => {
-                          const newPoints = (data.content.oneStopShop?.points || []).filter((_: { title: string, items: string[] }, i: number) => i !== idx)
-                          updateContent("oneStopShop", "points", newPoints)
-                        }}
-                        className="absolute top-2 right-2 text-red-500 hover:text-red-400 hover:bg-red-500/10 opacity-0 group-hover:opacity-100 transition-opacity"
-                      >
-                        ×
-                      </Button>
-                      <EditField label={`Category ${idx + 1} Title`} value={point.title} onChange={(v) => {
-                        const newPoints = [...(data.content.oneStopShop?.points || [])]
-                        newPoints[idx].title = v
-                        updateContent("oneStopShop", "points", newPoints)
-                      }} />
-
-                      <div className="space-y-3">
-                        <label className="text-[9px] font-black text-white/20 uppercase tracking-widest block">Bullet Points</label>
-                        {point.items?.map((item: string, i: number) => (
-                          <div key={i} className="flex gap-2">
-                            <Input
-                              value={item}
-                              onChange={(e) => {
-                                const newPoints = [...(data.content.oneStopShop?.points || [])]
-                                newPoints[idx].items[i] = e.target.value
-                                updateContent("oneStopShop", "points", newPoints)
-                              }}
-                              className="bg-white/5 border-white/10 text-white rounded-xl h-9 text-xs"
-                            />
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => {
-                                const newPoints = [...(data.content.oneStopShop?.points || [])]
-                                newPoints[idx].items = newPoints[idx].items.filter((_: string, index: number) => index !== i)
-                                updateContent("oneStopShop", "points", newPoints)
-                              }}
-                              className="text-red-500 hover:text-red-400 size-9"
-                            >
-                              ×
-                            </Button>
-                          </div>
-                        ))}
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => {
-                            const newPoints = [...(data.content.oneStopShop?.points || [])]
-                            newPoints[idx].items = [...newPoints[idx].items, "New point..."]
-                            updateContent("oneStopShop", "points", newPoints)
-                          }}
-                          className="w-full border-dashed border-white/10 text-white/40 hover:text-white h-8 rounded-lg text-[9px] font-black uppercase"
-                        >
-                          + Add Bullet
-                        </Button>
+                   <div className="space-y-4 pt-8 border-t border-white/5">
+                      <h3 className="text-[10px] font-black text-orange-500 uppercase tracking-widest ml-1">Specialty Marquee</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                         {(data?.content?.about?.specialties || []).map((spec: string, idx: number) => (
+                           <Input key={idx} value={spec} onChange={(e) => {
+                             const newSpecs = [...(data?.content?.about?.specialties || [])]
+                             newSpecs[idx] = e.target.value
+                             updateContent("about", "specialties", newSpecs)
+                           }} className="bg-black/40 border-white/10 text-white h-9 text-[10px]" />
+                         ))}
                       </div>
-                    </div>
-                  ))}
-                  <Button
-                    onClick={() => {
-                      const currentPoints = data.content.oneStopShop?.points || []
-                      const newPoints = [...currentPoints, { title: "New Service Category", items: ["New bullet point..."] }]
-                      updateContent("oneStopShop", "points", newPoints)
-                    }}
-                    className="w-full bg-blue-600/10 border border-dashed border-blue-500/20 text-blue-500 hover:bg-blue-600 hover:text-white font-black uppercase tracking-widest text-[10px] h-12 rounded-2xl transition-all"
-                  >
-                    + Add New Service Category
-                  </Button>
+                   </div>
+                   
+                   <EditField label="Bottom Focus Text" type="textarea" height="h-24" value={data?.content?.about?.focusText || ""} onChange={(v) => updateContent("about", "focusText", v)} />
+                   <EditField label="CTA Button Text" value={data?.content?.about?.ctaText || ""} onChange={(v) => updateContent("about", "ctaText", v)} />
                 </div>
-              </>
-            )}
-            {editingSection === "about" && (
-              <>
-                <ImageUpload label="Background Image" value={data.content.about?.backgroundImage || ""} onChange={(v) => updateContent("about", "backgroundImage", v)} />
-                <ImageUpload label="Joe's Profile Image" value={data.content.about?.profileImage || ""} onChange={(v) => updateContent("about", "profileImage", v)} />
-                <EditField label="About Heading" type="textarea" value={data.content.about?.title || ""} onChange={(v) => updateContent("about", "title", v)} />
-                <EditField label="Certification Subtitle" value={data.content.about?.subtitle || ""} onChange={(v) => updateContent("about", "subtitle", v)} />
-                <EditField label="Bio Description" type="textarea" height="h-32" value={data.content.about?.description || ""} onChange={(v) => updateContent("about", "description", v)} />
-                <EditField label="Bottom Focus Text" type="textarea" height="h-24" value={data.content.about?.focusText || ""} onChange={(v) => updateContent("about", "focusText", v)} />
-                <EditField label="CTA Button Text" value={data.content.about?.ctaText || ""} onChange={(v) => updateContent("about", "ctaText", v)} />
+              </div>
+            </div>
+          </section>
 
-                <div className="space-y-3 pt-4 border-t border-white/5">
-                  <label className="text-[10px] font-black text-white/40 uppercase tracking-widest block">Achievement Bullets</label>
-                  {(data.content.about?.bullets || []).map((bullet: string, idx: number) => (
-                    <div key={idx} className="flex gap-2">
-                      <Input
-                        value={bullet}
-                        onChange={(e) => {
-                          const newBullets = [...(data.content.about?.bullets || [])]
-                          newBullets[idx] = e.target.value
-                          updateContent("about", "bullets", newBullets)
-                        }}
-                        className="bg-white/5 border-white/10 text-white rounded-xl h-10 text-xs"
-                      />
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => {
-                          const newBullets = (data.content.about?.bullets || []).filter((_: string, i: number) => i !== idx)
-                          updateContent("about", "bullets", newBullets)
-                        }}
-                        className="text-red-500 hover:text-red-400 size-10"
-                      >
-                        ×
-                      </Button>
-                    </div>
-                  ))}
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      const newBullets = [...(data.content.about?.bullets || []), "New achievement..."]
-                      updateContent("about", "bullets", newBullets)
-                    }}
-                    className="w-full border-dashed border-white/10 text-white/40 hover:text-white h-10 rounded-xl text-[10px] font-black uppercase"
-                  >
-                    + Add Achievement
-                  </Button>
+          {/* --- 4. CONTACT SECTION --- */}
+          <section className="space-y-8">
+            <PreviewBlock title="4. Contact Section Preview">
+              <ContactSection data={data} />
+            </PreviewBlock>
+            
+            <div className="bg-[#0a0d12]/40 p-8 rounded-[2.5rem] border border-white/5 space-y-12">
+              <div className="flex items-center gap-3 border-b border-white/5 pb-4">
+                <div className="size-8 bg-cyan-600/20 rounded-lg flex items-center justify-center border border-cyan-500/20">
+                  <PhoneIcon className="size-4 text-cyan-500" />
                 </div>
-
-                <div className="space-y-3 pt-4 border-t border-white/5">
-                  <label className="text-[10px] font-black text-white/40 uppercase tracking-widest block">Specialty Marquee</label>
-                  {(data.content.about?.specialties || []).map((spec: string, idx: number) => (
-                    <div key={idx} className="flex gap-2">
-                      <Input
-                        value={spec}
-                        onChange={(e) => {
-                          const newSpecs = [...(data.content.about?.specialties || [])]
-                          newSpecs[idx] = e.target.value
-                          updateContent("about", "specialties", newSpecs)
-                        }}
-                        className="bg-white/5 border-white/10 text-white rounded-xl h-10 text-xs"
-                      />
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => {
-                          const newSpecs = (data.content.about?.specialties || []).filter((_: string, i: number) => i !== idx)
-                          updateContent("about", "specialties", newSpecs)
-                        }}
-                        className="text-red-500 hover:text-red-400 size-10"
-                      >
-                        ×
-                      </Button>
-                    </div>
-                  ))}
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      const newSpecs = [...(data.content.about?.specialties || []), "New specialty..."]
-                      updateContent("about", "specialties", newSpecs)
-                    }}
-                    className="w-full border-dashed border-white/10 text-white/40 hover:text-white h-10 rounded-xl text-[10px] font-black uppercase"
-                  >
-                    + Add Specialty
-                  </Button>
+                <h2 className="text-[11px] font-black text-white/40 uppercase tracking-[0.4em]">Direct Communication Hardening</h2>
+              </div>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <div className="space-y-6">
+                   <h3 className="text-[10px] font-black text-cyan-500 uppercase tracking-widest ml-1">Branding & Headers</h3>
+                   <ImageUpload label="Contact BG" value={data?.content?.contact?.backgroundImage || ""} onChange={(v) => updateContent("contact", "backgroundImage", v)} />
+                   <EditField label="Main Heading" value={data?.content?.contact?.title || ""} onChange={(v) => updateContent("contact", "title", v)} />
+                   <EditField label="Sub-Tagline" value={data?.content?.contact?.tagline || ""} onChange={(v) => updateContent("contact", "tagline", v)} />
                 </div>
-              </>
-            )}
-            {editingSection === "contact" && (
-              <>
-                <ImageUpload label="Background Image" value={data.content.contact?.backgroundImage || ""} onChange={(v) => updateContent("contact", "backgroundImage", v)} />
-                <EditField label="Contact Heading" value={data.content.contact?.title || ""} onChange={(v) => updateContent("contact", "title", v)} />
-                <EditField label="Tagline" value={data.content.contact?.tagline || ""} onChange={(v) => updateContent("contact", "tagline", v)} />
-
-                <div className="space-y-6 pt-4 border-t border-white/5">
-                  <div className="bg-white/5 p-4 rounded-2xl space-y-4 border border-white/5">
-                    <label className="text-[10px] font-black text-white/40 uppercase tracking-widest block">Direct Line Card</label>
-                    <EditField label="Card Title" value={data.content.contact?.phoneTitle || ""} onChange={(v) => updateContent("contact", "phoneTitle", v)} />
-                    <EditField label="Phone Number" value={data.content.contact?.phone || ""} onChange={(v) => updateContent("contact", "phone", v)} />
-                    <EditField label="Description" type="textarea" height="h-20" value={data.content.contact?.phoneDesc || ""} onChange={(v) => updateContent("contact", "phoneDesc", v)} />
-                  </div>
-
-                  <div className="bg-white/5 p-4 rounded-2xl space-y-4 border border-white/5">
-                    <label className="text-[10px] font-black text-white/40 uppercase tracking-widest block">Email Card</label>
-                    <EditField label="Card Title" value={data.content.contact?.emailTitle || ""} onChange={(v) => updateContent("contact", "emailTitle", v)} />
-                    <EditField label="Email Address" value={data.content.contact?.email || ""} onChange={(v) => updateContent("contact", "email", v)} />
-                    <EditField label="Description" type="textarea" height="h-20" value={data.content.contact?.emailDesc || ""} onChange={(v) => updateContent("contact", "emailDesc", v)} />
-                  </div>
-
-                  <div className="bg-white/5 p-4 rounded-2xl space-y-4 border border-white/5">
-                    <label className="text-[10px] font-black text-white/40 uppercase tracking-widest block">Location Card</label>
-                    <EditField label="Card Title" value={data.content.contact?.locationTitle || ""} onChange={(v) => updateContent("contact", "locationTitle", v)} />
-                    <EditField label="Location Details" type="textarea" height="h-24" value={data.content.contact?.location || ""} onChange={(v) => updateContent("contact", "location", v)} />
-                  </div>
+                <div className="space-y-6">
+                   <h3 className="text-[10px] font-black text-cyan-500 uppercase tracking-widest ml-1">Contact Intelligence</h3>
+                   <div className="space-y-4">
+                      {/* Phone */}
+                      <div className="bg-white/5 p-6 rounded-3xl border border-white/5 space-y-4">
+                        <EditField label="Phone Title" value={data?.content?.contact?.phoneTitle || ""} onChange={(v) => updateContent("contact", "phoneTitle", v)} />
+                        <EditField label="Phone Number" value={data?.content?.contact?.phone || ""} onChange={(v) => updateContent("contact", "phone", v)} />
+                        <EditField label="Phone Description" type="textarea" height="h-20" value={data?.content?.contact?.phoneDesc || ""} onChange={(v) => updateContent("contact", "phoneDesc", v)} />
+                      </div>
+                      {/* Email */}
+                      <div className="bg-white/5 p-6 rounded-3xl border border-white/5 space-y-4">
+                        <EditField label="Email Title" value={data?.content?.contact?.emailTitle || ""} onChange={(v) => updateContent("contact", "emailTitle", v)} />
+                        <EditField label="Email Address" value={data?.content?.contact?.email || ""} onChange={(v) => updateContent("contact", "email", v)} />
+                        <EditField label="Email Description" type="textarea" height="h-20" value={data?.content?.contact?.emailDesc || ""} onChange={(v) => updateContent("contact", "emailDesc", v)} />
+                      </div>
+                      {/* Location */}
+                      <div className="bg-white/5 p-6 rounded-3xl border border-white/5 space-y-4">
+                        <EditField label="Location Title" value={data?.content?.contact?.locationTitle || ""} onChange={(v) => updateContent("contact", "locationTitle", v)} />
+                        <EditField label="Full Office Address" type="textarea" height="h-24" value={data?.content?.contact?.location || ""} onChange={(v) => updateContent("contact", "location", v)} />
+                      </div>
+                   </div>
                 </div>
-              </>
-            )}
-          </div>
+              </div>
+            </div>
+          </section>
 
-          <DialogFooter className="p-6 bg-white/5 border-t border-white/5">
-            <Button onClick={() => setEditingSection(null)} className="bg-blue-600 hover:bg-blue-500 text-white font-black uppercase tracking-widest text-[10px] px-8 h-12 rounded-xl">
-              Done Editing
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+        </div>
+      )}
     </div>
   )
 }
 
-function PreviewWrapper({ children, onEdit }: { children: React.ReactNode, onEdit: () => void }) {
+function PreviewBlock({ title, children }: { title: string, children: React.ReactNode }) {
   return (
-    <div
-      className="relative group/section cursor-pointer overflow-hidden"
-      onClick={onEdit}
-    >
-      <div className="transition-opacity duration-500 group-hover/section:opacity-40 pointer-events-none">
+    <div className="w-full rounded-[3rem] overflow-hidden border border-white/5 bg-black shadow-3xl">
+      <div className="bg-white/5 px-8 py-3 flex items-center justify-center gap-3 border-b border-white/5">
+        <div className="size-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_10px_#22c55e]" />
+        <span className="text-[10px] font-black text-white/40 uppercase tracking-[0.4em]">{title}</span>
+      </div>
+      <div className="relative pointer-events-none opacity-90 transition-all">
         {children}
-      </div>
-
-      {/* Edit Overlay */}
-      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover/section:opacity-100 transition-all duration-300 z-30 bg-blue-600/5">
-        <div className="bg-blue-600 text-white size-16 rounded-full flex items-center justify-center shadow-[0_0_40px_rgba(59,130,246,0.8)] scale-75 group-hover/section:scale-100 transition-transform duration-300 border-4 border-white/20">
-          <PencilIcon className="size-6" />
-        </div>
-      </div>
-
-      <div className="absolute top-8 right-8 bg-blue-600 px-6 py-2 rounded-full text-[10px] font-black text-white uppercase tracking-[0.2em] opacity-0 group-hover/section:opacity-100 transition-all duration-300 translate-x-4 group-hover/section:translate-x-0 shadow-2xl z-40">
-        Click to Edit Section
       </div>
     </div>
   )
@@ -621,9 +551,9 @@ function PreviewWrapper({ children, onEdit }: { children: React.ReactNode, onEdi
 function EditField({ label, value, onChange, type = "text", height = "h-24" }: { label: string, value: string, onChange: (v: string) => void, type?: "text" | "textarea", height?: string }) {
   return (
     <div className="space-y-2">
-      <label className="text-[10px] font-black text-white/40 uppercase tracking-widest">{label}</label>
+      <label className="text-[10px] font-black text-white/20 uppercase tracking-widest ml-1">{label}</label>
       {type === "text" ? (
-        <Input value={value} onChange={(e) => onChange(e.target.value)} className="bg-white/5 border-white/10 text-white rounded-xl h-12 text-sm" />
+        <Input value={value} onChange={(e) => onChange(e.target.value)} className="bg-white/5 border-white/10 text-white rounded-xl h-11 text-xs" />
       ) : (
         <textarea
           className={`flex w-full ${height} rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500/50 transition-all no-scrollbar font-medium resize-none`}

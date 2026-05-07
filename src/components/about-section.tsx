@@ -17,7 +17,7 @@ export function AboutSection({ data }: { data?: PageData | null }) {
       "Featured on CBS News discussing college basketball economics and player valuation.",
       "Expert in determining fair market rates for endorsement deals and NIL valuation.",
       "Brings courtroom-tested economic analysis to NBA contract negotiation.",
-      "His goal is clear: to help elite NBA players, college prospects, and 5-star high-school talents succeed."
+      "His goal is clear: to help elite NBA players, college prospects, and 5-star high school talents succeed."
     ],
     specialties: [
       "Intellectual Property Expert",
@@ -42,7 +42,7 @@ export function AboutSection({ data }: { data?: PageData | null }) {
       <div className="absolute top-1/4 -right-20 w-96 h-96 bg-primary/10 blur-[120px] rounded-full" />
       <div className="absolute bottom-1/4 -left-20 w-96 h-96 bg-secondary/10 blur-[120px] rounded-full" />
 
-      <div className="w-full mx-auto px-6 max-w-7xl relative">
+      <div className="container mx-auto px-6 max-w-7xl relative">
         <div className="text-center mb-16 space-y-4">
           <GradientHeader tag="h2" size="lg" className="mb-6">
             {(content.title || "").split('\n').map((line: string, i: number) => (
@@ -60,25 +60,28 @@ export function AboutSection({ data }: { data?: PageData | null }) {
           </div>
         </div>
 
-        <div className="grid lg:grid-cols-12 gap-12 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           {/* Image Column */}
-          <div className="lg:col-span-5 flex justify-center">
+          <div id="joe-profile-column" className="lg:col-span-5 flex justify-center">
             <div className="relative group">
-              <div className="relative w-full aspect-[4/5] max-w-[520px] rounded-2xl overflow-hidden border border-white/10 glass shadow-2xl mx-auto">
+              <div className="relative w-full aspect-[4/5] min-w-[270px] md:min-w-[520px] rounded-2xl overflow-hidden border border-white/10 glass shadow-2xl">
                 <Image
-                  src={content.profileImage || "/owner/me.jpg"}
+                  id="joe-profile-image"
+                  src={(content.profileImage && content.profileImage.trim() !== "") ? content.profileImage : "/owner/me.jpg"}
                   alt="Joe Grekoski"
                   fill
                   className="object-cover object-top hover:scale-105 transition-transform duration-700"
+                  unoptimized
+                  priority
                 />
               </div>
             </div>
           </div>
 
           {/* Content Column */}
-          <div className="lg:col-span-7 space-y-8">
+          <div id="joe-content-column" className="lg:col-span-7 space-y-8">
             <div className="space-y-4">
-              <p className="text-lg text-white/90 leading-relaxed">
+              <p className="text-lg text-white/90 leading-relaxed font-medium">
                 {content.description}
               </p>
             </div>

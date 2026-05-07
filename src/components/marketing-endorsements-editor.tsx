@@ -11,6 +11,9 @@ import { GradientHeader } from "@/components/gradient-header"
 import { CtaButton } from "@/components/cta-button"
 import { SeoEditor } from "@/components/seo-editor"
 import { ImageUpload } from "@/components/image-upload"
+import { mergePageData } from "@/lib/data-utils"
+import { DEFAULT_MARKETING_ENDORSEMENTS_DATA } from "@/lib/defaults"
+import { PlusIcon, Trash2Icon } from "lucide-react"
 
 export function MarketingEndorsementsEditor() {
   const [loading, setLoading] = useState(true)
@@ -27,31 +30,9 @@ export function MarketingEndorsementsEditor() {
       const response = await fetch("/api/pages/marketing-endorsements")
       const result = await response.json()
       if (result.success && result.data) {
-        setData(result.data)
+        setData(mergePageData(result.data, DEFAULT_MARKETING_ENDORSEMENTS_DATA))
       } else {
-        setData({
-          slug: "marketing-endorsements",
-          title: "Marketing & Endorsements",
-          content: {
-            marketingEndorsements: {
-              title: "Marketing and \n Endorsement Deals",
-              tagline: "We build and monetize your personal brand so you earn maximum value from endorsements, sponsorships, and marketing opportunities.",
-              items: [
-                { title: "Professional brand valuation", desc: "Analysis of market value", iconType: "chart" },
-                { title: "Media training", desc: "Personal branding development", iconType: "mic" },
-              ],
-              transitionQuote: "Whether you're chasing your first major shoe deal or expanding your brand, we make sure you're never undervalued.",
-              readyHeading: "Ready to unlock your full potential?",
-              ctaText: "SCHEDULE YOUR CONFIDENTIAL CONTRACT STRATEGY CALL"
-            }
-          },
-          seo: {
-            title: "Marketing & Endorsements | Acclimation Sports",
-            description: "Build and monetize your personal brand.",
-            keywords: "Athlete Marketing, NBA Endorsements",
-            faqs: []
-          }
-        })
+        setData(DEFAULT_MARKETING_ENDORSEMENTS_DATA)
       }
     } catch (error) {
       console.error(error)
@@ -90,12 +71,13 @@ export function MarketingEndorsementsEditor() {
   const updateContent = (field: string, value: unknown) => {
     setData((prev) => {
       if (!prev) return null
+      const currentME = prev.content.marketingEndorsements || DEFAULT_MARKETING_ENDORSEMENTS_DATA.content.marketingEndorsements!
       return {
         ...prev,
         content: {
           ...prev.content,
           marketingEndorsements: {
-            ...prev.content.marketingEndorsements!,
+            ...currentME,
             [field]: value
           }
         }
@@ -124,7 +106,7 @@ export function MarketingEndorsementsEditor() {
     }
   };
 
-  if (loading || !data || !data.content.marketingEndorsements) {
+  if (loading || !data) {
     return (
       <div className="flex items-center justify-center h-[60vh]">
         <Loader2Icon className="size-10 animate-spin text-blue-500" />
@@ -132,7 +114,15 @@ export function MarketingEndorsementsEditor() {
     )
   }
 
-  const content = data.content.marketingEndorsements
+  const content = data?.content?.marketingEndorsements || {
+    title: "",
+    tagline: "",
+    items: [],
+    transitionQuote: "",
+    readyHeading: "",
+    ctaText: "",
+    backgroundImage: ""
+  }
 
   return (
     <div className="space-y-12 pb-24 animate-in fade-in duration-700 w-full max-w-full overflow-x-hidden">
@@ -187,7 +177,7 @@ export function MarketingEndorsementsEditor() {
             
             <div className="relative pt-12 pb-24 bg-[#05070a]">
               <div className="absolute inset-0 z-0">
-                <Image src={content.backgroundImage || "/fullbuscatecoart.png"} alt="Bg" fill className="object-cover opacity-50" />
+                <Image src={content.backgroundImage || "/fullbuscatecoart.png"} alt="Bg" fill className="object-cover opacity-50" unoptimized />
                 <div className="absolute inset-0 bg-gradient-to-b from-[#05070a]/90 via-[#05070a]/40 to-[#05070a]" />
               </div>
               
@@ -263,10 +253,29 @@ export function MarketingEndorsementsEditor() {
               </div>
 
               <div className="bg-[#0a0d12]/40 p-8 rounded-[2.5rem] border border-white/5 space-y-6">
-                 <h2 className="text-[11px] font-black text-white/40 uppercase tracking-[0.4em]">Marketing Highlights</h2>
+                 <div className="flex items-center justify-between">
+                   <h2 className="text-[11px] font-black text-white/40 uppercase tracking-[0.4em]">Marketing Highlights</h2>
+                   <Button 
+                    onClick={() => updateContent("items", [...content.items, { title: "New Highlight", desc: "", iconType: "trophy" }])}
+                    className="bg-blue-600/10 text-blue-500 border border-blue-500/20 text-[10px] font-black uppercase h-8 px-4 rounded-lg"
+                   >
+                     <PlusIcon className="size-3 mr-2" /> Add Highlight
+                   </Button>
+                 </div>
                  <div className="grid grid-cols-1 gap-4">
                    {content.items.map((item: MarketingEndorsementItem, idx: number) => (
-                     <div key={idx} className="bg-white/5 p-6 rounded-2xl border border-white/5 space-y-4">
+                     <div key={idx} className="bg-white/5 p-6 rounded-2xl border border-white/5 space-y-4 relative group/item">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => {
+                            const newItems = content.items.filter((_, i) => i !== idx)
+                            updateContent("items", newItems)
+                          }}
+                          className="absolute -top-2 -right-2 text-red-500 opacity-0 group-hover/item:opacity-100 transition-opacity bg-[#0a0d12] border border-white/10 size-6 rounded-full z-10"
+                        >
+                          <Trash2Icon className="size-3" />
+                        </Button>
                         <div className="flex justify-between items-center border-b border-white/5 pb-2">
                            <span className="text-[10px] font-black text-primary uppercase tracking-widest">Highlight {idx + 1}</span>
                         </div>

@@ -48,4 +48,8 @@ next-env.d.ts
 backend
 ./backend
 
-backend
+# uploads
+/public/uploads
+
+
+frontend

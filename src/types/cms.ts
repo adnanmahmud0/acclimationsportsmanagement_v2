@@ -19,6 +19,7 @@ export interface HeroData {
     title: string;
     data: ChartPoint[];
   };
+  ctaText?: string;
 }
 
 export interface ServicePoint {
@@ -140,6 +141,16 @@ export interface HolisticConciergeData {
   backgroundImage?: string;
 }
 
+export interface ContractNegotiationData {
+  mainTitle: string;
+  subDescription: string;
+  backgroundImage?: string;
+  ctaText: string;
+  points: Array<{ title: string; items: string[] }>;
+  processTitle: string;
+  processSteps: ProcessStep[];
+}
+
 export interface PageContent {
   hero?: HeroData;
   oneStopShop?: OneStopShopData;
@@ -150,15 +161,25 @@ export interface PageContent {
   marketingEndorsements?: MarketingEndorsementsData;
   preDraft?: PreDraftData;
   holisticConcierge?: HolisticConciergeData;
+  contractNegotiation?: ContractNegotiationData;
   mainTitle?: string;
   subDescription?: string;
   description?: string;
-  points?: Array<{ title: string; items: string[] }>; // Standardized points structure
+  points?: Array<{ 
+    title: string; 
+    items: string[]; 
+    image?: string; 
+    stats?: Array<{ label: string; value: string }> 
+  }>; // Standardized points structure
   processSteps?: ProcessStep[];
+  processTitle?: string;
   ctaText?: string;
   backgroundImage?: string;
   tagline?: string;
   stats?: Array<{ label: string; value: string }>;
+  transitionTitle?: string;
+  transitionDescription?: string;
+  sectionTitle?: string;
 }
 
 export interface FAQ {

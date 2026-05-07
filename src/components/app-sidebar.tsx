@@ -27,7 +27,8 @@ import {
   TargetIcon,
   HeartIcon,
   GraduationCap,
-  MailIcon
+  MailIcon,
+  ImageIcon
 } from "lucide-react"
 import Link from "next/link"
 import { Logo } from "@/components/logo"
@@ -36,7 +37,7 @@ const data = {
   user: {
     name: "Administrator",
     email: "admin@admin.com",
-    avatar: "/owner/me.png",
+    avatar: "/owner/me.jpg",
   },
 
   navMain: [
@@ -44,6 +45,11 @@ const data = {
       title: "Dashboard",
       url: "/admin",
       icon: <LayoutDashboardIcon />,
+    },
+    {
+      title: "Media Library",
+      url: "/admin/media",
+      icon: <ImageIcon />,
     },
     {
       title: "General",

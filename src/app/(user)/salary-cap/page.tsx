@@ -4,14 +4,16 @@ import { GradientHeader } from "@/components/gradient-header";
 import { CtaButton } from "@/components/cta-button";
 import { buildMetadataFromPage } from "@/lib/seo";
 import { BreadcrumbSchema, FAQSchema } from "@/components/json-ld";
+export const dynamic = "force-dynamic";
 import connectDB from "@/lib/mongodb";
 import Page from "@/models/page";
-import { PageData } from "@/types/cms";
+import { mergePageData } from "@/lib/data-utils";
+import { DEFAULT_SALARY_CAP_DATA } from "@/lib/defaults";
 
 async function getPageData() {
   await connectDB();
   const page = await Page.findOne({ slug: "salary-cap" }).lean();
-  return page as unknown as PageData | null;
+  return mergePageData(page, DEFAULT_SALARY_CAP_DATA);
 }
 
 export async function generateMetadata() {
@@ -21,26 +23,7 @@ export async function generateMetadata() {
 
 export default async function SalaryCapPage() {
   const pageData = await getPageData();
-  
-  const content = pageData?.content?.salaryCap || {
-    title: "Master the Salary Cap. \n Maximize Every Dollar.",
-    subtitle: "Proprietary analytical models and expert salary cap strategy that put more money in your pocket. We deliver precise, real-time salary cap modeling and data-driven strategies to optimize every contract.",
-    engineTitle: "The Acclimation Salary Cap Engine",
-    cardTitles: [
-      "Live Salary Cap Forecasting",
-      "Luxury Tax Stress Testing",
-      "Endorsement & NIL Valuation",
-      "Contract Optimization Simulator"
-    ],
-    points: [
-      "In-house salary cap & luxury tax forecasts",
-      "Custom analytical projections",
-      "Bird Rights and exception optimization",
-      "Trade scenario analysis"
-    ],
-    ctaText: "SCHEDULE YOUR CONFIDENTIAL CONTRACT STRATEGY CALL",
-    backgroundImage: "/graph.png"
-  };
+  const content = pageData.content.salaryCap!;
 
   return (
     <main className="relative min-h-screen overflow-x-hidden bg-[#05070a] text-white">
@@ -54,6 +37,7 @@ export default async function SalaryCapPage() {
           fill
           className="object-cover opacity-100"
           priority
+          unoptimized
         />
         <div className="absolute inset-0 bg-gradient-to-b from-[#05070a]/60 via-[#05070a]/20 to-[#05070a]" />
       </div>
@@ -61,15 +45,21 @@ export default async function SalaryCapPage() {
       <div className="container mx-auto px-6 pt-32 pb-24 relative z-10 flex flex-col items-center">
         {/* Header Section */}
         <div className="text-center space-y-6 max-w-5xl mx-auto mb-16">
-          <GradientHeader tag="h1" size="lg" className="mb-4 text-center">
-            {(content.title || "").split('\n').map((line: string, i: number) => (
+          <GradientHeader tag="h1" size="lg" className="mb-4">
+            {(content.title || "").split('\n').map((line: string, i: number, arr: string[]) => (
               <React.Fragment key={i}>
-                {line}
-                {i < (content.title || "").split('\n').length - 1 && <br />}
+                {i === arr.length - 1 ? (
+                  <span className="flex">{line}</span>
+                ) : (
+                  <>
+                    {line}
+                    <br />
+                  </>
+                )}
               </React.Fragment>
             ))}
           </GradientHeader>
-          <p className="text-sm font-bold tracking-[0.3em] uppercase text-white/50 mb-4 whitespace-pre-line">
+          <p className="text-sm font-bold tracking-[0.3em] uppercase text-white/50 mb-4 whitespace-pre-line max-w-4xl mx-auto">
             {content.subtitle}
           </p>
         </div>
@@ -92,7 +82,7 @@ export default async function SalaryCapPage() {
 
           {/* Engine Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <EngineCard title={content.cardTitles[0] || "Live Salary Cap Forecasting"}>
+            <EngineCard title={content.cardTitles?.[0] || "Live Salary Cap Forecasting"}>
               <div className="space-y-4">
                 <div className="text-xs font-bold text-white/30 uppercase tracking-widest leading-none">
                   Premium Growth
@@ -109,7 +99,7 @@ export default async function SalaryCapPage() {
               </div>
             </EngineCard>
 
-            <EngineCard title={content.cardTitles[1] || "Luxury Tax Stress Testing"}>
+            <EngineCard title={content.cardTitles?.[1] || "Luxury Tax Stress Testing"}>
               <div className="space-y-4">
                 <div className="flex justify-between items-end h-20 gap-2 px-2">
                   <div className="w-3 bg-purple-500/80 h-full rounded-t-sm" />
@@ -127,7 +117,7 @@ export default async function SalaryCapPage() {
               </div>
             </EngineCard>
 
-            <EngineCard title={content.cardTitles[2] || "Endorsement & NIL Valuation"}>
+            <EngineCard title={content.cardTitles?.[2] || "Endorsement & NIL Valuation"}>
               <div className="space-y-4">
                 <div className="flex justify-between items-center text-xs font-bold uppercase tracking-widest">
                   <span className="text-white/30">Value Uplift</span>
@@ -144,7 +134,7 @@ export default async function SalaryCapPage() {
               </div>
             </EngineCard>
 
-            <EngineCard title={content.cardTitles[3] || "Contract Optimization Simulator"}>
+            <EngineCard title={content.cardTitles?.[3] || "Contract Optimization Simulator"}>
               <div className="h-28 relative pt-4">
                 <svg
                   viewBox="0 0 200 100"
@@ -176,7 +166,7 @@ export default async function SalaryCapPage() {
           {/* List Section */}
           <div className="pt-12 ">
             <div className="flex flex-col justify-center items-center">
-              {content.points.map((point: string, i: number) => (
+              {content.points?.map((point: string, i: number) => (
                 <div key={i} className="flex gap-4 items-center group">
                   <p className="text-sm font-bold text-white/70 uppercase tracking-widest leading-tight">
                     {point}
@@ -205,7 +195,7 @@ function EngineCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className="glass-premium p-6 rounded-2xl border-white/10 hover:border-primary/40 transition-all group min-h-[180px] flex flex-col justify-between">
+    <div className="glass-premium p-6 rounded-2xl border-white/10 hover:border-primary/40 transition-all group min-h-[180px] flex flex-col justify-between shadow-2xl">
       <h3 className="text-sm font-black text-white uppercase tracking-widest leading-tight mb-6">
         {title}
       </h3>

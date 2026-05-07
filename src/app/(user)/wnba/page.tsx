@@ -4,6 +4,7 @@ import { GradientHeader } from "@/components/gradient-header";
 import { CtaButton } from "@/components/cta-button";
 import { buildMetadataFromPage } from "@/lib/seo";
 import { BreadcrumbSchema, FAQSchema } from "@/components/json-ld";
+export const dynamic = "force-dynamic";
 import connectDB from "@/lib/mongodb";
 import Page from "@/models/page";
 import { PageData } from "@/types/cms";
@@ -24,7 +25,7 @@ export default async function WNBAPage() {
 
   const content = pageData?.content || {
     mainTitle: "WNBA",
-    subDescription: "Capitalize on the Historic New CBA \n Maximize Your Earnings Now",
+    subDescription: "Capitalize on the Historic New CBA | Maximize Your Earnings Now",
     description: "The new 7-year WNBA CBA (2026–2032) explodes salaries: salary cap jumps to $7M in 2026, average pay rises to $583K, and max contracts reach $1.4M+.",
     points: [
       { title: "Expert negotiation under the new CBA", items: [] },
@@ -54,6 +55,7 @@ export default async function WNBAPage() {
           fill
           className="object-cover opacity-80"
           priority
+          unoptimized
         />
         <div className="absolute inset-0 bg-gradient-to-b from-[#05070a]/90 via-transparent to-[#05070a]" />
       </div>
@@ -67,8 +69,18 @@ export default async function WNBAPage() {
             </GradientHeader>
 
             <div className="space-y-4 text-center">
-              <h2 className="text-sm font-bold tracking-[0.3em] uppercase text-white/50 mb-4 whitespace-pre-line">
-                {content.subDescription}
+              <h2 className="text-sm font-bold tracking-[0.3em] uppercase text-white/50 mb-4">
+                {content.subDescription?.includes('|') ? (
+                  <>
+                    {content.subDescription.split('|')[0]}
+                    <br />
+                    <span className="text-primary">
+                      {content.subDescription.split('|')[1]}
+                    </span>
+                  </>
+                ) : (
+                  content.subDescription
+                )}
               </h2>
               <p className="text-sm md:text-lg text-white/80 font-medium leading-relaxed max-w-4xl mx-auto">
                 {content.description}

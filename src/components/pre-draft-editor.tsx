@@ -5,12 +5,14 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
 import { SaveIcon, Loader2Icon, Settings2Icon, CircleDot, TrendingUp, Target, Mic, FileText, PlusIcon, Trash2Icon } from "lucide-react"
-import { PageData, FAQ } from "@/types/cms"
+import { PageData, PageContent, FAQ, PreDraftData } from "@/types/cms"
 import Image from "next/image"
 import { GradientHeader } from "@/components/gradient-header"
 import { CtaButton } from "@/components/cta-button"
 import { SeoEditor } from "@/components/seo-editor"
 import { ImageUpload } from "@/components/image-upload"
+import { mergePageData } from "@/lib/data-utils"
+import { DEFAULT_PRE_DRAFT_DATA } from "@/lib/defaults"
 
 export function PreDraftEditor() {
   const [loading, setLoading] = useState(true)
@@ -27,29 +29,9 @@ export function PreDraftEditor() {
       const response = await fetch("/api/pages/pre-draft")
       const result = await response.json()
       if (result.success && result.data) {
-        setData(result.data)
+        setData(mergePageData(result.data, DEFAULT_PRE_DRAFT_DATA))
       } else {
-        setData({
-          slug: "pre-draft",
-          title: "Pre-Draft Mastery",
-          content: {
-            preDraft: {
-              title: "Pre-Draft and NBA \n Combine Mastery",
-              tagline: "Our Pre-Draft and NBA Combine Mastery program prepares elite prospects to rise on draft boards and enter the NBA with maximum value.",
-              points: [
-                "PROFESSIONAL PLAYER VALUATION REPORT",
-                "CUSTOMIZED NBA COMBINE TRAINING",
-                "TARGETED WORKOUTS WITH NBA TEAMS",
-              ],
-              ctaText: "SCHEDULE YOUR CONFIDENTIAL CONTRACT STRATEGY CALL"
-            }
-          },
-          seo: {
-            title: "Pre-Draft & NBA Combine Mastery | Acclimation Sports",
-            description: "Prepare to rise on draft boards.",
-            keywords: "NBA Draft, Pre-Draft Training"
-          }
-        })
+        setData(DEFAULT_PRE_DRAFT_DATA)
       }
     } catch (error) {
       console.error(error)
@@ -85,17 +67,18 @@ export function PreDraftEditor() {
     }
   }
 
-  const updateContent = (field: string, value: string | string[]) => {
+  const updateContent = (field: string, value: unknown) => {
     setData((prev) => {
       if (!prev) return null
+      const currentPD = prev.content.preDraft || DEFAULT_PRE_DRAFT_DATA.content.preDraft!
       return {
         ...prev,
         content: {
           ...prev.content,
           preDraft: {
-            ...prev.content.preDraft!,
+            ...currentPD,
             [field]: value
-          }
+          } as PageContent["preDraft"]
         }
       }
     })
@@ -122,7 +105,7 @@ export function PreDraftEditor() {
     return icons[idx % icons.length]
   }
 
-  if (loading || !data || !data.content.preDraft) {
+  if (loading || !data) {
     return (
       <div className="flex items-center justify-center h-[60vh]">
         <Loader2Icon className="size-10 animate-spin text-blue-500" />
@@ -130,7 +113,13 @@ export function PreDraftEditor() {
     )
   }
 
-  const content = data.content.preDraft
+  const content = (data?.content?.preDraft || {
+    title: "",
+    tagline: "",
+    points: [],
+    ctaText: "",
+    backgroundImage: ""
+  }) as PreDraftData
 
   return (
     <div className="space-y-12 pb-24 animate-in fade-in duration-700 w-full max-w-full overflow-x-hidden">
@@ -185,7 +174,7 @@ export function PreDraftEditor() {
             
             <div className="relative pt-12 pb-24 bg-[#05070a]">
               <div className="absolute inset-0 z-0">
-                <Image src={content.backgroundImage || "/baskateballplayer.png"} alt="Bg" fill className="object-cover opacity-60" />
+                <Image src={content.backgroundImage || "/baskateballplayer.png"} alt="Bg" fill className="object-cover opacity-60" unoptimized />
                 <div className="absolute inset-0 bg-gradient-to-b from-[#05070a]/60 via-[#05070a]/20 to-[#05070a]" />
               </div>
               
