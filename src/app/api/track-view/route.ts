@@ -11,8 +11,8 @@ export async function POST(req: Request) {
     console.log(`[TRACKING] Page view registered for: ${slug}`);
     await Page.findOneAndUpdate(
       { slug },
-      { $inc: { views: 1 }, $setOnInsert: { title: slug.charAt(0).toUpperCase() + slug.slice(1) } },
-      { upsert: true }
+      { $inc: { views: 1 } },
+      { upsert: false } // Only track if page exists
     );
 
     return NextResponse.json({ success: true });

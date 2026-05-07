@@ -10,6 +10,8 @@ export interface IPage {
     keywords?: string;
     canonicalUrl?: string;
     noIndex?: boolean;
+    sitemapPriority?: number;
+    sitemapChangeFreq?: "always" | "hourly" | "daily" | "weekly" | "monthly" | "yearly" | "never";
     faqs?: Array<{ question: string; answer: string }>;
   };
   views?: number;
@@ -37,6 +39,12 @@ const pageSchema = new Schema<IPage>(
       keywords: { type: String, default: "" },
       canonicalUrl: { type: String, default: "" },
       noIndex: { type: Boolean, default: false },
+      sitemapPriority: { type: Number, default: 0.7 },
+      sitemapChangeFreq: { 
+        type: String, 
+        enum: ["always", "hourly", "daily", "weekly", "monthly", "yearly", "never"],
+        default: "monthly" 
+      },
       faqs: [
         {
           question: { type: String, default: "" },

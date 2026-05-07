@@ -4,7 +4,7 @@ import { GradientHeader } from "@/components/gradient-header";
 import { CtaButton } from "@/components/cta-button";
 import { buildMetadataFromPage } from "@/lib/seo";
 import { BreadcrumbSchema } from "@/components/json-ld";
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
 import connectDB from "@/lib/mongodb";
 import Page from "@/models/page";
 import { PageData } from "@/types/cms";
@@ -70,7 +70,7 @@ export default async function TwoWayContractsPage() {
             alt="Two-Way Background"
             fill
             className="object-cover opacity-90 shadow-[inset_0_0_100px_rgba(0,0,0,0.8)]"
-            priority
+            sizes="100vw"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-[#05070a]/80 via-[#05070a]/40 to-[#05070a]" />
         </div>

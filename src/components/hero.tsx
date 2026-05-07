@@ -3,8 +3,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, ShieldCheck, TrendingUp, Handshake, Trophy } from "lucide-react";
 import { PageData } from "@/types/cms";
-import { CareerGrowthChart } from "@/components/career-growth-chart";
 import { GradientHeader } from "@/components/gradient-header";
+import { ChartWrapper } from "@/components/chart-wrapper";
 
 interface HeroCard {
   title: string;
@@ -60,7 +60,9 @@ export function Hero({ data }: { data?: PageData | null }) {
           fill
           className="object-cover object-top opacity-80"
           priority
-          unoptimized
+          sizes="100vw"
+          fetchPriority="high"
+          quality={85}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-[#05070a]/60 via-[#05070a]/20 to-[#05070a]" />
       </div>
@@ -76,9 +78,9 @@ export function Hero({ data }: { data?: PageData | null }) {
             ))}
           </GradientHeader>
 
-          <p className="text-sm font-bold tracking-[0.3em] uppercase text-white/50 mb-4">
+          <h2 className="text-sm font-bold tracking-[0.3em] uppercase text-white/50 mb-4">
             {content.tagline}
-          </p>
+          </h2>
 
           {/* Feature Bar */}
           <div className="inline-flex flex-wrap justify-center items-center gap-4 md:gap-8 px-6 py-2.5 glass-premium rounded-full text-[9px] md:text-[10px] font-semibold tracking-wide border-primary/20 bg-[#00d2ff]/5 mb-4">
@@ -107,7 +109,7 @@ export function Hero({ data }: { data?: PageData | null }) {
             <div className="flex flex-col items-center">
               <GradientHeader tag="h3" size="md" className="mb-4 text-center">{content.chart?.title || "Projected Career Value Growth"}</GradientHeader>
               <div className="w-full h-[280px] relative">
-                <CareerGrowthChart data={content.chart?.data} />
+                <ChartWrapper data={content.chart?.data} />
               </div>
             </div>
           </div>
@@ -134,7 +136,9 @@ function ServiceCard({ title, desc, icon }: { title: string, desc: string, icon:
       <div className="w-10 h-10 glass rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform bg-white/5 border-white/10!">
         {icon}
       </div>
-      <GradientHeader tag="h4" size="sm" className="mb-2">{title}</GradientHeader>
+      <h3 className="font-serif text-lg font-bold leading-tight bg-gradient-to-r from-white to-primary bg-clip-text text-transparent mb-2 inline-block">
+        {title}
+      </h3>
       <p className="text-sm text-white/60 leading-relaxed font-light">
         {desc}
       </p>

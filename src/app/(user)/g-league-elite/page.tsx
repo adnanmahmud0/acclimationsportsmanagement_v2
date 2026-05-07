@@ -8,7 +8,7 @@ import connectDB from "@/lib/mongodb";
 import Page from "@/models/page";
 import { PageData } from "@/types/cms";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
 
 async function getPageData() {
   try {
@@ -78,8 +78,7 @@ export default async function GLeagueElitePage() {
             alt="G League Background"
             fill
             className="object-cover opacity-90 shadow-[inset_0_0_100px_rgba(0,0,0,0.8)]"
-            priority
-            unoptimized
+            sizes="100vw"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-[#05070a]/80 via-[#05070a]/40 to-[#05070a]" />
         </div>

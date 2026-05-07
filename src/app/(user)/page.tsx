@@ -1,19 +1,22 @@
 import { Hero } from "@/components/hero";
 import { OneStopShop } from "@/components/one-stop-shop";
-import { AboutSection } from "@/components/about-section";
-import { ContactSection } from "@/components/contact-section";
 import { buildMetadataFromPage } from "@/lib/seo";
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 import connectDB from "@/lib/mongodb";
 import Page from "@/models/page";
 import { FAQSchema } from "@/components/json-ld";
 import { mergePageData } from "@/lib/data-utils";
+import { cache } from "react";
+import dynamic from "next/dynamic";
 
-async function getPageData() {
+const AboutSection = dynamic(() => import("@/components/about-section").then(mod => mod.AboutSection));
+const ContactSection = dynamic(() => import("@/components/contact-section").then(mod => mod.ContactSection));
+
+const getPageData = cache(async () => {
   await connectDB();
   const page = await Page.findOne({ slug: "home" }).lean();
   return mergePageData(page);
-}
+});
 
 export async function generateMetadata() {
   const page = await getPageData();

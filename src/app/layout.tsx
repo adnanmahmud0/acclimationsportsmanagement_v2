@@ -10,6 +10,7 @@ const inter = localFont({
     { path: "../../public/fonts/Inter-Bold.ttf", weight: "700", style: "normal" },
   ],
   variable: "--font-inter",
+  display: "swap",
 });
 
 const playfair = localFont({
@@ -18,6 +19,7 @@ const playfair = localFont({
     { path: "../../public/fonts/PlayfairDisplay-Bold.ttf", weight: "700", style: "normal" },
   ],
   variable: "--font-playfair",
+  display: "swap",
 });
 
 export const metadata: Metadata = {

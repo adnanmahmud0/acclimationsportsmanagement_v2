@@ -43,7 +43,8 @@ export function OneStopShop({ data }: { data?: PageData | null }) {
           alt="Analysis background"
           fill
           className="object-cover opacity-60"
-          unoptimized
+          sizes="100vw"
+          quality={75}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-[#05070a] via-transparent to-[#05070a]" />
       </div>

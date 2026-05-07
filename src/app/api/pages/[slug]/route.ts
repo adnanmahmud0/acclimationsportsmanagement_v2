@@ -79,3 +79,49 @@ export async function PATCH(
     );
   }
 }
+
+export async function DELETE(
+  req: Request,
+  { params }: { params: Promise<{ slug: string }> }
+) {
+  try {
+    await connectDB();
+    const userPayload = (await verifyAuth(req)) as JwtPayload;
+    const { slug } = await params;
+
+    if (!userPayload || (userPayload.role !== USER_ROLES.SUPER_ADMIN && userPayload.role !== USER_ROLES.ADMIN)) {
+      return NextResponse.json(
+        { success: false, message: "Unauthorized" },
+        { status: StatusCodes.FORBIDDEN }
+      );
+    }
+
+    // Prevent deletion of system pages
+    if (["home", "contact"].includes(slug)) {
+      return NextResponse.json(
+        { success: false, message: "System pages cannot be deleted" },
+        { status: StatusCodes.BAD_REQUEST }
+      );
+    }
+
+    const page = await Page.findOneAndDelete({ slug });
+
+    if (!page) {
+      return NextResponse.json(
+        { success: false, message: "Page not found" },
+        { status: StatusCodes.NOT_FOUND }
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: "Page deleted successfully",
+    });
+  } catch (error: unknown) {
+    console.error("Delete page error:", error);
+    return NextResponse.json(
+      { success: false, message: "Internal server error" },
+      { status: StatusCodes.INTERNAL_SERVER_ERROR }
+    );
+  }
+}

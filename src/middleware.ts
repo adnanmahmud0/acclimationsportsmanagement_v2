@@ -31,7 +31,7 @@ export async function middleware(request: NextRequest) {
       
       // Check if user has admin/super_admin role
       if (payload.role !== "ADMIN" && payload.role !== "SUPER_ADMIN") {
-        return NextResponse.redirect(new URL("/", request.url));
+        return NextResponse.redirect(new URL("/unauthorized", request.url));
       }
 
       return NextResponse.next();

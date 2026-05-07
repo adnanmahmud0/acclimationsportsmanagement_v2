@@ -4,7 +4,7 @@ import { GradientHeader } from "@/components/gradient-header";
 import { CtaButton } from "@/components/cta-button";
 import { buildMetadataFromPage } from "@/lib/seo";
 import { BreadcrumbSchema, FAQSchema } from "@/components/json-ld";
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
 import connectDB from "@/lib/mongodb";
 import Page from "@/models/page";
 import { PageData } from "@/types/cms";
@@ -54,8 +54,7 @@ export default async function WNBAPage() {
           alt="WNBA Background"
           fill
           className="object-cover opacity-80"
-          priority
-          unoptimized
+          sizes="100vw"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-[#05070a]/90 via-transparent to-[#05070a]" />
       </div>
