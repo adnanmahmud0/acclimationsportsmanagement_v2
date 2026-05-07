@@ -28,7 +28,8 @@ import {
   HeartIcon,
   GraduationCap,
   MailIcon,
-  ImageIcon
+  ImageIcon,
+  GlobeIcon
 } from "lucide-react"
 import Link from "next/link"
 import { Logo } from "@/components/logo"
@@ -151,6 +152,11 @@ const data = {
       title: "Setting",
       url: "/admin/setting",
       icon: <Settings2Icon />,
+    },
+    {
+      title: "Sitemap",
+      url: "/admin/sitemap",
+      icon: <GlobeIcon />,
     },
   ],
 }

@@ -35,7 +35,7 @@ export function AboutSection({ data }: { data?: PageData | null }) {
       {/* Subtle Background elements */}
       {content.backgroundImage && (
         <div className="absolute inset-0 z-0">
-          <Image src={content.backgroundImage} alt="About Background" fill className="object-cover opacity-20" />
+          <Image src={content.backgroundImage} alt="About Background" fill className="object-cover opacity-20" sizes="100vw" />
           <div className="absolute inset-0 bg-gradient-to-b from-[#05070a] via-transparent to-[#05070a]" />
         </div>
       )}
@@ -71,8 +71,7 @@ export function AboutSection({ data }: { data?: PageData | null }) {
                   alt="Joe Grekoski"
                   fill
                   className="object-cover object-top hover:scale-105 transition-transform duration-700"
-                  unoptimized
-                  priority
+                  sizes="(max-width: 1024px) 100vw, 40vw"
                 />
               </div>
             </div>

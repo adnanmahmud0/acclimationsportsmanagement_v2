@@ -137,7 +137,10 @@ export function Navbar() {
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger
             render={
-              <button className="p-2 text-white/70 hover:text-primary transition-colors cursor-pointer">
+              <button 
+                className="p-2 text-white/70 hover:text-primary transition-colors cursor-pointer"
+                aria-label="Toggle mobile menu"
+              >
                 <Menu className="w-6 h-6" />
               </button>
             }

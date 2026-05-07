@@ -9,7 +9,7 @@ import connectDB from "@/lib/mongodb";
 import Page from "@/models/page";
 import { PageData } from "@/types/cms";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
 
 async function getPageData() {
   try {
@@ -57,8 +57,7 @@ export default async function MarketingEndorsementsPage() {
           alt="Marketing & Endorsements Background"
           fill
           className="object-cover opacity-80"
-          priority
-          unoptimized
+          sizes="100vw"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-[#05070a]/90 via-[#05070a]/40 to-[#05070a]" />
       </div>

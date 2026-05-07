@@ -13,7 +13,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         const baseUrl = domainSetting?.value || seoSiteConfig.url || "https://www.acclimationsportsmanagement.com";
 
         // Fetch all dynamic pages
-        const pages = await Page.find({}, { slug: 1, updatedAt: 1 }).lean();
+        const pages = await Page.find({}, { slug: 1, updatedAt: 1, seo: 1 }).lean();
 
         // Static routes based on seoConfig or common routes
         const staticRoutes: MetadataRoute.Sitemap = [
@@ -33,12 +33,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
         // Dynamic routes from DB
         const dynamicRoutes: MetadataRoute.Sitemap = pages
-            .filter((p) => p.slug && p.slug !== "home" && p.slug !== "contact")
+            .filter((p) => {
+                const isSystemRoute = ["home", "contact"].includes(p.slug);
+                const isImageFile = /\.(png|jpg|jpeg|webp|gif|svg|ico)$/i.test(p.slug);
+                return p.slug && !isSystemRoute && !isImageFile && !p.seo?.noIndex;
+            })
             .map((p) => ({
                 url: `${baseUrl}/${p.slug}`,
                 lastModified: p.updatedAt ? new Date(p.updatedAt) : new Date(),
-                changeFrequency: "monthly" as const,
-                priority: 0.9,
+                changeFrequency: (p.seo?.sitemapChangeFreq || "monthly") as "always" | "hourly" | "daily" | "weekly" | "monthly" | "yearly" | "never",
+                priority: p.seo?.sitemapPriority ?? 0.7,
             }));
 
         return [...staticRoutes, ...dynamicRoutes];

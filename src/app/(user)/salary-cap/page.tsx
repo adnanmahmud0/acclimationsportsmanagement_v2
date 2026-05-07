@@ -4,7 +4,7 @@ import { GradientHeader } from "@/components/gradient-header";
 import { CtaButton } from "@/components/cta-button";
 import { buildMetadataFromPage } from "@/lib/seo";
 import { BreadcrumbSchema, FAQSchema } from "@/components/json-ld";
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
 import connectDB from "@/lib/mongodb";
 import Page from "@/models/page";
 import { mergePageData } from "@/lib/data-utils";
@@ -36,8 +36,7 @@ export default async function SalaryCapPage() {
           alt="Salary Cap Analysis Background"
           fill
           className="object-cover opacity-100"
-          priority
-          unoptimized
+          sizes="100vw"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-[#05070a]/60 via-[#05070a]/20 to-[#05070a]" />
       </div>

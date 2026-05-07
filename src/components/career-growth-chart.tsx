@@ -87,7 +87,7 @@ export function CareerGrowthChart({ data }: { data?: ChartDataItem[] }) {
             strokeWidth={4}
             fillOpacity={1}
             fill="url(#colorValue)"
-            animationDuration={2000}
+            animationDuration={500}
             dot={(props) => {
               const { cx, cy, payload } = props as { cx: number, cy: number, payload: { year: number, label?: string } };
               if (payload.label) {

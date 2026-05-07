@@ -199,5 +199,7 @@ export interface PageData {
     faqs?: FAQ[];
     canonicalUrl?: string;
     noIndex?: boolean;
+    sitemapPriority?: number;
+    sitemapChangeFreq?: "always" | "hourly" | "daily" | "weekly" | "monthly" | "yearly" | "never";
   };
 }
