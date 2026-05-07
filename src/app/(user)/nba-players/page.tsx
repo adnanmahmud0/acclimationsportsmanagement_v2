@@ -4,7 +4,7 @@ import { GradientHeader } from "@/components/gradient-header";
 import { CtaButton } from "@/components/cta-button";
 import { buildMetadataFromPage } from "@/lib/seo";
 import { BreadcrumbSchema } from "@/components/json-ld";
-
+export const dynamic = "force-dynamic";
 import connectDB from "@/lib/mongodb";
 import Page from "@/models/page";
 import { PageData } from "@/types/cms";
@@ -24,24 +24,25 @@ export default async function NBAPlayersPage() {
   const pageData = await getPageData();
 
   const content = pageData?.content || {
-    mainTitle: "Elite Advocacy for the \n Active NBA Professional",
-    subDescription: "Maximum Leverage • Data-Backed Strategy • Global Branding",
-    description: "You've made it to the league. Now, we make sure you stay on top and maximize every second of your professional window. From aggressive contract negotiation to global brand scaling, we provide the elite infrastructure required by the modern NBA star.",
+    mainTitle: "Active NBA Players",
+    subDescription: "Maximize Your Off-Court Value | and Build Real Wealth",
+    description: "Your on-court talent opens doors. We turn that into serious money through world-class endorsements, smart branding, and strategic opportunities.",
     ctaText: "SCHEDULE YOUR CONFIDENTIAL CONTRACT STRATEGY CALL",
     backgroundImage: "/ground.png",
     points: [
-      { title: "Aggressive Contract Negotiation", items: ["Utilizing proprietary salary cap models to secure maximum guaranteed money and optimized incentives."] },
-      { title: "Global Brand Monetization", items: ["Scaling your personal brand into a global economic asset with high-value endorsement deals."] },
-      { title: "Holistic Concierge Support", items: ["Private chefs, elite trainers, luxury travel coordination, and 24/7 personal security."] },
-      { title: "Long-Term Wealth Strategy", items: ["Coordinating with world-class financial advisors to ensure your NBA earnings last a lifetime."] },
+      { title: "Comprehensive audit of current contract & market standing.", items: [] },
+      { title: "Proprietary salary cap modeling & leverage mapping.", items: [] },
+      { title: "Aggressive negotiation and brand development.", items: [] },
+      { title: "Full holistic concierge & wealth architecture.", items: [] },
     ],
     stats: [
-      { label: "Contract Value Managed", value: "$420M+" },
-      { label: "Average Deal Uplift", value: "24%" },
-      { label: "Global Brand Reach", value: "12M+" },
+      { label: "Direct connections to world-class brands and sponsors.", value: "1" },
+      { label: "Proprietary tools to accurately value and maximize your endorsement deals.", value: "2" },
+      { label: "Booking high-profile podcast appearances and media opportunities.", value: "3" },
+      { label: "Professional publishing and promotion of your advanced statistics online.", value: "4" },
+      { label: "Expert negotiation for your next contract extension.", value: "5" },
     ]
   };
-
 
   return (
     <main className="relative min-h-screen overflow-x-hidden pt-12">
@@ -54,73 +55,118 @@ export default async function NBAPlayersPage() {
           fill
           className="object-cover opacity-80"
           priority
+          unoptimized
         />
         <div className="absolute inset-0 bg-gradient-to-b from-[#05070a]/80 via-[#05070a]/40 to-[#05070a]" />
       </div>
 
       <div className="container mx-auto px-6 pt-32 pb-24 relative z-10 flex flex-col items-center text-center">
         <div className="space-y-12 max-w-6xl mx-auto">
-          {/* Header Content */}
+          {/* Main Header */}
           <div className="space-y-6">
             <GradientHeader tag="h1" size="lg" className="mb-4">
-              {(content.mainTitle || "").split('\n').map((line, i) => (
-                <React.Fragment key={i}>
-                  {line}
-                  {i < (content.mainTitle || "").split('\n').length - 1 && <br />}
-                </React.Fragment>
-              ))}
+              {content.mainTitle}
             </GradientHeader>
-            <p className="text-sm font-bold tracking-[0.3em] uppercase text-white/50 mb-4">
-              {content.subDescription}
-            </p>
-            <p className="md:text-lg text-white/80 font-medium leading-relaxed max-w-4xl mx-auto">
-              {content.description}
-            </p>
-          </div>
-
-          {/* Core Services Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-8">
-            {content.points?.map((service, idx) => (
-              <div
-                key={idx}
-                className="group relative p-10 rounded-[2rem] bg-white/[0.02] border border-white/5 hover:bg-white/[0.05] hover:border-primary/20 transition-all duration-500 text-left"
-              >
-                <div className="absolute top-8 right-8 text-white/10 group-hover:text-primary/20 transition-colors">
-                  <span className="text-4xl font-black">0{idx + 1}</span>
-                </div>
-                <h3 className="text-xl font-black text-white uppercase tracking-widest mb-4">
-                  {service.title}
-                </h3>
-                <p className="text-sm font-bold text-white/40 uppercase tracking-widest leading-relaxed">
-                  {service.items?.[0] || ""}
-                </p>
-              </div>
-            ))}
-          </div>
-
-          {/* Stats Bar */}
-          <div className="pt-12">
-            <div className="glass-premium rounded-[2.5rem] p-10 flex flex-wrap justify-center gap-12 md:gap-24 border-white/5">
-              {content.stats?.map((stat, idx) => (
-                <div key={idx} className="space-y-2">
-                  <p className="text-3xl md:text-5xl font-black text-white">
-                    {stat.value}
-                  </p>
-                  <p className="text-[10px] font-black text-primary uppercase tracking-[0.3em]">
-                    {stat.label}
-                  </p>
-                </div>
-              ))}
+            <div className="space-y-6">
+              <h2 className="text-sm font-bold tracking-[0.3em] uppercase text-white/50 mb-4">
+                {content.subDescription?.includes('|') ? (
+                  <>
+                    {content.subDescription.split('|')[0]}
+                    <br className="hidden md:block" />
+                    <span className="text-primary">
+                      {content.subDescription.split('|')[1]}
+                    </span>
+                  </>
+                ) : (
+                  content.subDescription
+                )}
+              </h2>
+              <p className="text-sm md:text-xl text-white/60 font-medium leading-relaxed max-w-4xl mx-auto">
+                {content.description}
+              </p>
             </div>
           </div>
 
-          <div className="pt-12">
-            <CtaButton href="/contact" className="w-full max-w-4xl">
-              {content.ctaText}
-            </CtaButton>
+          {/* What We Provide Timeline Section */}
+          <div className="space-y-12 py-12">
+            <div className="relative">
+              <div className="flex items-center justify-center gap-4 text-primary">
+                <div className="h-[1px] w-12 bg-primary/30" />
+                <span className="text-sm font-black uppercase tracking-[0.4em]">
+                  What We Provide
+                </span>
+                <div className="h-[1px] w-12 bg-primary/30" />
+              </div>
+            </div>
+
+            {/* 5-Point Timeline Visual */}
+            <div className="relative w-full max-w-7xl mx-auto pt-10 pb-20">
+              {/* Connecting Line */}
+              <div className="absolute top-[40px] left-[10%] right-[10%] h-[1px] bg-gradient-to-r from-transparent via-primary/30 to-transparent hidden md:block" />
+
+              <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
+                {(content.stats || []).map((stat: { label: string; value: string }, idx: number) => (
+                  <TimelinePoint
+                    key={idx}
+                    number={stat.value || (idx + 1).toString()}
+                    text={stat.label}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Transition Copy */}
+          <div className="space-y-8">
+            <h2 className="text-xl md:text-3xl font-black text-white leading-tight uppercase tracking-tight">
+              {(content.transitionTitle || "Advanced Contract Architecture & \n Strategic Career Management").split('\n').map((line: string, i: number) => (
+                <React.Fragment key={i}>{line}{i < (content.transitionTitle || "").split('\n').length - 1 && <br />}</React.Fragment>
+              ))}
+            </h2>
+            <p className="text-sm md:text-lg text-white/50 font-medium leading-relaxed max-w-3xl mx-auto">
+              {content.transitionDescription || "For the veteran or rising star, we provide litigation-grade representation, proprietary market analysis, and a holistic concierge system that handles everything off the court so you can dominate on it."}
+            </p>
+          </div>
+
+          {/* CTA Section */}
+          <div className="text-center space-y-8">
+            <div className="flex flex-col items-center gap-6">
+              <CtaButton href="/contact">
+                {content.ctaText}
+              </CtaButton>
+            </div>
+          </div>
+
+          {/* Timeline/Process Section */}
+          <div className="relative pt-12">
+            {/* Connecting Line */}
+            <div className="absolute top-[4.5rem] left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/30 to-transparent hidden lg:block" />
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 relative z-10">
+              {(content.points || []).map((point: { title: string }, idx: number) => (
+                <TimelinePoint
+                  key={idx}
+                  number={`0${idx + 1}`}
+                  text={point.title}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </div>
     </main>
+  );
+}
+
+function TimelinePoint({ number, text }: { number: string; text: string }) {
+  return (
+    <div className="flex flex-col items-center space-y-6 group">
+      <div className="w-14 h-14 rounded-full bg-[#0a0d12]/80 border border-primary/40 flex items-center justify-center font-black text-xl text-white group-hover:bg-primary group-hover:text-black group-hover:border-primary transition-all shadow-[0_0_20px_rgba(0,180,255,0.2)] relative z-10">
+        {number}
+      </div>
+      <p className="text-base font-bold text-white/90 uppercase tracking-widest leading-relaxed px-4 group-hover:text-white transition-colors">
+        {text}
+      </p>
+    </div>
   );
 }

@@ -4,7 +4,7 @@ import { GradientHeader } from "@/components/gradient-header";
 import { CtaButton } from "@/components/cta-button";
 import { buildMetadataFromPage } from "@/lib/seo";
 import { BreadcrumbSchema } from "@/components/json-ld";
-
+export const dynamic = "force-dynamic";
 import connectDB from "@/lib/mongodb";
 import Page from "@/models/page";
 import { PageData } from "@/types/cms";
@@ -23,6 +23,7 @@ export async function generateMetadata() {
 export default async function TwoWayContractsPage() {
   const pageData = await getPageData();
 
+  // Default content matches the static design exactly
   const content = pageData?.content || {
     mainTitle: "NBA Two-Way Contracts \n 2025-26 / 2026-27: \n Rules, Salaries, and Fast Track",
     ctaText: "SCHEDULE YOUR CONFIDENTIAL CONTRACT STRATEGY CALL",
@@ -31,7 +32,8 @@ export default async function TwoWayContractsPage() {
     points: [
       { 
         title: "What Is a Two-Way Contract?", 
-        items: ["Hybrid deal allowing players to split time between the NBA team and its G League affiliate while receiving occasional call-ups to the main roster."] 
+        items: ["Hybrid deal allowing players to split time between the NBA team and its G League affiliate while receiving occasional call-ups to the main roster."],
+        image: "/baskatecoart.png"
       },
       { 
         title: "2025-26 / 2026-27 Key Rules", 
@@ -43,7 +45,11 @@ export default async function TwoWayContractsPage() {
       },
       { 
         title: "Salary Breakdown 2025-26", 
-        items: ["$636,435", "2025-26 value (2026-27 will increase)"] 
+        items: ["$636,435", "2025-26 value (2026-27 will increase)"],
+        stats: [
+          { label: "Higher NBA Days", value: "70" },
+          { label: "Daily Rate G League", value: "30" }
+        ]
       },
       { 
         title: "How Conversions Work", 
@@ -52,10 +58,10 @@ export default async function TwoWayContractsPage() {
     ]
   };
 
-
   return (
     <main className="relative min-h-screen overflow-x-hidden">
       <BreadcrumbSchema items={[{ name: "Two-Way Contracts", href: "/two-way-contracts" }]} />
+      
       {/* Hero Section */}
       <div className="relative">
         <div className="absolute inset-0 z-[-1] h-[85vh]">
@@ -74,7 +80,7 @@ export default async function TwoWayContractsPage() {
             <div className="flex flex-col items-center text-center gap-12">
               <div className="space-y-8 max-w-5xl mx-auto">
                 <GradientHeader tag="h1" size="lg" className="mb-4">
-                  {(content.mainTitle || "").split('\n').map((line, i) => (
+                  {(content.mainTitle || "").split('\n').map((line: string, i: number) => (
                     <React.Fragment key={i}>
                       {line}
                       {i < (content.mainTitle || "").split('\n').length - 1 && <br />}
@@ -92,15 +98,16 @@ export default async function TwoWayContractsPage() {
         <h2 className="text-sm font-black uppercase tracking-[0.4em] text-primary text-center mb-8">
           {content.subDescription}
         </h2>
+        
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {/* Card 1 */}
+          {/* Card 1: Definition */}
           <div className="glass-premium p-8 rounded-3xl border-primary/20 space-y-6">
             <h3 className="text-xl font-black text-white uppercase tracking-wider">
               {content.points?.[0]?.title}
             </h3>
             <div className="relative aspect-video rounded-xl overflow-hidden border border-white/10">
               <Image
-                src="/baskatecoart.png"
+                src={content.points?.[0]?.image || "/baskatecoart.png"}
                 alt="Court"
                 fill
                 className="object-cover opacity-60"
@@ -116,13 +123,13 @@ export default async function TwoWayContractsPage() {
             </p>
           </div>
 
-          {/* Card 2 */}
+          {/* Card 2: Numbered Rules */}
           <div className="glass-premium p-8 rounded-3xl border-primary/20 space-y-6">
             <h3 className="text-xl font-black text-white uppercase tracking-wider">
               {content.points?.[1]?.title}
             </h3>
             <div className="space-y-4">
-              {content.points?.[1]?.items?.map((rule, idx) => (
+              {(content.points?.[1]?.items || []).map((rule: string, idx: number) => (
                 <div key={idx} className="flex gap-4 items-start group">
                   <div className="w-8 h-8 rounded-lg bg-primary/20 border border-primary/40 flex items-center justify-center text-primary font-black flex-shrink-0 group-hover:bg-primary group-hover:text-black transition-colors">
                     {idx + 1}
@@ -135,7 +142,7 @@ export default async function TwoWayContractsPage() {
             </div>
           </div>
 
-          {/* Card 3 */}
+          {/* Card 3: Salary & Stats */}
           <div className="glass-premium p-8 rounded-3xl border-primary/20 space-y-6">
             <h3 className="text-xl font-black text-white uppercase tracking-wider">
               {content.points?.[2]?.title}
@@ -154,25 +161,31 @@ export default async function TwoWayContractsPage() {
               <div className="space-y-4">
                 <div className="space-y-2">
                   <div className="flex justify-between text-xs font-bold text-white/40 uppercase tracking-widest">
-                    <span>Higher NBA Days</span>
-                    <span>Daily Rate G League</span>
+                    <span>{content.points?.[2]?.stats?.[0]?.label || "NBA Days"}</span>
+                    <span>{content.points?.[2]?.stats?.[1]?.label || "G League"}</span>
                   </div>
                   <div className="h-4 w-full bg-white/5 rounded-full overflow-hidden flex border border-white/5">
-                    <div className="h-full bg-primary w-[70%] shadow-[0_0_10px_rgba(0,210,255,0.5)]" />
-                    <div className="h-full bg-blue-600 w-[30%]" />
+                    <div 
+                      className="h-full bg-primary shadow-[0_0_10px_rgba(0,210,255,0.5)] transition-all duration-1000" 
+                      style={{ width: `${content.points?.[2]?.stats?.[0]?.value || 70}%` }}
+                    />
+                    <div 
+                      className="h-full bg-blue-600 transition-all duration-1000" 
+                      style={{ width: `${content.points?.[2]?.stats?.[1]?.value || 30}%` }}
+                    />
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Card 4 */}
+          {/* Card 4: Step-by-Step */}
           <div className="glass-premium p-8 rounded-3xl border-primary/20 space-y-6">
             <h3 className="text-xl font-black text-white uppercase tracking-wider">
               {content.points?.[3]?.title}
             </h3>
             <div className="flex flex-col gap-6">
-              {content.points?.[3]?.items?.map((step: string, i: number) => (
+              {(content.points?.[3]?.items || []).map((step: string, i: number) => (
                 <div key={i} className="relative group">
                   <div className="bg-white/5 border border-white/10 p-4 rounded-xl text-sm font-bold text-white/90 group-hover:bg-primary/10 group-hover:border-primary/30 transition-all">
                     {step}
@@ -187,7 +200,8 @@ export default async function TwoWayContractsPage() {
             </div>
           </div>
         </div>
-        <div className="text-center space-y-8 mt-12">
+
+        <div className="text-center space-y-8 mt-15">
           <div className="flex flex-col items-center gap-4">
             <CtaButton href="/contact">
               {content.ctaText}

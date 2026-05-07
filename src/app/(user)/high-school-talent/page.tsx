@@ -5,7 +5,7 @@ import { GradientHeader } from "@/components/gradient-header";
 import { CtaButton } from "@/components/cta-button";
 import { buildMetadataFromPage } from "@/lib/seo";
 import { BreadcrumbSchema } from "@/components/json-ld";
-
+export const dynamic = "force-dynamic";
 import connectDB from "@/lib/mongodb";
 import Page from "@/models/page";
 import { PageData } from "@/types/cms";
@@ -58,6 +58,7 @@ export default async function HighSchoolTalentPage() {
           fill
           className="object-cover opacity-80"
           priority
+          unoptimized
         />
         <div className="absolute inset-0 bg-gradient-to-b from-[#05070a]/80 via-[#05070a]/50 to-[#05070a]" />
       </div>
@@ -67,10 +68,16 @@ export default async function HighSchoolTalentPage() {
           {/* Header Content */}
           <div className="space-y-8">
             <GradientHeader tag="h1" size="lg" className="mb-4">
-              {(content.mainTitle || "").split('\n').map((line, i) => (
+              {(content.mainTitle || "").split('\n').map((line: string, i: number, arr: string[]) => (
                 <React.Fragment key={i}>
-                  {line}
-                  {i < (content.mainTitle || "").split('\n').length - 1 && <br />}
+                  {i === arr.length - 1 ? (
+                    <span className="flex justify-center">{line}</span>
+                  ) : (
+                    <>
+                      {line}
+                      <br />
+                    </>
+                  )}
                 </React.Fragment>
               ))}
             </GradientHeader>
@@ -97,8 +104,9 @@ export default async function HighSchoolTalentPage() {
                   </span>
                 </div>
                 <GradientHeader tag="h2" size="md">
-                  Why Elite Prospects <br />
-                  Choose Acclimation
+                  {(content.sectionTitle || "Why Elite Prospects \n Choose Acclimation").split('\n').map((line: string, i: number) => (
+                    <React.Fragment key={i}>{line}{i < (content.sectionTitle || "").split('\n').length - 1 && <br />}</React.Fragment>
+                  ))}
                 </GradientHeader>
               </div>
 

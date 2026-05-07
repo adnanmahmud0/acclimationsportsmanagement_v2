@@ -65,7 +65,7 @@ export function Hero({ data }: { data?: PageData | null }) {
         <div className="absolute inset-0 bg-gradient-to-b from-[#05070a]/60 via-[#05070a]/20 to-[#05070a]" />
       </div>
 
-      <main className="w-full max-w-7xl mx-auto px-6 pb-20 min-h-screen flex flex-col justify-center text-center text-balance">
+      <main className="container mx-auto px-6 pb-20 min-h-screen flex flex-col justify-center text-center text-balance">
         <div className="max-w-7xl mx-auto w-full">
           <GradientHeader tag="h1" size="lg" className="mb-4">
             {(content.title || "").split('\n').map((line: string, i: number) => (

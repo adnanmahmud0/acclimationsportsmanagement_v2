@@ -19,7 +19,7 @@ export function MarketingEndorsementsEditor() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [data, setData] = useState<PageData | null>(null)
-  const [activeTab, setActiveTab] = useState<"live" | "seo">("live")
+  const [activeTab, setActiveTab] = useState<"live" | "seo">("seo")
 
   useEffect(() => {
     fetchPageData()

@@ -4,15 +4,21 @@ import { GradientHeader } from "@/components/gradient-header";
 import { CtaButton } from "@/components/cta-button";
 import { buildMetadataFromPage } from "@/lib/seo";
 import { BreadcrumbSchema } from "@/components/json-ld";
-
 import connectDB from "@/lib/mongodb";
 import Page from "@/models/page";
 import { PageData } from "@/types/cms";
 
+export const dynamic = "force-dynamic";
+
 async function getPageData() {
-  await connectDB();
-  const page = await Page.findOne({ slug: "g-league-elite" }).lean();
-  return page as unknown as PageData | null;
+  try {
+    await connectDB();
+    const page = await Page.findOne({ slug: "g-league-elite" }).lean();
+    return page as unknown as PageData | null;
+  } catch (error) {
+    console.error("Error fetching G League Elite data:", error);
+    return null;
+  }
 }
 
 export async function generateMetadata() {
@@ -23,10 +29,12 @@ export async function generateMetadata() {
 export default async function GLeagueElitePage() {
   const pageData = await getPageData();
 
+  // Static design fallback for parity
   const content = pageData?.content || {
     mainTitle: "NBA G League 2025-26: \n Rules, Salaries, and the Fast Track \n from Prospects to the NBA",
-    ctaText: "SCHEDULE YOUR CONFIDENTIAL CONTRACT STRATEGY CALL",
+    subDescription: "G League Breakdown & Benefits",
     backgroundImage: "/analitic.png",
+    ctaText: "SCHEDULE YOUR CONFIDENTIAL CONTRACT STRATEGY CALL",
     stats: [
       { label: "Teams", value: "31" },
       { label: "Games", value: "50+" },
@@ -61,6 +69,7 @@ export default async function GLeagueElitePage() {
   return (
     <main className="relative min-h-screen overflow-x-hidden">
       <BreadcrumbSchema items={[{ name: "G League Elite", href: "/g-league-elite" }]} />
+      
       {/* Hero Section */}
       <div className="relative">
         <div className="absolute inset-0 z-[-1] h-[85vh]">
@@ -70,60 +79,57 @@ export default async function GLeagueElitePage() {
             fill
             className="object-cover opacity-90 shadow-[inset_0_0_100px_rgba(0,0,0,0.8)]"
             priority
+            unoptimized
           />
           <div className="absolute inset-0 bg-gradient-to-b from-[#05070a]/80 via-[#05070a]/40 to-[#05070a]" />
         </div>
 
         <div className="container mx-auto px-6 pt-32 pb-16 relative z-10">
-          <div className="space-y-12">
-            {/* Hero Content Section */}
-            <div className="flex flex-col items-center text-center gap-12">
-              <div className="space-y-8 max-w-5xl mx-auto">
+          <div className="space-y-12 text-center">
+             <div className="max-w-5xl mx-auto">
                 <GradientHeader tag="h1" size="lg" className="mb-4">
                   {(content.mainTitle || "").split('\n').map((line, i) => (
-                    <React.Fragment key={i}>
-                      {line}
-                      {i < (content.mainTitle || "").split('\n').length - 1 && <br />}
-                    </React.Fragment>
+                    <React.Fragment key={i}>{line}{i < (content.mainTitle || "").split('\n').length - 1 && <br />}</React.Fragment>
                   ))}
                 </GradientHeader>
-              </div>
-            </div>
+             </div>
           </div>
         </div>
       </div>
 
-      {/* Grid Content Section */}
-      <div className="container mx-auto px-6 pb-24">
+      {/* Main Content Grid */}
+      <div className="container mx-auto px-6 pb-24 relative z-10">
         <div className="space-y-12">
+          
           {/* Season at a Glance Bar */}
-          {content.stats && content.stats.length > 0 && (
-            <div className="glass-premium rounded-2xl md:rounded-full px-8 py-6 flex flex-wrap justify-between items-center gap-8 border-primary/20 shadow-2xl">
-              <div className="flex flex-col">
-                <span className="text-xs font-black text-primary uppercase tracking-widest">
-                  2025-26 G League
+          <div className="glass-premium rounded-2xl md:rounded-full px-8 py-6 flex flex-wrap justify-between items-center gap-8 border-primary/20 shadow-2xl bg-[#0a0d12]/60">
+            <div className="flex flex-col">
+              <span className="text-xs font-black text-primary uppercase tracking-widest">
+                2025-26 G League
+              </span>
+              <span className="text-lg font-bold text-white uppercase">
+                Season at a Glance
+              </span>
+            </div>
+
+            {content.stats?.map((stat, i) => (
+              <div key={i} className="flex flex-col items-center">
+                <span className={`text-2xl font-black ${stat.label === 'Standard Salary' ? 'text-primary' : 'text-white'}`}>
+                  {stat.value}
                 </span>
-                <span className="text-lg font-bold text-white uppercase">
-                  Season at a Glance
+                <span className="text-xs font-bold text-white/40 uppercase tracking-widest">
+                  {stat.label}
                 </span>
               </div>
-
-              {content.stats.map((stat, i) => (
-                <div key={i} className="flex flex-col items-center">
-                  <span className="text-2xl font-black text-white">{stat.value}</span>
-                  <span className="text-xs font-bold text-white/40 uppercase tracking-widest">
-                    {stat.label}
-                  </span>
-                </div>
-              ))}
-            </div>
-          )}
+            ))}
+          </div>
 
           <h2 className="text-sm font-black uppercase tracking-[0.4em] text-primary text-center mb-6">
-            G League Breakdown &amp; Benefits
+            {content.subDescription || "G League Breakdown & Benefits"}
           </h2>
+
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/* Card 1 */}
+            {/* Card 1: Definition */}
             <div className="glass-premium p-8 rounded-3xl border-primary/20 space-y-6">
               <h3 className="text-xl font-black text-white uppercase tracking-wider">
                 {content.points?.[0]?.title}
@@ -146,7 +152,7 @@ export default async function GLeagueElitePage() {
               </p>
             </div>
 
-            {/* Card 2 */}
+            {/* Card 2: Rules */}
             <div className="glass-premium p-8 rounded-3xl border-primary/20 space-y-6 text-white/80">
               <h3 className="text-xl font-black text-white uppercase tracking-wider leading-tight">
                 {content.points?.[1]?.title}
@@ -161,7 +167,7 @@ export default async function GLeagueElitePage() {
               </ul>
             </div>
 
-            {/* Card 3 */}
+            {/* Card 3: Salary */}
             <div className="glass-premium p-8 rounded-3xl border-primary/20 space-y-6">
               <h3 className="text-xl font-black text-white uppercase tracking-wider leading-tight">
                 {content.points?.[2]?.title}
@@ -181,40 +187,36 @@ export default async function GLeagueElitePage() {
                   </div>
                 </div>
                 <p className="text-base text-white/90 leading-relaxed font-bold pt-4">
-                  {content.points?.[2]?.items?.[1]}
+                   {content.points?.[2]?.items?.[1]}
                 </p>
               </div>
             </div>
 
-            {/* Card 4 */}
+            {/* Card 4: Pathway */}
             <div className="glass-premium p-8 rounded-3xl border-primary/20 space-y-6">
               <h3 className="text-xl font-black text-white uppercase tracking-wider leading-tight">
                 {content.points?.[3]?.title}
               </h3>
-              <div className="flex flex-col gap-6">
-                <div className="flex flex-col gap-4 text-base font-bold text-white/90">
-                  {content.points?.[3]?.items?.map((step: string, i: number) => (
-                    <div key={i} className="flex items-center gap-4">
-                      <div className="p-3 bg-white/5 border border-white/10 rounded-xl flex-1">
-                        {step}
-                      </div>
-                      {i < (content.points?.[3]?.items?.length || 0) - 1 && (
-                        <span className="text-primary/50 text-lg">→</span>
-                      )}
+              <div className="flex flex-col gap-4 text-base font-bold text-white/90">
+                {content.points?.[3]?.items?.map((step, i) => (
+                  <div key={i} className="flex items-center gap-4">
+                    <div className="p-3 bg-white/5 border border-white/10 rounded-xl flex-1 text-sm uppercase tracking-wider">
+                      {step}
                     </div>
-                  ))}
-                </div>
+                    {i < (content.points?.[3]?.items?.length || 0) - 1 && (
+                      <span className="text-primary/50 text-lg">→</span>
+                    )}
+                  </div>
+                ))}
               </div>
             </div>
           </div>
 
-          {/* Main CTA Section */}
-          <div className="text-center space-y-8">
-            <div className="flex flex-col items-center gap-4">
-              <CtaButton href="/contact">
-                {content.ctaText}
-              </CtaButton>
-            </div>
+          {/* CTA Section */}
+          <div className="text-center pt-12">
+             <CtaButton href="/contact">
+               {content.ctaText}
+             </CtaButton>
           </div>
         </div>
       </div>

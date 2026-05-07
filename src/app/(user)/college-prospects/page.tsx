@@ -5,6 +5,7 @@ import { GradientHeader } from "@/components/gradient-header";
 import { CtaButton } from "@/components/cta-button";
 import { buildMetadataFromPage } from "@/lib/seo";
 import { BreadcrumbSchema } from "@/components/json-ld";
+export const dynamic = "force-dynamic";
 import connectDB from "@/lib/mongodb";
 import Page from "@/models/page";
 import { PageData } from "@/types/cms";
@@ -62,6 +63,7 @@ export default async function CollegeProspectsPage() {
           fill
           className="object-cover opacity-80"
           priority
+          unoptimized
         />
         <div className="absolute inset-0 bg-gradient-to-b from-[#05070a]/80 via-[#05070a]/50 to-[#05070a]" />
       </div>
@@ -72,10 +74,16 @@ export default async function CollegeProspectsPage() {
           <div className="flex flex-col lg:flex-row items-center gap-12 lg:text-left">
             <div className="flex-1 space-y-6">
               <GradientHeader tag="h1" size="lg" className="mb-4">
-                {(content.mainTitle || "").split('\n').map((line: string, i: number) => (
+                {(content.mainTitle || "").split('\n').map((line: string, i: number, arr: string[]) => (
                   <React.Fragment key={i}>
-                    {line}
-                    {i < (content.mainTitle || "").split('\n').length - 1 && <br className="hidden md:block" />}
+                    {i === arr.length - 1 ? (
+                      <span className="md:pr-12">{line}</span>
+                    ) : (
+                      <>
+                        {line}
+                        <br className="hidden md:block" />
+                      </>
+                    )}
                   </React.Fragment>
                 ))}
               </GradientHeader>
@@ -98,6 +106,7 @@ export default async function CollegeProspectsPage() {
                   alt="Basketball Grid"
                   fill
                   className="object-cover opacity-20 rotate-45 scale-150"
+                  unoptimized
                 />
                 <div className="text-primary font-black text-4xl tracking-tighter opacity-40 select-none">
                   FUTURE

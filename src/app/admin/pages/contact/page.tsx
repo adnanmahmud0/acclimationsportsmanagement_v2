@@ -1,9 +1,9 @@
-import { ContactPageEditor } from "@/components/contact-page-editor"
+import { ContactEditor } from "@/components/contact-editor"
 
-export default function AdminContactPage() {
+export default async function ContactAdminPage() {
   return (
     <div className="w-full max-w-full">
-      <ContactPageEditor />
+      <ContactEditor />
     </div>
   )
 }

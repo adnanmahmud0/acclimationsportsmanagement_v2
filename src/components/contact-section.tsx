@@ -32,7 +32,7 @@ export function ContactSection({ data }: { data?: PageData | null }) {
             <div className="absolute inset-0 bg-gradient-to-b from-[#05070a]/95 via-[#05070a]/60 to-[#05070a]" />
          </div>
 
-         <div className="w-full mx-auto px-6 relative z-10 flex flex-col items-center">
+         <div className="container mx-auto px-6 relative z-10 flex flex-col items-center">
             {/* Header Section */}
             <div className="text-center space-y-6 mb-20 max-w-4xl mx-auto">
                <GradientHeader tag="h2" size="lg" className="mb-4">

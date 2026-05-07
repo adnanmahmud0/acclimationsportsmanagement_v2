@@ -37,12 +37,9 @@ async function connectDB() {
       bufferCommands: false,
     };
 
-    // Build the database name based on environment as per previous backend logic
-    const env = process.env.NODE_ENV || 'development';
-    const dbName =
-      env === 'production'
-        ? 'acclimation-sports-management'
-        : 'acclimation-sports-management-dev';
+    // Use a consistent database name across environments
+    // You can also add DB_NAME=... to your .env to override this
+    const dbName = process.env.DB_NAME || 'acclimation-sports-management';
 
     const urlWithDb = DATABASE_URL!.replace(
       /(\.mongodb\.net\/)[^?]*(\?|$)/,

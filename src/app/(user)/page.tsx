@@ -3,10 +3,10 @@ import { OneStopShop } from "@/components/one-stop-shop";
 import { AboutSection } from "@/components/about-section";
 import { ContactSection } from "@/components/contact-section";
 import { buildMetadataFromPage } from "@/lib/seo";
+export const dynamic = "force-dynamic";
 import connectDB from "@/lib/mongodb";
 import Page from "@/models/page";
 import { FAQSchema } from "@/components/json-ld";
-
 import { mergePageData } from "@/lib/data-utils";
 
 async function getPageData() {

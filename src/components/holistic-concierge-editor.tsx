@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
 import { SaveIcon, Loader2Icon, Settings2Icon, PlusIcon, Trash2Icon, Dumbbell, Plane, Utensils, Tv, PiggyBank, Headphones } from "lucide-react"
-import { PageData, FAQ } from "@/types/cms"
+import { PageData, PageContent, FAQ, HolisticConciergeData } from "@/types/cms"
 import { SeoEditor } from "@/components/seo-editor"
 import { ImageUpload } from "@/components/image-upload"
 import { mergePageData } from "@/lib/data-utils"
@@ -23,7 +23,7 @@ export function HolisticConciergeEditor({ slug }: HolisticConciergeEditorProps) 
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [data, setData] = useState<PageData | null>(null)
-  const [activeTab, setActiveTab] = useState<"live" | "seo">("live")
+  const [activeTab, setActiveTab] = useState<"live" | "seo">("seo")
 
   const fetchPageData = useCallback(async () => {
     setLoading(true)
@@ -76,7 +76,7 @@ export function HolisticConciergeEditor({ slug }: HolisticConciergeEditorProps) 
           holisticConcierge: {
             ...currentHC,
             [field]: value
-          }
+          } as PageContent["holisticConcierge"]
         }
       }
     })
@@ -109,13 +109,13 @@ export function HolisticConciergeEditor({ slug }: HolisticConciergeEditorProps) 
     )
   }
 
-  const content = data?.content?.holisticConcierge || {
+  const content = (data?.content?.holisticConcierge || {
     title: "",
     tagline: "",
     services: [],
     ctaText: "",
     backgroundImage: ""
-  }
+  }) as HolisticConciergeData
 
   return (
     <div className="space-y-12 pb-24 animate-in fade-in duration-700 w-full">

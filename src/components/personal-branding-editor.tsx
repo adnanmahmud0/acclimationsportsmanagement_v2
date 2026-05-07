@@ -20,7 +20,7 @@ export function PersonalBrandingEditor() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [data, setData] = useState<PageData | null>(null)
-  const [activeTab, setActiveTab] = useState<"live" | "seo">("live")
+  const [activeTab, setActiveTab] = useState<"live" | "seo">("seo")
 
   useEffect(() => {
     fetchPageData()
@@ -166,57 +166,92 @@ export function PersonalBrandingEditor() {
               <span className="text-[10px] font-black text-white/40 uppercase tracking-[0.4em]">Visual Preview</span>
             </div>
             
-            <div className="relative pt-12 pb-24 bg-[#05070a]">
+            <div className="relative pt-12 pb-24 bg-[#05070a] overflow-hidden origin-top scale-[0.85] lg:scale-100 flex flex-col">
               <div className="absolute inset-0 z-0">
-                <Image src={content.backgroundImage || "/glove.png"} alt="Bg" fill className="object-cover opacity-50" unoptimized />
+                <Image src={content.backgroundImage || "/glove.png"} alt="Bg" fill className="object-cover opacity-60" unoptimized />
+                <div className="absolute inset-0 bg-gradient-to-b from-[#05070a]/90 via-[#05070a]/40 to-[#05070a]" />
               </div>
               
-              <div className="container mx-auto px-6 pt-24 pb-12 relative z-10 flex flex-col items-center">
-                <div className="text-center space-y-4 mb-12">
+              <div className="container mx-auto px-6 pt-32 pb-24 relative z-10 flex flex-col items-center">
+                {/* Hero Section */}
+                <div className="text-center space-y-4 mb-8 md:mb-12 max-w-6xl">
                   <GradientHeader tag="h1" size="lg" className="mb-4 text-center">
                     {(content.title || "").split('\n').map((line: string, i: number) => (
                       <React.Fragment key={i}>{line}{i < (content.title || "").split('\n').length - 1 && <br />}</React.Fragment>
                     ))}
                   </GradientHeader>
-                  <p className="text-sm font-bold tracking-[0.3em] uppercase text-white/50 mb-4 whitespace-pre-line leading-relaxed">
+                  <p className="text-sm font-bold tracking-[0.3em] uppercase text-white/50 mb-4 whitespace-pre-line leading-relaxed max-w-4xl mx-auto">
                     {content.tagline}
                   </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-5xl mb-12">
-                  {content.metrics.map((m: { title: string; value: string }, i: number) => (
-                    <div key={i} className="bg-[#0a0d12]/95 border border-primary/30 p-6 rounded-3xl backdrop-blur-xl shadow-2xl text-center">
-                      <div className="text-xs font-bold text-primary uppercase tracking-widest mb-1">{m.title}</div>
-                      <div className="text-3xl font-black text-white">{m.value}</div>
-                    </div>
-                  ))}
+                {/* Central Visual Section - Mobile Optimized */}
+                <div className="relative w-full max-w-5xl mb-12">
+                  {/* Mobile view: Stacked Data Points */}
+                  <div className="grid grid-cols-1 md:hidden gap-4 w-full">
+                    {content.metrics?.map((m: { title: string; value: string }, i: number) => (
+                      <div key={i} className="bg-[#0a0d12]/95 border border-primary/30 p-5 rounded-2xl backdrop-blur-xl shadow-2xl flex justify-between items-center">
+                        <div className="text-[10px] font-bold text-primary uppercase tracking-widest">{m.title}</div>
+                        <div className="text-sm font-black text-white">{m.value}</div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="hidden md:flex relative w-full aspect-[16/9] items-center justify-center">
+                    {content.metrics?.[0] && (
+                      <div className="absolute top-10 left-10 md:top-20 md:left-20 bg-[#0a0d12]/95 border border-primary/30 p-8 rounded-3xl backdrop-blur-xl shadow-2xl z-20">
+                        <div className="text-xs font-bold text-primary uppercase tracking-widest mb-1">{content.metrics[0].title}</div>
+                        <div className="text-3xl font-black text-white">{content.metrics[0].value}</div>
+                      </div>
+                    )}
+
+                    {content.metrics?.[1] && (
+                      <div className="absolute top-1/2 -right-10 md:-right-20 -translate-y-1/2 bg-[#0a0d12]/95 border border-primary/30 p-8 rounded-3xl backdrop-blur-xl shadow-2xl z-20">
+                        <div className="text-xs font-bold text-primary uppercase tracking-widest mb-1">{content.metrics[1].title}</div>
+                        <div className="text-3xl font-black text-white">{content.metrics[1].value}</div>
+                      </div>
+                    )}
+
+                    {content.metrics?.[2] && (
+                      <div className="absolute bottom-10 left-5 md:bottom-20 md:left-5 lg:-left-20 bg-[#0a0d12]/95 border border-primary/30 p-8 rounded-3xl backdrop-blur-xl shadow-2xl z-20">
+                        <div className="text-xs font-bold text-primary uppercase tracking-widest mb-1">{content.metrics[2].title}</div>
+                        <div className="text-3xl font-black text-white">{content.metrics[2].value}</div>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
-                <div className="w-full max-w-7xl space-y-12 bg-gradient-to-t from-[#05070a] via-[#05070a]/80 to-transparent p-8 md:p-12 rounded-[3rem] border border-white/5 backdrop-blur-sm mt-12">
-                  <div className="flex flex-col lg:flex-row gap-12 items-end">
-                    <div className="flex-1 space-y-8">
-                      <h2 className="text-2xl md:text-3xl font-black text-white uppercase tracking-tight">
-                        {(content.resultsTitle || "Personal Brand Strategy | Negotiation:").split('|')[0]} | <span className="text-primary">{(content.resultsTitle || "").split('|')[1] || ""}</span>
+                <div className="w-full max-w-7xl space-y-12 bg-gradient-to-t from-[#05070a] via-[#05070a]/80 to-transparent p-8 md:p-12 rounded-[3rem] border border-white/5 backdrop-blur-sm mt-12 text-left relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 blur-[100px] -mr-32 -mt-32 rounded-full" />
+                  <div className="flex flex-col lg:flex-row gap-16 items-end relative z-10">
+                    <div className="flex-1 space-y-10">
+                      <h2 className="text-3xl md:text-5xl font-black text-white leading-tight uppercase tracking-tighter">
+                        {(content.resultsTitle || "Personal Brand Strategy | Negotiation:").split('|')[0]}
+                        <span className="text-primary">{(content.resultsTitle || "").split('|')[1] || ""}</span>
                       </h2>
                       <div className="grid md:grid-cols-3 gap-6">
                         {content.services.map((s: { title: string; desc: string }, i: number) => (
-                          <div key={i} className="bg-[#0a0d12]/95 border border-white/10 p-6 rounded-2xl space-y-4">
-                            <div className="flex gap-3 items-center">
-                              <div className="w-2 h-2 rounded-full bg-primary" />
-                              <h4 className="text-white font-black uppercase text-sm tracking-widest">{s.title}</h4>
+                          <div key={i} className="bg-[#0a0d12]/95 border border-white/10 p-8 rounded-2xl space-y-6 hover:border-primary/30 transition-all shadow-xl">
+                            <div className="flex gap-4 items-center">
+                              <div className="w-3 h-3 rounded-full bg-primary shadow-[0_0_15px_rgba(0,210,255,0.8)]" />
+                              <h4 className="text-white font-black uppercase text-base tracking-widest leading-tight">{s.title}</h4>
                             </div>
-                            <p className="text-white/70 text-[10px] font-bold uppercase tracking-wider">{s.desc}</p>
+                            <p className="text-white/60 text-xs font-bold uppercase tracking-[0.15em] leading-relaxed">{s.desc}</p>
                           </div>
                         ))}
                       </div>
                     </div>
 
                     <div className="lg:w-1/3 space-y-6">
-                      <div className="grid grid-cols-2 gap-6">
+                      <div className="flex justify-between items-center bg-white/10 border border-white/20 px-8 py-3 rounded-xl backdrop-blur-md">
+                        <span className="text-[10px] font-black text-white uppercase tracking-widest">Potential Results</span>
+                        <span className="text-primary text-xl">→</span>
+                      </div>
+                      <div className="grid grid-cols-2 gap-8">
                         {content.highlights.map((h: { value: string; label: string }, i: number) => (
-                          <div key={i} className="bg-[#0a0d12]/95 border border-primary/20 p-8 rounded-2xl shadow-2xl text-center">
-                            <div className="text-4xl font-black text-white mb-2">{h.value}</div>
-                            <div className="text-[10px] font-bold text-white/70 uppercase tracking-widest leading-relaxed whitespace-pre-line">{h.label}</div>
+                          <div key={i} className="bg-[#0a0d12]/95 border border-primary/20 p-10 rounded-[2.5rem] shadow-[0_30px_60px_rgba(0,0,0,0.5)] text-center hover:scale-105 transition-all duration-500">
+                            <div className="text-5xl font-black text-white mb-3 tracking-tighter">{h.value}</div>
+                            <div className="text-[10px] font-black text-white/50 uppercase tracking-[0.4em] leading-relaxed whitespace-pre-line">{h.label}</div>
                           </div>
                         ))}
                       </div>
@@ -225,7 +260,7 @@ export function PersonalBrandingEditor() {
                 </div>
 
                 <div className="mt-12">
-                  <CtaButton href="#">SCHEDULE YOUR CALL</CtaButton>
+                  <CtaButton href="#">{content.ctaText || "SCHEDULE YOUR CALL"}</CtaButton>
                 </div>
               </div>
             </div>

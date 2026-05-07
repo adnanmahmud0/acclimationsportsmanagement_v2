@@ -210,7 +210,7 @@ export const DEFAULT_HOLISTIC_CONCIERGE_DATA: PageData = {
   content: {
     holisticConcierge: {
       title: "One-Stop Holistic \n Concierge Support",
-      tagline: "We manage your entire off-court world so you can focus only on dominating the game.",
+      tagline: "We manage your entire off-court world so you can | focus only on dominating the game.",
       services: [
         { iconType: "dumbbell", title: "Elite Physical Training", desc: "Access to world-class trainers and state-of-the-art facilities to optimize your performance." },
         { iconType: "plane", title: "Luxury Travel", desc: "Private jet charters and VIP logistics for seamless travel." },

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
 import { SaveIcon, Loader2Icon, Settings2Icon, CircleDot, TrendingUp, Target, Mic, FileText, PlusIcon, Trash2Icon } from "lucide-react"
-import { PageData, FAQ } from "@/types/cms"
+import { PageData, PageContent, FAQ, PreDraftData } from "@/types/cms"
 import Image from "next/image"
 import { GradientHeader } from "@/components/gradient-header"
 import { CtaButton } from "@/components/cta-button"
@@ -18,7 +18,7 @@ export function PreDraftEditor() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [data, setData] = useState<PageData | null>(null)
-  const [activeTab, setActiveTab] = useState<"live" | "seo">("live")
+  const [activeTab, setActiveTab] = useState<"live" | "seo">("seo")
 
   useEffect(() => {
     fetchPageData()
@@ -78,7 +78,7 @@ export function PreDraftEditor() {
           preDraft: {
             ...currentPD,
             [field]: value
-          }
+          } as PageContent["preDraft"]
         }
       }
     })
@@ -113,13 +113,13 @@ export function PreDraftEditor() {
     )
   }
 
-  const content = data?.content?.preDraft || {
+  const content = (data?.content?.preDraft || {
     title: "",
     tagline: "",
     points: [],
     ctaText: "",
     backgroundImage: ""
-  }
+  }) as PreDraftData
 
   return (
     <div className="space-y-12 pb-24 animate-in fade-in duration-700 w-full max-w-full overflow-x-hidden">
