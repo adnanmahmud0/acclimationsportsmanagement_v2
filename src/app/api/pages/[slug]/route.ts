@@ -55,7 +55,7 @@ export async function PATCH(
     const data = await req.json();
 
     // Surgical update to prevent wiping out data
-    const updateData: any = {};
+    const updateData: Record<string, unknown> = {};
     if (data.title !== undefined) updateData.title = data.title;
     if (data.content !== undefined) updateData.content = data.content;
     
