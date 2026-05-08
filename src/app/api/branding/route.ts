@@ -5,6 +5,8 @@ import { verifyAuth } from "@/lib/auth-middleware";
 import { USER_ROLES } from "@/types/user";
 import { StatusCodes } from "http-status-codes";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   try {
     await connectDB();
