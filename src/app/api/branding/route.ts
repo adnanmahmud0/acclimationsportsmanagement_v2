@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import connectDB from "@/lib/mongodb";
 import Branding from "@/models/branding";
 import { verifyAuth } from "@/lib/auth-middleware";
@@ -48,6 +49,9 @@ export async function PATCH(req: NextRequest) {
       { $set: data },
       { new: true, upsert: true }
     );
+
+    // Revalidate all pages to show the new branding immediately
+    revalidatePath("/", "layout");
 
     return NextResponse.json({
       success: true,

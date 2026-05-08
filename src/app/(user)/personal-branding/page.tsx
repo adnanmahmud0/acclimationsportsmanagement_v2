@@ -8,7 +8,7 @@ import connectDB from "@/lib/mongodb";
 import Page from "@/models/page";
 import { PageData } from "@/types/cms";
 
-export const revalidate = 3600;
+export const revalidate = 60;
 
 async function getPageData() {
   try {

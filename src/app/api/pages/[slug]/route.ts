@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import connectDB from "@/lib/mongodb";
 import Page from "@/models/page";
 import { verifyAuth } from "@/lib/auth-middleware";
@@ -72,6 +73,9 @@ export async function PATCH(
       { $set: updateData },
       { new: true, upsert: true, runValidators: true }
     );
+
+    // Revalidate all pages to show the update immediately
+    revalidatePath("/", "layout");
 
     return NextResponse.json({
       success: true,
