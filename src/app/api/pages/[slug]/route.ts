@@ -54,16 +54,21 @@ export async function PATCH(
 
     const data = await req.json();
 
+    // Surgical update to prevent wiping out data
+    const updateData: any = {};
+    if (data.title !== undefined) updateData.title = data.title;
+    if (data.content !== undefined) updateData.content = data.content;
+    
+    if (data.seo !== undefined && data.seo !== null) {
+      Object.keys(data.seo).forEach(key => {
+        updateData[`seo.${key}`] = data.seo[key];
+      });
+    }
+
     const page = await Page.findOneAndUpdate(
       { slug },
-      { 
-        $set: {
-          title: data.title,
-          content: data.content,
-          seo: data.seo,
-        } 
-      },
-      { new: true, upsert: true }
+      { $set: updateData },
+      { new: true, upsert: true, runValidators: true }
     );
 
     return NextResponse.json({

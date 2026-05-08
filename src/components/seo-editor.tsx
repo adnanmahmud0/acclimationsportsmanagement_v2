@@ -1,9 +1,10 @@
 "use client"
 
-import React from "react"
+import React, { useState } from "react"
 import { GlobeIcon } from "lucide-react"
 import { PageData, FAQ } from "@/types/cms"
 import Image from "next/image"
+import { MediaSelector } from "@/components/media-selector"
 
 // Individual imports to be safe
 import { Button as UIButton } from "@/components/ui/button"
@@ -16,6 +17,8 @@ interface SeoEditorProps {
 }
 
 export function SeoEditor({ data, updateSeo }: SeoEditorProps) {
+  const [selectorOpen, setSelectorOpen] = useState(false)
+
   return (
     <div className="bg-[#0a0d12]/40 p-6 md:p-10 rounded-[2.5rem] border border-white/5 backdrop-blur-md">
       <div className="flex items-center gap-3 mb-8">
@@ -79,31 +82,10 @@ export function SeoEditor({ data, updateSeo }: SeoEditorProps) {
         <div className="space-y-2 pt-4 border-t border-white/5">
            <label className="text-[9px] font-black text-white/20 uppercase tracking-widest block mb-2">Social Media Preview Image (OG Image)</label>
            <div className="bg-white/5 p-4 rounded-2xl border border-white/10">
-              <input 
-                type="file" 
-                className="hidden" 
-                id="og-image-upload" 
-                accept="image/*"
-                onChange={async (e) => {
-                  const file = e.target.files?.[0]
-                  if (!file) return
-                  const formData = new FormData()
-                  formData.append("file", file)
-                  try {
-                    const res = await fetch("/api/upload", { method: "POST", body: formData })
-                    const result = await res.json()
-                    if (result.success) {
-                      updateSeo("ogImage", result.url)
-                    }
-                  } catch (err) {
-                    console.error("Upload failed", err)
-                  }
-                }}
-              />
               <div className="flex items-center gap-6">
                 <div className="relative w-32 aspect-[1.91/1] rounded-lg overflow-hidden bg-black border border-white/10 shrink-0">
                   {data?.seo?.ogImage ? (
-                    <Image src={data.seo.ogImage} alt="OG Preview" fill className="object-cover" />
+                    <Image src={data.seo.ogImage} alt="OG Preview" fill className="object-cover" unoptimized />
                   ) : (
                     <div className="absolute inset-0 flex items-center justify-center text-[10px] text-white/10 font-black uppercase">No Image</div>
                   )}
@@ -115,7 +97,7 @@ export function SeoEditor({ data, updateSeo }: SeoEditorProps) {
                   <div className="flex gap-2">
                     <UIButton 
                       size="sm" 
-                      onClick={() => document.getElementById("og-image-upload")?.click()}
+                      onClick={() => setSelectorOpen(true)}
                       className="bg-blue-600/10 text-blue-500 hover:bg-blue-600 hover:text-white border border-blue-500/20 text-[10px] font-black uppercase tracking-widest h-9 px-4 rounded-xl"
                     >
                       {data?.seo?.ogImage ? "Change Image" : "Upload Image"}
@@ -298,7 +280,15 @@ export function SeoEditor({ data, updateSeo }: SeoEditorProps) {
               <label className="text-[9px] font-black text-white/20 uppercase tracking-widest block mb-4">Social Media Preview</label>
               <div className="max-w-md bg-[#18191a] rounded-xl overflow-hidden border border-white/10 shadow-2xl font-sans text-left">
                 <div className="relative aspect-[1.91/1] bg-white flex items-center justify-center overflow-hidden p-8">
-                   <Image src={data?.seo?.ogImage || "/logo/AcclimationLogo-Vartical.png"} alt="Logo" fill={!!data?.seo?.ogImage} width={!data?.seo?.ogImage ? 140 : undefined} height={!data?.seo?.ogImage ? 140 : undefined} className="object-contain" />
+                   <Image 
+                    src={data?.seo?.ogImage || "/logo/AcclimationLogo-Vartical.png"} 
+                    alt="Logo" 
+                    fill={!!data?.seo?.ogImage} 
+                    width={!data?.seo?.ogImage ? 140 : undefined} 
+                    height={!data?.seo?.ogImage ? 140 : undefined} 
+                    className="object-contain" 
+                    unoptimized 
+                   />
                 </div>
                 <div className="p-4 bg-[#242526] border-t border-white/5">
                   <div className="text-[11px] text-[#b0b3b8] uppercase tracking-wider mb-1 font-medium">acclimationsports.com</div>
@@ -314,6 +304,15 @@ export function SeoEditor({ data, updateSeo }: SeoEditorProps) {
           </div>
         </div>
       </div>
+      
+      <MediaSelector 
+        isOpen={selectorOpen}
+        onClose={() => setSelectorOpen(false)}
+        onSelect={(url) => {
+          updateSeo("ogImage", url)
+          setSelectorOpen(false)
+        }}
+      />
     </div>
   )
 }
