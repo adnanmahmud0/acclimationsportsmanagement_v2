@@ -158,6 +158,11 @@ const data = {
       url: "/admin/sitemap",
       icon: <GlobeIcon />,
     },
+    {
+      title: "Logo & Branding",
+      url: "/admin/branding",
+      icon: <ImageIcon />,
+    },
   ],
 }
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -170,7 +175,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               className="data-[slot=sidebar-menu-button]:p-1.5! h-12"
               render={<Link href="/" />}
             >
-              <Logo variant="horizontal" width={140} height={30} showLink={false} />
+              <Logo type="sidebar" showLink={false} />
             </SidebarMenuButton>
           </SidebarMenuItem>
 

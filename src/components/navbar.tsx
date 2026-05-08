@@ -152,7 +152,7 @@ export function Navbar() {
             <SheetHeader className="text-left p-6 border-b border-white/5 bg-[#05070a]">
               <div className="flex items-center justify-between">
                 <SheetTitle>
-                  <Logo variant="horizontal" width={140} height={32} />
+                  <Logo type="navbar" width={140} height={32} />
                 </SheetTitle>
               </div>
             </SheetHeader>
@@ -277,7 +277,7 @@ export function Navbar() {
       </div>
 
       {/* Logo */}
-      <Logo variant="horizontal" className="w-40 md:w-56 lg:w-64" />
+      <Logo type="navbar" />
 
       {/* Navigation Menu (Desktop) */}
       <div className="hidden lg:flex items-center gap-2">

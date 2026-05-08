@@ -22,7 +22,7 @@ export function Footer() {
       </nav>
 
       <footer className="w-full flex flex-col items-center gap-6 pt-4">
-        <Logo variant="vertical" width={60} height={60} className="opacity-80 hover:opacity-100 transition-opacity" />
+        <Logo type="footer" className="opacity-80 hover:opacity-100 transition-opacity" />
         <address className="not-italic text-xs font-bold text-white/50 uppercase tracking-[0.2em] text-center">
           Acclimation Sports Management &bull; Fort Lauderdale, FL 33308 &bull;{" "}
           <a href="tel:5125186547" className="hover:text-white/90 transition-colors">512-518-6547</a>
