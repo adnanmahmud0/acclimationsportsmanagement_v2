@@ -58,6 +58,7 @@ export default async function HighSchoolTalentPage() {
           fill
           className="object-cover opacity-80"
           sizes="100vw"
+          unoptimized
         />
         <div className="absolute inset-0 bg-gradient-to-b from-[#05070a]/80 via-[#05070a]/50 to-[#05070a]" />
       </div>

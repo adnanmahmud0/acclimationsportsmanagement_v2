@@ -55,6 +55,7 @@ export default async function WNBAPage() {
           fill
           className="object-cover opacity-80"
           sizes="100vw"
+          unoptimized
         />
         <div className="absolute inset-0 bg-gradient-to-b from-[#05070a]/90 via-transparent to-[#05070a]" />
       </div>

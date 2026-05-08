@@ -68,6 +68,7 @@ export default async function PreDraftPage() {
           fill
           className="object-cover opacity-60 shadow-[inset_0_0_100px_rgba(0,0,0,0.8)]"
           sizes="100vw"
+          unoptimized
         />
         <div className="absolute inset-0 bg-gradient-to-b from-[#05070a]/90 via-[#05070a]/40 to-[#05070a]" />
       </div>

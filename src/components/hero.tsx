@@ -63,6 +63,7 @@ export function Hero({ data }: { data?: PageData | null }) {
           sizes="100vw"
           fetchPriority="high"
           quality={85}
+          unoptimized
         />
         <div className="absolute inset-0 bg-gradient-to-b from-[#05070a]/60 via-[#05070a]/20 to-[#05070a]" />
       </div>

@@ -45,6 +45,7 @@ export function OneStopShop({ data }: { data?: PageData | null }) {
           className="object-cover opacity-60"
           sizes="100vw"
           quality={75}
+          unoptimized
         />
         <div className="absolute inset-0 bg-gradient-to-b from-[#05070a] via-transparent to-[#05070a]" />
       </div>

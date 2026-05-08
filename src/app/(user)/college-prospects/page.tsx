@@ -63,6 +63,7 @@ export default async function CollegeProspectsPage() {
           fill
           className="object-cover opacity-80"
           sizes="100vw"
+          unoptimized
         />
         <div className="absolute inset-0 bg-gradient-to-b from-[#05070a]/80 via-[#05070a]/50 to-[#05070a]" />
       </div>
@@ -105,6 +106,7 @@ export default async function CollegeProspectsPage() {
                   alt="Basketball Grid"
                   fill
                   className="object-cover opacity-20 rotate-45 scale-150"
+                  unoptimized
                 />
                 <div className="text-primary font-black text-4xl tracking-tighter opacity-40 select-none">
                   FUTURE
