@@ -27,38 +27,44 @@ export async function generateMetadata() {
   return buildMetadataFromPage(page, "/pre-draft");
 }
 
+import { FAQSchema } from "@/components/json-ld";
+
 export default async function PreDraftPage() {
   const pageData = await getPageData();
 
   // Static design fallback for parity
   const content = pageData?.content?.preDraft || {
     title: "Pre-Draft and NBA \n Combine Mastery",
-    tagline: "Our Pre-Draft and NBA Combine Mastery program prepares elite prospects to rise on draft boards and enter the NBA with maximum value.",
+    tagline: "Our Pre-Draft and NBA Combine Mastery program prepares elite high school and college basketball prospects to rise on draft boards and enter the NBA with maximum value.",
     backgroundImage: "/baskateballplayer.png",
     ctaText: "SCHEDULE YOUR CONFIDENTIAL CONTRACT STRATEGY CALL",
     points: [
-      "PROFESSIONAL PLAYER VALUATION REPORT",
-      "CUSTOMIZED NBA COMBINE TRAINING",
-      "TARGETED WORKOUTS WITH NBA TEAMS",
-      "MEDIA TRAINING & INTERVIEW PREP",
-      "MEDICAL EVALUATION STRATEGY"
+      "PROFESSIONAL PLAYER VALUATION AND DRAFT PROJECTION REPORT",
+      "CUSTOMIZED NBA COMBINE AND PRO DAY TRAINING WITH TOP COACHES",
+      "TARGETED WORKOUTS WITH NBA TEAMS THAT NEED YOUR SKILL SET",
+      "MEDIA TRAINING, INTERVIEW PREPARATION, AND PERSONAL BRANDING",
+      "SEAMLESS TRANSITION INTO AGGRESSIVE ROOKIE CONTRACT NEGOTIATION"
     ]
   };
 
   const getIcon = (idx: number) => {
     const icons = [
-      <CircleDot key="circledot" className="w-8 h-8" />,
-      <TrendingUp key="trendingup" className="w-8 h-8" />,
-      <Target key="target" className="w-8 h-8" />,
-      <Mic key="mic" className="w-8 h-8" />,
-      <FileText key="filetext" className="w-8 h-8" />,
+      <CircleDot key="circledot" className="w-6 h-6 text-primary" />,
+      <TrendingUp key="trendingup" className="w-6 h-6 text-primary" />,
+      <Target key="target" className="w-6 h-6 text-primary" />,
+      <Mic key="mic" className="w-6 h-6 text-primary" />,
+      <FileText key="filetext" className="w-6 h-6 text-primary" />,
     ];
     return icons[idx % icons.length];
   };
 
   return (
-    <main className="relative min-h-screen overflow-x-hidden pt-12">
+    <main className="relative min-h-screen overflow-x-hidden pt-12 bg-[#05070a]">
       <BreadcrumbSchema items={[{ name: "Pre-Draft Mastery", href: "/pre-draft" }]} />
+      <FAQSchema faqs={[
+        { question: "What does NBA Combine preparation include?", answer: "Our Pre-Draft Mastery program includes player valuation reports, customized NBA Combine training with top coaches, targeted workouts with NBA teams, media and interview preparation, and seamless transition into rookie contract negotiation." },
+        { question: "How do you prepare prospects for the NBA Draft?", answer: "We provide professional player valuation and draft projection reports, customized combine training, targeted workouts, media training, and aggressive rookie contract negotiation planning." },
+      ]} />
       
       {/* Background Image with Overlay */}
       <div className="absolute inset-0 z-0">
@@ -66,48 +72,43 @@ export default async function PreDraftPage() {
           src={content.backgroundImage || "/baskateballplayer.png"}
           alt="Pre-Draft Mastery Background"
           fill
-          className="object-cover opacity-60 shadow-[inset_0_0_100px_rgba(0,0,0,0.8)]"
+          className="object-cover opacity-60"
           sizes="100vw"
           unoptimized
+          priority
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#05070a]/90 via-[#05070a]/40 to-[#05070a]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#05070a]/60 via-[#05070a]/20 to-[#05070a]" />
       </div>
 
-      <div className="container mx-auto px-6 pt-32 pb-24 relative z-10 flex flex-col items-center text-center">
-        <div className="space-y-16 max-w-6xl mx-auto">
+      <div className="container mx-auto px-6 pt-32 pb-24 relative z-10 flex flex-col items-center">
+        <div className="space-y-16 max-w-6xl mx-auto text-center">
           {/* Main Header */}
-          <div className="space-y-8">
+          <div className="space-y-6">
             <GradientHeader tag="h1" size="lg" className="mb-4">
               {(content.title || "").split('\n').map((line, i) => (
                 <React.Fragment key={i}>{line}{i < (content.title || "").split('\n').length - 1 && <br />}</React.Fragment>
               ))}
             </GradientHeader>
-            <p className="text-sm font-bold tracking-[0.4em] uppercase text-white/50 mb-4 max-w-4xl mx-auto leading-relaxed">
+            <p className="text-sm font-bold tracking-[0.3em] uppercase text-white/50 mb-4 max-w-4xl mx-auto leading-relaxed">
               {content.tagline}
             </p>
           </div>
 
-          {/* Mastery Points Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 py-12 w-full max-w-7xl mx-auto text-left">
-            {content.points?.map((point, idx) => (
-              <div key={idx} className="flex flex-col gap-8 group p-10 rounded-[2.5rem] bg-[#0a0d12]/60 border border-white/5 hover:border-primary/40 hover:bg-[#0a0d12]/80 transition-all backdrop-blur-xl shadow-2xl relative overflow-hidden group">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 blur-[50px] -mr-16 -mt-16 rounded-full group-hover:bg-primary/10 transition-all duration-500" />
-                
-                <div className="w-16 h-16 shrink-0 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-primary group-hover:scale-110 group-hover:bg-primary group-hover:text-black transition-all shadow-xl">
-                  {getIcon(idx)}
-                </div>
-                
-                <div className="space-y-4 relative z-10">
-                  <h4 className="text-lg md:text-xl font-black text-white tracking-tight leading-tight uppercase group-hover:text-primary transition-colors">
-                    {point}
-                  </h4>
-                </div>
-              </div>
-            ))}
+          {/* Mastery Points List */}
+          <div className="pt-12 flex justify-center w-full">
+            <ul className="space-y-8 max-w-4xl text-left w-full">
+              {content.points?.map((point, idx) => (
+                <PointItem
+                  key={idx}
+                  icon={getIcon(idx)}
+                  text={point}
+                />
+              ))}
+            </ul>
           </div>
 
           {/* CTA Section */}
-          <div className="pt-8">
+          <div className="text-center pt-8">
             <CtaButton href="/contact">
               {content.ctaText}
             </CtaButton>
@@ -117,3 +118,17 @@ export default async function PreDraftPage() {
     </main>
   );
 }
+
+function PointItem({ icon, text }: { icon: React.ReactNode; text: string }) {
+  return (
+    <li className="flex items-center gap-6 group">
+      <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:border-primary/40 transition-all shadow-xl">
+        {icon}
+      </div>
+      <span className="text-base md:text-lg font-bold text-white tracking-tight leading-tight uppercase">
+        {text}
+      </span>
+    </li>
+  );
+}
+

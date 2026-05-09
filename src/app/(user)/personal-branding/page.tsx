@@ -61,7 +61,7 @@ export default async function PersonalBrandingPage() {
           src={content.backgroundImage || "/glove.png"}
           alt="Personal Branding Background"
           fill
-          className="object-cover opacity-60"
+          className="object-cover"
           sizes="100vw"
           unoptimized
         />
