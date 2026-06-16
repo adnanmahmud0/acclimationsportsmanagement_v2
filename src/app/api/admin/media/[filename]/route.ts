@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { unlink } from "fs/promises";
-import path from "path";
+import { connectDB } from "@/lib/db";
+import { Media } from "@/models/media";
 
 export async function DELETE(
   req: NextRequest,
@@ -8,17 +8,15 @@ export async function DELETE(
 ) {
   try {
     const { filename } = await params;
-    const filePath = path.join(process.cwd(), "public", "uploads", filename);
+    
+    await connectDB();
+    const result = await Media.findOneAndDelete({ filename });
 
-    try {
-      await unlink(filePath);
-      return NextResponse.json({ success: true, message: "File deleted successfully" });
-    } catch (err: unknown) {
-      if (err instanceof Error && 'code' in err && err.code === 'ENOENT') {
-        return NextResponse.json({ success: false, message: "File not found" }, { status: 404 });
-      }
-      throw err;
+    if (!result) {
+      return NextResponse.json({ success: false, message: "File not found" }, { status: 404 });
     }
+
+    return NextResponse.json({ success: true, message: "File deleted successfully" });
   } catch (error) {
     console.error("Media delete error:", error);
     return NextResponse.json({ success: false, message: "Failed to delete file" }, { status: 500 });

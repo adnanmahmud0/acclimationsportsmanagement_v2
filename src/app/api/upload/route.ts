@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { writeFile, mkdir } from "fs/promises";
-import path from "path";
-import { existsSync } from "fs";
+import { connectDB } from "@/lib/db";
+import { Media } from "@/models/media";
 
 export async function POST(req: NextRequest) {
   try {
@@ -14,22 +13,39 @@ export async function POST(req: NextRequest) {
 
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
+    const base64Image = buffer.toString('base64');
 
-    const filename = `${Date.now()}-${file.name.replaceAll(" ", "-")}`;
-    const uploadDir = path.join(process.cwd(), "public", "uploads");
-    
-    // Ensure directory exists
-    if (!existsSync(uploadDir)) {
-      await mkdir(uploadDir, { recursive: true });
+    const imgbbFormData = new URLSearchParams();
+    imgbbFormData.append("image", base64Image);
+
+    const imgbbResponse = await fetch(`https://api.imgbb.com/1/upload?key=2972898062782b58a0741b9b6cecd0aa`, {
+      method: 'POST',
+      body: imgbbFormData,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    });
+
+    const imgbbResult = await imgbbResponse.json();
+
+    if (!imgbbResult.success) {
+      return NextResponse.json({ success: false, message: "ImgBB upload failed" }, { status: 500 });
     }
 
-    const filePath = path.join(uploadDir, filename);
+    const url = imgbbResult.data.url;
+    const size = imgbbResult.data.size;
+    const filename = `${Date.now()}-${file.name.replaceAll(" ", "-")}`;
 
-    await writeFile(filePath, buffer);
+    await connectDB();
+    const media = await Media.create({
+      filename,
+      url,
+      size
+    });
 
     return NextResponse.json({ 
       success: true, 
-      url: `/api/uploads/${filename}` 
+      url: media.url 
     });
   } catch (error) {
     console.error("Upload error:", error);
