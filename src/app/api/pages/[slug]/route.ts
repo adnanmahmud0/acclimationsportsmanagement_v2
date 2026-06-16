@@ -1,10 +1,13 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import connectDB from "@/lib/mongodb";
 import Page from "@/models/page";
 import { verifyAuth } from "@/lib/auth-middleware";
 import { USER_ROLES } from "@/types/user";
 import { StatusCodes } from "http-status-codes";
 import { JwtPayload } from "jsonwebtoken";
+
+export const dynamic = "force-dynamic";
 
 export async function GET(
   req: Request,
@@ -54,17 +57,25 @@ export async function PATCH(
 
     const data = await req.json();
 
+    // Surgical update to prevent wiping out data
+    const updateData: Record<string, unknown> = {};
+    if (data.title !== undefined) updateData.title = data.title;
+    if (data.content !== undefined) updateData.content = data.content;
+    
+    if (data.seo !== undefined && data.seo !== null) {
+      Object.keys(data.seo).forEach(key => {
+        updateData[`seo.${key}`] = data.seo[key];
+      });
+    }
+
     const page = await Page.findOneAndUpdate(
       { slug },
-      { 
-        $set: {
-          title: data.title,
-          content: data.content,
-          seo: data.seo,
-        } 
-      },
-      { new: true, upsert: true }
+      { $set: updateData },
+      { new: true, upsert: true, runValidators: true }
     );
+
+    // Revalidate all pages to show the update immediately
+    revalidatePath("/", "layout");
 
     return NextResponse.json({
       success: true,

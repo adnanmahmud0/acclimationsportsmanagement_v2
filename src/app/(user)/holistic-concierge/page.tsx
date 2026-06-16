@@ -9,7 +9,7 @@ import connectDB from "@/lib/mongodb";
 import Page from "@/models/page";
 import { PageData } from "@/types/cms";
 
-export const revalidate = 3600;
+export const revalidate = 60;
 
 async function getPageData() {
   try {
@@ -47,10 +47,10 @@ export default async function HolisticConciergePage() {
   };
 
   return (
-    <main className="relative min-h-screen overflow-x-hidden">
+    <main className="relative min-h-screen overflow-x-hidden pt-12">
       <BreadcrumbSchema items={[{ name: "Holistic Concierge", href: "/holistic-concierge" }]} />
       
-      {/* Hero Section with Fixed Height Background */}
+      {/* Hero Section */}
       <div className="relative">
         <div className="absolute inset-x-0 top-0 z-0 h-[85vh]">
           <Image
@@ -59,21 +59,23 @@ export default async function HolisticConciergePage() {
             fill
             className="object-cover opacity-90 shadow-[inset_0_0_100px_rgba(0,0,0,0.8)]"
             sizes="100vw"
+            unoptimized
+            priority
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#05070a]/95 via-[#05070a]/60 to-[#05070a]" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#05070a]/90 via-[#05070a]/40 to-[#05070a]" />
         </div>
 
         <div className="container mx-auto px-6 pt-32 pb-24 relative z-10 flex flex-col items-center text-center">
           <div className="space-y-12 max-w-6xl mx-auto">
             {/* Main Header */}
-            <div className="space-y-8">
+            <div className="space-y-6">
               <GradientHeader tag="h1" size="lg" className="mb-4">
                 {(content.title || "").split('\n').map((line, i) => (
                   <React.Fragment key={i}>{line}{i < (content.title || "").split('\n').length - 1 && <br />}</React.Fragment>
                 ))}
               </GradientHeader>
               
-              <h2 className="text-sm font-bold tracking-[0.4em] uppercase text-white/50 mb-4 max-w-4xl mx-auto leading-relaxed">
+              <h2 className="text-sm font-bold tracking-[0.3em] uppercase text-white/50 mb-4 max-w-4xl mx-auto leading-relaxed">
                 {content.tagline?.includes('|') ? (
                   <>
                     {content.tagline.split('|')[0]}
@@ -89,7 +91,7 @@ export default async function HolisticConciergePage() {
             </div>
 
             {/* Services Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 py-12 w-full max-w-7xl mx-auto text-left">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 py-8 w-full max-w-5xl mx-auto text-left">
               {content.services?.map((service, idx) => (
                 <ServiceCard
                   key={idx}
@@ -101,7 +103,7 @@ export default async function HolisticConciergePage() {
             </div>
 
             {/* CTA Section */}
-            <div className="pt-12">
+            <div className="pt-6">
               <CtaButton href="/contact">
                 {content.ctaText}
               </CtaButton>
@@ -115,33 +117,31 @@ export default async function HolisticConciergePage() {
 
 function getIcon(type: string) {
   switch (type) {
-    case "dumbbell": return <Dumbbell className="w-8 h-8" />;
-    case "plane": return <Plane className="w-8 h-8" />;
-    case "utensils": return <Utensils className="w-8 h-8" />;
-    case "tv": return <Tv className="w-8 h-8" />;
-    case "piggybank": return <PiggyBank className="w-8 h-8" />;
-    case "headphones": return <Headphones className="w-8 h-8" />;
-    default: return <Headphones className="w-8 h-8" />;
+    case "dumbbell": return <Dumbbell className="w-6 h-6" />;
+    case "plane": return <Plane className="w-6 h-6" />;
+    case "utensils": return <Utensils className="w-6 h-6" />;
+    case "tv": return <Tv className="w-6 h-6" />;
+    case "piggybank": return <PiggyBank className="w-6 h-6" />;
+    case "headphones": return <Headphones className="w-6 h-6" />;
+    default: return <Headphones className="w-6 h-6" />;
   }
 }
 
 function ServiceCard({ icon, title, desc }: { icon: React.ReactNode; title: string; desc: string; }) {
   return (
-    <div className="flex flex-col gap-8 group p-10 rounded-[2.5rem] bg-[#0a0d12]/60 border border-white/5 hover:border-primary/40 hover:bg-[#0a0d12]/80 transition-all backdrop-blur-xl shadow-2xl relative overflow-hidden group">
-      <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 blur-[50px] -mr-16 -mt-16 rounded-full group-hover:bg-primary/10 transition-all duration-500" />
-      
-      <div className="w-16 h-16 shrink-0 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-primary group-hover:scale-110 group-hover:bg-primary group-hover:text-black transition-all shadow-xl">
+    <div className="flex gap-6 group p-6 rounded-2xl bg-[#0a0d12]/40 border border-white/5 hover:border-primary/40 hover:bg-[#0a0d12]/60 transition-all backdrop-blur-md shadow-xl">
+      <div className="w-12 h-12 shrink-0 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-black transition-all">
         {icon}
       </div>
-      
-      <div className="space-y-4 relative z-10">
-        <h4 className="text-xl md:text-2xl font-black text-white tracking-tight leading-tight uppercase group-hover:text-primary transition-colors">
+      <div className="space-y-1">
+        <h4 className="text-base md:text-lg font-black text-white tracking-tight leading-tight uppercase group-hover:text-primary transition-colors">
           {title}
         </h4>
-        <p className="text-white/50 text-[10px] md:text-xs font-black uppercase tracking-[0.2em] leading-relaxed">
+        <p className="text-white/60 text-xs md:text-sm font-bold uppercase tracking-widest leading-relaxed">
           {desc}
         </p>
       </div>
     </div>
   );
 }
+

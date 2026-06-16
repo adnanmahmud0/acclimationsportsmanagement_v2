@@ -12,6 +12,7 @@ export interface IPage {
     noIndex?: boolean;
     sitemapPriority?: number;
     sitemapChangeFreq?: "always" | "hourly" | "daily" | "weekly" | "monthly" | "yearly" | "never";
+    ogImage?: string;
     faqs?: Array<{ question: string; answer: string }>;
   };
   views?: number;
@@ -39,6 +40,7 @@ const pageSchema = new Schema<IPage>(
       keywords: { type: String, default: "" },
       canonicalUrl: { type: String, default: "" },
       noIndex: { type: Boolean, default: false },
+      ogImage: { type: String, default: "" },
       sitemapPriority: { type: Number, default: 0.7 },
       sitemapChangeFreq: { 
         type: String, 

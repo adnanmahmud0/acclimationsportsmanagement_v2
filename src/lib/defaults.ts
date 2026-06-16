@@ -87,7 +87,7 @@ export const DEFAULT_HOME_DATA: PageData = {
       locationTitle: "Office Location"
     }
   },
-  seo: { title: "Acclimation Sports Management", description: "Elite NBA representation.", keywords: "NBA Agent" }
+  seo: { title: "Acclimation Sports Management", description: "Elite NBA representation.", keywords: "NBA Agent", ogImage: "" }
 };
 export const DEFAULT_PERSONAL_BRANDING_DATA: PageData = {
   slug: "personal-branding",
@@ -118,7 +118,8 @@ export const DEFAULT_PERSONAL_BRANDING_DATA: PageData = {
   seo: {
     title: "Personal Branding | Acclimation Sports",
     description: "Turn your talent into a premium asset.",
-    keywords: "Personal Branding, NBA Brand"
+    keywords: "Personal Branding, NBA Brand",
+    ogImage: ""
   }
 };
 
@@ -148,7 +149,8 @@ export const DEFAULT_SALARY_CAP_DATA: PageData = {
   seo: {
     title: "Salary Cap Analytics | Acclimation Sports",
     description: "Proprietary analytical models and expert salary cap strategy.",
-    keywords: "NBA Salary Cap, Analytics"
+    keywords: "NBA Salary Cap, Analytics",
+    ogImage: ""
   }
 };
 
@@ -175,6 +177,7 @@ export const DEFAULT_MARKETING_ENDORSEMENTS_DATA: PageData = {
     title: "Marketing & Endorsements | Acclimation Sports",
     description: "Build and monetize your personal brand.",
     keywords: "Athlete Marketing, NBA Endorsements",
+    ogImage: "",
     faqs: []
   }
 };
@@ -200,7 +203,8 @@ export const DEFAULT_PRE_DRAFT_DATA: PageData = {
   seo: {
     title: "Pre-Draft & NBA Combine Mastery | Acclimation Sports",
     description: "Prepare to rise on draft boards.",
-    keywords: "NBA Draft, Pre-Draft Training"
+    keywords: "NBA Draft, Pre-Draft Training",
+    ogImage: ""
   }
 };
 
@@ -226,6 +230,7 @@ export const DEFAULT_HOLISTIC_CONCIERGE_DATA: PageData = {
   seo: {
     title: "Holistic Concierge | Acclimation Sports",
     description: "Manage your entire off-court world.",
-    keywords: "Athlete Concierge, Sports Management"
+    keywords: "Athlete Concierge, Sports Management",
+    ogImage: ""
   }
 };

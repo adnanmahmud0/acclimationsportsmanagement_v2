@@ -9,7 +9,7 @@ import connectDB from "@/lib/mongodb";
 import Page from "@/models/page";
 import { PageData } from "@/types/cms";
 
-export const revalidate = 3600;
+export const revalidate = 60;
 
 async function getPageData() {
   try {
@@ -33,17 +33,18 @@ export default async function MarketingEndorsementsPage() {
   // Static design fallback for parity
   const content = pageData?.content?.marketingEndorsements || {
     title: "Marketing and \n Endorsement Deals",
-    tagline: "We build and monetize your personal brand so you earn maximum value from endorsements, sponsorships, and marketing opportunities.",
+    tagline: "We build and monetize your personal brand so you earn maximum value from endorsements, sponsorships, and marketing opportunities. elite high school talent turn their talent into real off-court income.",
     backgroundImage: "/fullbuscatecoart.png",
     ctaText: "SCHEDULE YOUR CONFIDENTIAL CONTRACT STRATEGY CALL",
     items: [
-      { title: "Professional brand valuation", desc: "Analysis of market value", iconType: "chart" },
-      { title: "Media training", desc: "Personal branding development", iconType: "mic" },
-      { title: "Endorsement Negotiation", desc: "Strategic contract review", iconType: "handshake" },
-      { title: "Network Access", desc: "Global brand connections", iconType: "network" },
+      { title: "Professional brand valuation and market positioning", desc: "Analysis of your market value and strategic positioning", iconType: "chart" },
+      { title: "Media training and personal branding development", desc: "", iconType: "mic" },
+      { title: "Targeted endorsement strategy and deal sourcing", desc: "Negotiation of sponsorships, NIL deals, and long-term partnerships", iconType: "handshake" },
+      { title: "Full integration with your NBA contract", desc: "Seamless alignment with your professional contract", iconType: "network" },
+      { title: "Long-term portfolio growth and legacy building", desc: "Strategies to ensure sustained off-court success", iconType: "trophy" },
     ],
-    transitionQuote: "Whether you're chasing your first major shoe deal or expanding your brand, we make sure you're never undervalued.",
-    readyHeading: "Ready to unlock your full potential?"
+    transitionQuote: "Whether you're chasing your first major shoe deal, building your NIL portfolio, or expanding your brand as a NBA player, we make sure you're never undervalued in the marketplace.",
+    readyHeading: "Ready to unlock your full earning potential off the court?"
   };
 
   return (
@@ -58,12 +59,14 @@ export default async function MarketingEndorsementsPage() {
           fill
           className="object-cover opacity-80"
           sizes="100vw"
+          unoptimized
+          priority
         />
         <div className="absolute inset-0 bg-gradient-to-b from-[#05070a]/90 via-[#05070a]/40 to-[#05070a]" />
       </div>
 
       <div className="container mx-auto px-6 pt-32 pb-24 relative z-10 flex flex-col items-center text-center">
-        <div className="space-y-16 max-w-5xl mx-auto">
+        <div className="space-y-12 max-w-5xl mx-auto">
           {/* Main Header */}
           <div className="space-y-6">
             <GradientHeader tag="h1" size="lg" className="mb-4">
@@ -71,14 +74,14 @@ export default async function MarketingEndorsementsPage() {
                 <React.Fragment key={i}>{line}{i < (content.title || "").split('\n').length - 1 && <br />}</React.Fragment>
               ))}
             </GradientHeader>
-            <p className="text-sm font-bold tracking-[0.3em] uppercase text-white/50 mb-4 whitespace-pre-line max-w-4xl mx-auto leading-relaxed">
+            <p className="text-sm font-bold tracking-[0.3em] uppercase text-white/50 mb-4 max-w-4xl mx-auto leading-relaxed">
               {content.tagline}
             </p>
           </div>
 
           {/* List Section */}
           <div className="flex flex-col items-center gap-10 py-8 w-full max-w-4xl mx-auto">
-            <ul className="space-y-10 text-left w-full">
+            <ul className="space-y-8 text-left w-full">
               {content.items?.map((item, i) => (
                 <ListItem
                   key={i}
@@ -91,16 +94,16 @@ export default async function MarketingEndorsementsPage() {
           </div>
 
           {/* Transition Copy */}
-          <div className="space-y-8 max-w-4xl mx-auto">
-            <p className="text-white/60 text-xl md:text-2xl font-bold tracking-wide leading-relaxed italic border-l-4 border-primary pl-8 text-left">
-              &quot;{content.transitionQuote}&quot;
+          <div className="space-y-6 max-w-4xl mx-auto">
+            <p className="text-white/60 text-lg md:text-xl font-bold tracking-wide leading-relaxed">
+              {content.transitionQuote}
             </p>
-            <h2 className="text-3xl md:text-5xl font-black text-white uppercase tracking-tighter pt-4">
+            <h2 className="text-2xl md:text-4xl font-black text-white uppercase tracking-tighter">
               {content.readyHeading}
             </h2>
           </div>
 
-          <div className="pt-8">
+          <div className="pt-6">
             <CtaButton href="/contact">
               {content.ctaText}
             </CtaButton>
@@ -124,16 +127,16 @@ function getIcon(type: string) {
 
 function ListItem({ icon, title, desc }: { icon: React.ReactNode; title: string; desc?: string; }) {
   return (
-    <li className="flex gap-8 group bg-[#0a0d12]/40 p-8 rounded-[2.5rem] border border-white/5 hover:border-primary/40 transition-all backdrop-blur-md">
-      <div className="w-16 h-16 shrink-0 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-primary group-hover:text-black transition-all shadow-xl">
-        {React.cloneElement(icon as React.ReactElement<{ className?: string }>, { className: "w-8 h-8 group-hover:text-black transition-colors" })}
+    <li className="flex gap-6 group">
+      <div className="w-12 h-12 shrink-0 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:border-primary/40 transition-all shadow-xl">
+        {icon}
       </div>
-      <div className="space-y-2">
-        <h4 className="text-xl md:text-2xl font-black text-white tracking-tight leading-tight uppercase group-hover:text-primary transition-colors">
+      <div className="space-y-1">
+        <h4 className="text-lg md:text-xl font-black text-white tracking-tight leading-tight uppercase">
           {title}
         </h4>
         {desc && (
-          <p className="text-white/40 text-xs md:text-sm font-black uppercase tracking-[0.2em] leading-relaxed">
+          <p className="text-white/40 text-[10px] md:text-xs font-bold uppercase tracking-widest">
             {desc}
           </p>
         )}
@@ -141,3 +144,4 @@ function ListItem({ icon, title, desc }: { icon: React.ReactNode; title: string;
     </li>
   );
 }
+

@@ -4,7 +4,7 @@ import { GradientHeader } from "@/components/gradient-header";
 import { CtaButton } from "@/components/cta-button";
 import { buildMetadataFromPage } from "@/lib/seo";
 import { BreadcrumbSchema } from "@/components/json-ld";
-export const revalidate = 3600;
+export const revalidate = 60;
 import connectDB from "@/lib/mongodb";
 import Page from "@/models/page";
 import { PageData } from "@/types/cms";
@@ -55,6 +55,7 @@ export default async function NBAPlayersPage() {
           fill
           className="object-cover opacity-80"
           sizes="100vw"
+          unoptimized
         />
         <div className="absolute inset-0 bg-gradient-to-b from-[#05070a]/80 via-[#05070a]/40 to-[#05070a]" />
       </div>

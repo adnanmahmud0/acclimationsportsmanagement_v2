@@ -3,6 +3,7 @@ import { buildMetadataFromPage } from "@/lib/seo";
 import { LocalBusinessSchema, PersonSchema, BreadcrumbSchema } from "@/components/json-ld";
 import { ContactSection } from "@/components/contact-section";
 
+export const revalidate = 60;
 import connectDB from "@/lib/mongodb";
 import Page from "@/models/page";
 import { PageData } from "@/types/cms";

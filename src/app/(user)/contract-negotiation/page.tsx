@@ -8,7 +8,7 @@ import connectDB from "@/lib/mongodb";
 import Page from "@/models/page";
 import { PageData } from "@/types/cms";
 
-export const revalidate = 3600;
+export const revalidate = 60;
 
 async function getPageData() {
   try {
@@ -54,15 +54,16 @@ export default async function ContractNegotiationPage() {
   return (
     <main className="relative min-h-screen overflow-x-hidden pt-12">
       <BreadcrumbSchema items={[{ name: "Contract Negotiation", href: "/contract-negotiation" }]} />
-      
+
       {/* Background Image with Overlay */}
       <div className="absolute inset-0 z-0">
         <Image
           src={content.backgroundImage || "/effect.png"}
           alt="Contract Negotiation Background"
           fill
-          className="object-cover opacity-30 shadow-[inset_0_0_100px_rgba(0,0,0,0.8)]"
+          className="object-cover opacity-80"
           sizes="100vw"
+          unoptimized
         />
         <div className="absolute inset-0 bg-gradient-to-b from-[#05070a]/95 via-[#05070a]/60 to-[#05070a]" />
       </div>
@@ -79,7 +80,7 @@ export default async function ContractNegotiationPage() {
             <p className="text-base md:text-xl font-bold tracking-wide text-white/50 mb-4 max-w-4xl mx-auto leading-relaxed">
               {content.subDescription}
             </p>
-            
+
             {/* Strategy Points List */}
             <div className="flex flex-col items-center pt-8">
               <ul className="text-left space-y-4">
@@ -110,7 +111,7 @@ export default async function ContractNegotiationPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 relative">
               {/* Connecting Line */}
               <div className="absolute top-10 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent hidden lg:block" />
-              
+
               {content.processSteps?.map((item, idx) => (
                 <div key={idx} className="flex flex-col items-center text-center space-y-6 group relative z-10">
                   <div className="w-20 h-20 rounded-full bg-[#0a0d12]/80 border border-primary/40 flex items-center justify-center font-black text-2xl text-white group-hover:bg-primary group-hover:text-black group-hover:border-primary transition-all shadow-[0_0_30px_rgba(0,180,255,0.2)]">

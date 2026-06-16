@@ -28,6 +28,7 @@ export function ContactSection({ data }: { data?: PageData | null }) {
                fill
                className="object-cover opacity-80"
                sizes="100vw"
+               unoptimized
             />
             <div className="absolute inset-0 bg-gradient-to-b from-[#05070a]/95 via-[#05070a]/60 to-[#05070a]" />
          </div>

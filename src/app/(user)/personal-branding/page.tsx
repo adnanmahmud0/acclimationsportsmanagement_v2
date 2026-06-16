@@ -8,7 +8,7 @@ import connectDB from "@/lib/mongodb";
 import Page from "@/models/page";
 import { PageData } from "@/types/cms";
 
-export const revalidate = 3600;
+export const revalidate = 60;
 
 async function getPageData() {
   try {
@@ -61,8 +61,9 @@ export default async function PersonalBrandingPage() {
           src={content.backgroundImage || "/glove.png"}
           alt="Personal Branding Background"
           fill
-          className="object-cover opacity-60"
+          className="object-cover"
           sizes="100vw"
+          unoptimized
         />
         <div className="absolute inset-0 bg-gradient-to-b from-[#05070a]/90 via-[#05070a]/40 to-[#05070a]" />
       </div>

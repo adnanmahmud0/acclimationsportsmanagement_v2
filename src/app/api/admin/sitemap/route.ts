@@ -6,6 +6,8 @@ import { USER_ROLES } from "@/types/user";
 import { StatusCodes } from "http-status-codes";
 import { JwtPayload } from "jsonwebtoken";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(req: Request) {
   try {
     await connectDB();

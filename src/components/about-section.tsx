@@ -35,7 +35,7 @@ export function AboutSection({ data }: { data?: PageData | null }) {
       {/* Subtle Background elements */}
       {content.backgroundImage && (
         <div className="absolute inset-0 z-0">
-          <Image src={content.backgroundImage} alt="About Background" fill className="object-cover opacity-20" sizes="100vw" />
+          <Image src={content.backgroundImage} alt="About Background" fill className="object-cover opacity-20" sizes="100vw" unoptimized />
           <div className="absolute inset-0 bg-gradient-to-b from-[#05070a] via-transparent to-[#05070a]" />
         </div>
       )}
@@ -72,6 +72,7 @@ export function AboutSection({ data }: { data?: PageData | null }) {
                   fill
                   className="object-cover object-top hover:scale-105 transition-transform duration-700"
                   sizes="(max-width: 1024px) 100vw, 40vw"
+                  unoptimized
                 />
               </div>
             </div>

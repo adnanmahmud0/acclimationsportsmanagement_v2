@@ -63,6 +63,7 @@ export function Hero({ data }: { data?: PageData | null }) {
           sizes="100vw"
           fetchPriority="high"
           quality={85}
+          unoptimized
         />
         <div className="absolute inset-0 bg-gradient-to-b from-[#05070a]/60 via-[#05070a]/20 to-[#05070a]" />
       </div>
@@ -133,10 +134,10 @@ export function Hero({ data }: { data?: PageData | null }) {
 function ServiceCard({ title, desc, icon }: { title: string, desc: string, icon: React.ReactNode }) {
   return (
     <div className="glass-premium px-8 py-5 rounded-xl hover:border-primary/50 transition-all duration-500 group">
-      <div className="w-10 h-10 glass rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform bg-white/5 border-white/10!">
+      <div className="w-10 h-10 glass rounded-xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform bg-white/5 border-white/10!">
         {icon}
       </div>
-      <h3 className="font-serif text-lg font-bold leading-tight bg-gradient-to-r from-white to-primary bg-clip-text text-transparent mb-2 inline-block">
+      <h3 className="font-serif text-2xl font-bold leading-tight bg-gradient-to-r from-white to-primary bg-clip-text text-transparent mb-6 inline-block">
         {title}
       </h3>
       <p className="text-sm text-white/60 leading-relaxed font-light">
